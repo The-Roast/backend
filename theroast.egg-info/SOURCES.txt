@@ -1,9 +1,0 @@
-setup.py
-theroast/__init__.py
-theroast/config.py
-theroast.egg-info/PKG-INFO
-theroast.egg-info/SOURCES.txt
-theroast.egg-info/dependency_links.txt
-theroast.egg-info/top_level.txt
-theroast/data/__init__.py
-theroast/data/news.py
