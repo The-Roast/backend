@@ -1,1 +1,10 @@
 NEWS_API_KEY=95697dffe0d54d0baadc9c0d2c9a1713
+OPENAI_API_KEY = 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
+
+FLASK_ENV=development
+FLASK_APP=theroast.app:create_app
+SECRET_KEY=np-^$4c4lf4ebsd)dhxf$@$$a2$jr3q9em9n88jw66^gf07bln
+
+POSTGRESQL_USERNAME=postgres
+POSTGRESQL_PASSWORD=299792458
+POSTGRESQL_DATABASE=theroast

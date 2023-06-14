@@ -8,7 +8,7 @@ def extract_headlines(articles):
 
     assert articles
 
-    return "<" + "\n".join([f'({i}||{a["title"]})' for i, a in enumerate(articles["articles"])]) + ">"
+    return "<" + ",".join([f'({a["title"]})' for i, a in enumerate(articles["articles"])]) + ">"
 
 
 def extract_articles(articles, section):
