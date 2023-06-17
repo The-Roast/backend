@@ -8,8 +8,15 @@ def extract_headlines(articles):
 
     assert articles
 
-    return "<" + ",".join([f'({a["title"]})' for i, a in enumerate(articles["articles"])]) + ">"
+    return list(articles.keys())
 
+def process_articles(articles):
+
+    '''Method for processing articles into a dictionary corresponding headlines to content'''
+
+    assert articles
+
+    return {a["title"]: a["content"] for a in articles["articles"]}
 
 def extract_articles(articles, section):
 

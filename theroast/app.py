@@ -10,6 +10,10 @@ def create_app(testing = False):
         app.config["TESTING"] = True
     CORS(app)
 
+    configure_extensions(app)
+
+    return app
+
 
 def configure_extensions(app):
 
