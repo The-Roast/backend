@@ -25,6 +25,8 @@ def configure_extensions(app):
     
     @lm.user_loader
     def load_user(id):
+        print(type(id))
+        print(id)
         return Users.query.filter_by(id = id)
 
 def configure_blueprints(app):

@@ -1,6 +1,6 @@
 from crypt import methods
 from dis import dis
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
 from ...db.schemas import *
 
@@ -60,6 +60,7 @@ def get_user(email):
     return response
 
 @core.route("/user", methods = ['GET'])
-@login_required
 def get_current_user():
-    return current_user.as_dict()
+    return jsonify({
+        "auth": current_user.is_authenticated
+    })

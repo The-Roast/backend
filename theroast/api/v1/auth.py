@@ -1,4 +1,4 @@
-from flask import Blueprint, request, redirect, url_for, jsonify
+from flask import Blueprint, request, redirect, url_for, jsonify, session
 from flask_login import login_user, login_required, logout_user
 from ...extensions import db
 from ...db.schemas import Digests, Users, create_color
@@ -11,19 +11,18 @@ def login():
     email = request.json["email"]
 
     user = Users.query.filter_by(email = email).first()
-
     if not user:
-        return {
+        return jsonify({
             "message": "Invalid email.",
             "status": 404
-        }
+        })
     
     login_user(user, remember = True)
     
-    return {
+    return jsonify({
         "message": "Successfully logged in.",
         "status": 200
-    }
+    })
 
 @auth.route('/signup', methods = ['POST'])
 def signup():
@@ -39,10 +38,10 @@ def signup():
     user = Users.query.filter_by(email = email).first()
 
     if user:
-        return {
+        return jsonify({
             "message": "Use a different email.",
             "status": 404
-        }
+        })
     
     user = Users(
         email = email,
@@ -65,16 +64,9 @@ def signup():
 
     login_user(user, remember = True)
 
-    return {
+    print(session["logged_in"])
+    
+    return jsonify({
         "message": "Signed in.",
         "status": 200
-    }
-
-@auth.route('/logout', methods = ['GET', 'POST'])
-@login_required
-def logout():
-    logout_user()
-    return {
-        "message": "Signed in.",
-        "status": 200
-    }
+    })
