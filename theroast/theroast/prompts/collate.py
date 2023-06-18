@@ -2,7 +2,7 @@ from . import Prompt, SYSTEM_PROMPT
 from textwrap import dedent
 
 COLLATE_PROMPT = dedent('''\
-    Given the tab-separated list of sections separated by <>, create structured, cohesive and comprehensive newletter such that a reader would be engaged and interested while reading. Format your response as a JSON with the following structure:
+    Given the tab-separated list of sections separated by <>, create structured, cohesive and comprehensive newletter. Format your response as a JSON with the following structure:
     {
         "title": "Title of newsletter",
         "introduction": "Introduction of newsletter",
@@ -13,9 +13,9 @@ COLLATE_PROMPT = dedent('''\
         if {list_of_sections is in an invalid format}:
             return {"message": "Invalid format"}
         json = {}
-        json["title"]: String = {Create an engaging and descriptive title based on the list_of_sections (it should not be more than a couple of words)}
-        json["introduction"]: String = {Create an engaging and descriptive introduction based on the list_of_sections and your personality. Make sure to be subtle about your personality and match the tone and mood of list_of_sections.}
-        json["conclusion"]: String = {Create an engaging and descriptive conclusion based on the list_of_sections and your personality. Make sure to be subtle about your personality and match the tone and mood of list_of_sections.}
+        json["title"]: String = {Create a descriptive title based on the list_of_sections (it should not be more than a couple of words)}
+        json["introduction"]: String = {Create an informative introduction with dry humor based on the list_of_sections and your personality. Make sure to be subtle about your personality and match the tone and mood of list_of_sections.}
+        json["conclusion"]: String = {Create an intormative conclusion with dry humor based on the list_of_sections and your personality. Make sure to be subtle about your personality and match the tone and mood of list_of_sections.}
         return json
     ''')
 REFORMAT_COLLATE_PROMPT = dedent('''\

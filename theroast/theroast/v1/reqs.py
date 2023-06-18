@@ -3,8 +3,17 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
+from langchain.chat_models import ChatOpenAI, ChatAnthropic
+from theroast.config import OPENAI_API_KEY, ANTHROPIC_API_KEY
+
 import json
 from theroast.theroast.prompts import extract, collate, cluster, section
+
+gpt = ChatOpenAI(
+        openai_api_key = OPENAI_API_KEY,
+        model = "gpt-3.5-turbo-16k",
+        temperature = 0.5
+    )
 
 def extract_request(ag, headlines):
 
@@ -15,7 +24,7 @@ def extract_request(ag, headlines):
     try:
         extr = json.loads(extract__raw.content)
     except json.JSONDecodeError:
-        extract__raw = ag.predict_messages([
+        extract__raw = gpt.predict_messages([
             HumanMessage(content = extract.ExtractPrompt().create_prompt(headlines)),
             extract__raw,
             HumanMessage(content = extract.ExtractPrompt().reformat_prompt(extract__raw.content))
@@ -32,7 +41,7 @@ def cluster_request(ag, headlines, personality):
     try:
         clus = json.loads(cluster__raw.content)
     except json.JSONDecodeError:
-        cluster__raw = ag.predict_messages([
+        cluster__raw = gpt.predict_messages([
             HumanMessage(content = cluster.ClusterPrompt().create_prompt(headlines, personality)),
             cluster__raw,
             HumanMessage(content = cluster.ClusterPrompt().reformat_prompt(cluster__raw.content))
@@ -54,7 +63,7 @@ def section_request(ag, sections, personality):
         try:
             sect = json.loads(section__raw.content)
         except json.JSONDecodeError:
-            section__raw = ag.predict_messages([
+            section__raw = gpt.predict_messages([
                 SystemMessage(content = sm),
                 HumanMessage(content = sp), 
                 section__raw,
@@ -77,7 +86,7 @@ def collate_request(ag, sections, personality):
     try:
         coll = json.loads(collate__raw.content)
     except json.JSONDecodeError:
-        collate__raw = ag.predict_messages([
+        collate__raw = gpt.predict_messages([
             SystemMessage(content = sm),
             HumanMessage(content = cp),
             collate__raw,

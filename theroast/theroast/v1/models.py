@@ -24,7 +24,7 @@ def run_anthropic(interests, sources, personality):
     ag = ChatAnthropic(
         anthropic_api_key = ANTHROPIC_API_KEY,
         model = "claude-1",
-        temperature = 0.5
+        temperature = 0.4
     )
     return create_newsletter(ag, interests, sources, personality)
 
