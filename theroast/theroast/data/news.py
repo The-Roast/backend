@@ -1,6 +1,6 @@
 from datetime import date
 from newsapi import NewsApiClient, newsapi_exception
-from ..config import NEWS_API_KEY
+from ...config import NEWS_API_KEY
 
 def extract_headlines(articles):
 

@@ -4,7 +4,7 @@ import sqlalchemy.schema as ss
 import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
 from flask_login import UserMixin
-from ...extensions import sql as db
+from ...extensions import db
 
 def create_sources():
 

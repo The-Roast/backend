@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
+from .db.schemas import *
 from .extensions import *
 
 def create_app(testing = False):
@@ -17,5 +18,5 @@ def create_app(testing = False):
 
 def configure_extensions(app):
 
-    sql.init_app(app)
-    migrate.init_app(app, sql)
+    db.init_app(app)
+    migrate.init_app(app, db)
