@@ -4,14 +4,14 @@ from ...db.schemas import Digests, Users, create_color
 
 auth = Blueprint('auth', __name__)
 
-current_user: Users = None
+current_user: int = None
 
 @auth.route('/login', methods = ['POST'])
 def login():
     
     email = request.json["email"]
 
-    user = Users.query.filter_by(email = email).first()
+    user: Users = Users.query.filter_by(email = email).first()
     if not user:
         return jsonify({
             "message": "Invalid email.",
@@ -19,7 +19,7 @@ def login():
         })
     
     global current_user
-    current_user = user
+    current_user = user.id
 
     return jsonify({
         "message": "Successfully logged in.",
@@ -65,7 +65,7 @@ def signup():
     db.session.commit()
 
     global current_user
-    current_user = user
+    current_user = user.id
     
     return jsonify({
         "message": "Signed in.",
@@ -74,7 +74,10 @@ def signup():
 
 @auth.route('/logout', methods = ["GET"])
 def logout():
+
+    global current_user
     current_user = None
+
     return {
         "message": "Signed out.",
         "status": 200

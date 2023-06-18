@@ -32,10 +32,10 @@ def set_digest():
         settings = settings,
         color = color
     )
-    db.session.add(digest)
     from .auth import current_user
-    current_user.digests.append(digest)
-    db.session.add(current_user)
+    user = Users.query.filter_by(id = current_user).first()
+    db.session.add(digest)
+    user.digests.append(digest)
     db.session.commit()
 
     return {
@@ -64,4 +64,6 @@ def get_current_user():
 
     from .auth import current_user
 
-    return current_user.as_dict()
+    user: Users = Users.query.filter_by(id = current_user).first()
+
+    return user.as_dict()
