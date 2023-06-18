@@ -27,12 +27,15 @@ def set_digest():
         "personality": request.json["personality"]
     }
     color = request.json["color"]["hex"]
-
     digest = Digests(
         name = name,
         settings = settings,
         color = color
     )
+    db.session.add(digest)
+    from .auth import current_user
+    current_user.digests.append(digest)
+    db.session.commit()
 
     return {
         "message": "Created digest.",
