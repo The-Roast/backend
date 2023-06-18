@@ -25,10 +25,22 @@ def get_digest(uuid):
 @login_required
 def set_digest():
 
-    request.json["digestName"]
-    request.json[""]
-    request.json["color"]["hex"]
-    request.json[""]
+    name = request.json["digestName"]
+    settings = {
+        "sources": request.json["contentSources"],
+        "interests": request.json["interests"],
+        "personality": request.json["personality"]
+    }
+    color = request.json["color"]["hex"]
+
+    digest = Digests(
+        name = name,
+        settings = settings,
+        color = color
+    )
+
+    current_user.digests.append()
+
 
 @core.route("/user/<email>", methods = ['GET'])
 @login_required
