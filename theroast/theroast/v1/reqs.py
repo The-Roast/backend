@@ -1,3 +1,4 @@
+from posixpath import supports_unicode_filenames
 from langchain.schema import (
     AIMessage,
     HumanMessage,
@@ -49,7 +50,7 @@ def cluster_request(ag, headlines, personality):
         clus = json.loads(cluster__raw.content)
     return clus
 
-def section_request(ag, sections, personality):
+def section_request(ag, sections, personality, news):
 
     sects = []
     for k, v in sections.items():
@@ -71,8 +72,15 @@ def section_request(ag, sections, personality):
                 HumanMessage(content = section.SectionPrompt().reformat_prompt(section__raw.content))
             ])
             sect = json.loads(section__raw.content)
+        i = 0
+        for a1 in v:
+            for a2 in news["articles"]:
+                if a1 == a2["content"]:
+                    href = a2["url"]
+                    src = a2["source"]["name"]
+                    sect["body"].replace("[CITATION]", f'<a href={href}>{src}</a>', 1)
         sects.append(sect)
-    
+
     return sects
 
 def collate_request(ag, sections, personality):

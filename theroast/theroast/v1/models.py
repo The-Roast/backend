@@ -7,14 +7,17 @@ import json
 def create_newsletter(ag, interests, sources, personality):
 
     ns = NewsScraper()
-    articles = ns.get_everything(q = " OR ".join(interests), sources = sources)
+    news = ns.get_everything(q = " OR ".join(interests), sources = sources)
     
-    articles = process_articles(articles)
+    articles = process_articles(news)
     headlines = extract_headlines(articles)
 
     extr = extract_request(ag, headlines)
     clus = cluster_request(ag, extr["headlines"], personality)
-    sects = section_request(ag, clus, personality)
+    ats = {}
+    for k, v in clus.items():
+        ats[k] = [articles[a] for a in v]
+    sects = section_request(ag, ats, personality, news)
     coll = collate_request(ag, sects, personality)
 
     return sects, coll
