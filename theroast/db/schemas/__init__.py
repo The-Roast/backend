@@ -74,6 +74,10 @@ class Digests(db.Model):
         return {
             "uuid": self.uuid,
             "name": self.name,
-            "settings": dict(self.settings),
-            "color": self.color
+            "contentSources": dict(self.settings)["sources"],
+            "interests": dict(self.settings)["interests"],
+            "personality": dict(self.settings)["personality"],
+            "color": {
+                "hex": self.color
+            }
         }

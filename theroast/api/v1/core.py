@@ -21,6 +21,15 @@ def get_digest(uuid):
 
     return digest.as_dict()
 
+@core.route("/digest", methods = ['POST'])
+@login_required
+def set_digest():
+
+    request.json["digestName"]
+    request.json[""]
+    request.json["color"]["hex"]
+    request.json[""]
+
 @core.route("/user/<email>", methods = ['GET'])
 @login_required
 def get_user(email):

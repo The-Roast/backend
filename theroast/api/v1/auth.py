@@ -63,6 +63,8 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
+    login_user(user, remember = True)
+
     return {
         "message": "Signed in.",
         "status": 200
