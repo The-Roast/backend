@@ -25,9 +25,10 @@ def login():
         "status": 200
     }
 
-@auth.route('/signup')
+@auth.route('/signup', methods = ['POST'])
 def signup():
 
+    print(request.json)
     email = request.json["email"]
     first_name = request.json["firstName"]
     last_name = request.json["lastName"]
@@ -58,7 +59,7 @@ def signup():
         },
         color = create_color()
     )
-    user.children.append(digest)
+    user.digests.append(digest)
 
     db.session.add(user)
     db.session.commit()
@@ -68,7 +69,7 @@ def signup():
         "status": 200
     }
 
-@auth.route('/logout')
+@auth.route('/logout', methods = ['POST'])
 @login_required
 def logout():
     logout_user()

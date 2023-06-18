@@ -27,12 +27,20 @@ def create_settings():
         "personality": "normal"
     }
 
+user_digest = db.Table(
+    "user_digest",
+    ss.Column("user", ss.ForeignKey("users.id"), primary_key = True),
+    ss.Column("digest", ss.ForeignKey("digests.id"), primary_key = True)
+)
+
 class Users(db.Model, UserMixin):
 
     __tablename__ = "users"
     __table_args__ = {"extend_existing": True}
 
     id = ss.Column("id", st.Integer, primary_key = True)
+
+    digests = db.relationship("Digests", secondary = user_digest)
 
     first_name = ss.Column("first_name", st.String, unique = False, nullable = True)
     last_name = ss.Column("last_name", st.String, unique = False, nullable = True)
@@ -54,10 +62,3 @@ class Digests(db.Model):
         default = create_settings
     )
     color = ss.Column("color", st.String(7), unique = False, nullable = False, default = create_color)
-
-
-user_digest = db.Table(
-    "user_digest",
-    ss.Column("user", ss.ForeignKey("users.id"), primary_key = True),
-    ss.Column("digest", ss.ForeignKey("digests.id"), primary_key = True)
-)
