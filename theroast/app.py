@@ -30,5 +30,7 @@ def configure_extensions(app):
 def configure_blueprints(app):
 
     from theroast.api.v1.auth import auth
+    from theroast.api.v1.core import core
 
     app.register_blueprint(auth)
+    app.register_blueprint(core)

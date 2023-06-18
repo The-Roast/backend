@@ -47,6 +47,13 @@ class Users(db.Model, UserMixin):
     email = ss.Column("email", st.String, unique = True, nullable = False)
     password = ss.Column("password", st.String, unique = False, nullable = True)
 
+    def as_dict(self):
+        return {
+            "firstName": self.first_name,
+            "lastName": self.last_name,
+            "email": self.email,
+        }
+
 class Digests(db.Model):
 
     __tablename__ = "digests"
@@ -62,3 +69,11 @@ class Digests(db.Model):
         default = create_settings
     )
     color = ss.Column("color", st.String(7), unique = False, nullable = False, default = create_color)
+
+    def as_dict(self):
+        return {
+            "uuid": self.uuid,
+            "name": self.name,
+            "settings": dict(self.settings),
+            "color": self.color
+        }

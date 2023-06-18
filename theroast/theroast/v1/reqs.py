@@ -58,6 +58,7 @@ def section_request(ag, sections, personality):
                 SystemMessage(content = sm),
                 HumanMessage(content = sp), 
                 section__raw,
+                SystemMessage(content = sm),
                 HumanMessage(content = section.SectionPrompt().reformat_prompt(section__raw.content))
             ])
             sect = json.loads(section__raw.content)
@@ -80,6 +81,7 @@ def collate_request(ag, sections, personality):
             SystemMessage(content = sm),
             HumanMessage(content = cp),
             collate__raw,
+            SystemMessage(content = sm),
             HumanMessage(content = collate.CollatePrompt().reformat_prompt(collate__raw.content))
         ])
         coll = json.loads(collate__raw.content)
