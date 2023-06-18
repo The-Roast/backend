@@ -1,10 +1,10 @@
-from datetime import datetime
 from flask import Blueprint, request, redirect, url_for, jsonify, session
-from flask_jwt_extended import create_access_token
 from ...extensions import db
 from ...db.schemas import Digests, Users, create_color
 
 auth = Blueprint('auth', __name__)
+
+current_user: int = None
 
 @auth.route('/login', methods = ['POST'])
 def login():
@@ -18,11 +18,11 @@ def login():
             "status": 404
         })
     
-    expires = datetime.timedelta(days=7)
-    access_token = create_access_token(identity=str(user.id), expires_delta=expires)
+    global current_user
+    current_user = user.id
 
     return jsonify({
-        "message": access_token,
+        "message": "Successfully logged in.",
         "status": 200
     })
 
@@ -64,19 +64,21 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
-    expires = datetime.timedelta(days=7)
-    access_token = create_access_token(identity=str(user.id), expires_delta=expires)
+    global current_user
+    current_user = user.id
     
     return jsonify({
-        "message": access_token,
+        "message": "Signed in.",
         "status": 200
     })
 
-# @auth.route('/logout', methods = ["GET"])
-# @jwt_required
-# def logout():
+@auth.route('/logout', methods = ["GET"])
+def logout():
 
-#     return {
-#         "message": "Signed out.",
-#         "status": 200
-#     }
+    global current_user
+    current_user = None
+
+    return {
+        "message": "Signed out.",
+        "status": 200
+    }
