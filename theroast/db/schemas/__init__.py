@@ -5,13 +5,26 @@ import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
 from flask_login import UserMixin
 from ...extensions import db
+import uuid
+import random
 
-def create_sources():
+def create_color(color = None):
+    
+    if color:
+        return color
+    
+    color = random.randrange(0, 2**24)
+    color = hex(color)
+    color = "#" + color[2:]
+    
+    return color
+
+def create_settings():
 
     return {
-        "topics": [],
-        "traditional": [],
-        "non-traditional": []
+        "interests": [],
+        "sources": [],
+        "personality": "normal"
     }
 
 class Users(db.Model, UserMixin):
@@ -21,8 +34,10 @@ class Users(db.Model, UserMixin):
 
     id = ss.Column("id", st.Integer, primary_key = True)
 
+    first_name = ss.Column("first_name", st.String, unique = False, nullable = True)
+    last_name = ss.Column("last_name", st.String, unique = False, nullable = True)
     email = ss.Column("email", st.String, unique = True, nullable = False)
-    password = ss.Column("password", st.String, unique = False, nullable = False)
+    password = ss.Column("password", st.String, unique = False, nullable = True)
 
 class Digests(db.Model):
 
@@ -31,13 +46,14 @@ class Digests(db.Model):
 
     id = ss.Column("id", st.Integer, primary_key = True)
 
-    name = ss.Column("name", st.String, unique = True, nullable = False)
-    sources = ss.Column(
-        "sources",
+    uuid = ss.Column("uuid", st.UUID(as_uuid = True), unique = True, nullable = False, default = uuid.uuid4)
+    name = ss.Column("name", st.String, unique = False, nullable = True)
+    settings = ss.Column(
+        "settings",
         NestedMutableJson, unique = False, nullable = False,
-        default = create_sources
+        default = create_settings
     )
-    color = ss.Column("color", st.String(7), unique = False, nullable = False)
+    color = ss.Column("color", st.String(7), unique = False, nullable = False, default = create_color)
 
 
 user_digest = db.Table(
