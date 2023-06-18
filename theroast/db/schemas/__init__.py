@@ -67,6 +67,7 @@ class Digests(db.Model):
         NestedMutableJson, unique = False, nullable = False,
         default = create_settings
     )
+    newsletter = ss.Column("newsletter", st.String, unique = False, nullable = True)
     color = ss.Column("color", st.String(7), unique = False, nullable = False, default = create_color)
 
     def as_dict(self):
@@ -76,6 +77,7 @@ class Digests(db.Model):
             "contentSources": dict(self.settings)["sources"],
             "interests": dict(self.settings)["interests"],
             "personality": dict(self.settings)["personality"],
+            "newsletter": self.newsletter,
             "color": {
                 "hex": self.color
             }
