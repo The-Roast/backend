@@ -82,16 +82,16 @@ def get_newsletter(uuid):
             "status": 404
         })
     
-    sect, coll = run_openai(
+    sects, coll = run_openai(
         list(digest.settings["interests"]),
         list(digest.settings["sources"]),
         list(digest.settings["personality"])
     )
     response = coll
-    response["sections"] = sect
+    for sect in sects:
+        response[sect["title"]] = sect["body"]
 
     return jsonify({
         "response": response,
         "status": 200
     })
-
