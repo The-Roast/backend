@@ -1,5 +1,5 @@
-from langchain.chat_models import ChatOpenAI
-
+from langchain.chat_models import ChatOpenAI, ChatAnthropic
+from theroast.theroast.v1.models import run_anthropic, run_openai
 from theroast.theroast.data.news import NewsScraper, extract_headlines, process_articles
 from theroast.config import OPENAI_API_KEY
 from theroast.theroast.v1.reqs import extract_request, cluster_request, section_request, collate_request
@@ -20,6 +20,8 @@ sects = section_request(ag, clus, PERSONALITY)
 print(sects)
 coll = collate_request(ag, sects, PERSONALITY)
 print(coll)
+
+# sects, coll = run_anthropic(interests = "literature", sources = [], personality = "reflective")
 
 newsletter = f'{coll["title"]}\n\n{coll["introduction"]}' + "\n\n".join([f"{s['title']}\n{s['body']}" for s in sects]) + f'\n\n{coll["conclusion"]}'
 print(newsletter)

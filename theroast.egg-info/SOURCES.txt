@@ -23,4 +23,5 @@ theroast/theroast/prompts/collate.py
 theroast/theroast/prompts/extract.py
 theroast/theroast/prompts/section.py
 theroast/theroast/v1/__init__.py
+theroast/theroast/v1/models.py
 theroast/theroast/v1/reqs.py

@@ -7,6 +7,7 @@ load_dotenv(find_dotenv(".flaskenv"))
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 ENV = os.getenv("FLASK_ENV")
 DEBUG = ENV == "development"
