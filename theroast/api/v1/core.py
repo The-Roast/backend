@@ -1,9 +1,11 @@
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from ...db.schemas import *
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
 
 @core.route("/digest/<uuid>", methods = ['GET'])
+@jwt_required()
 def get_digest(uuid):
 
     assert uuid and isinstance(uuid, str)
@@ -18,7 +20,10 @@ def get_digest(uuid):
     return digest.as_dict()
 
 @core.route("/digest", methods = ['POST'])
+@jwt_required()
 def set_digest():
+
+    id = get_jwt_identity()
 
     name = request.json["name"]
     settings = {
@@ -32,8 +37,7 @@ def set_digest():
         settings = settings,
         color = color
     )
-    from .auth import current_user
-    user = Users.query.filter_by(id = current_user).first()
+    user = Users.query.filter_by(id = id).first()
     db.session.add(digest)
     user.digests.append(digest)
     db.session.commit()
@@ -44,6 +48,7 @@ def set_digest():
     }
 
 @core.route("/user/<email>", methods = ['GET'])
+@jwt_required()
 def get_user(email):
 
     assert email and isinstance(email, str)
@@ -60,10 +65,11 @@ def get_user(email):
     return response
 
 @core.route("/user", methods = ['GET'])
+@jwt_required()
 def get_current_user():
 
-    from .auth import current_user
+    id = get_jwt_identity()
 
-    user: Users = Users.query.filter_by(id = current_user).first()
+    user: Users = Users.query.filter_by(id = id).first()
 
     return user.as_dict()

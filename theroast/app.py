@@ -16,11 +16,11 @@ def create_app(testing = False):
 
     return app
 
-
 def configure_extensions(app):
 
     db.init_app(app)
     migrate.init_app(app, db)
+    bcrypt.init_app(app)
 
 def configure_blueprints(app):
 
