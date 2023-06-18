@@ -11,7 +11,6 @@ def create_newsletter(ag, interests, sources, personality):
     
     articles = process_articles(news)
     headlines = extract_headlines(articles)
-
     extr = extract_request(ag, headlines)
     clus = cluster_request(ag, extr["headlines"], personality)
     ats = {}

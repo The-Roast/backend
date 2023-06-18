@@ -1,4 +1,7 @@
+import json
 from flask import Blueprint, request, jsonify
+
+from theroast.theroast.v1.models import run_openai
 from ...db.schemas import *
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
@@ -67,4 +70,28 @@ def get_current_user():
     user: Users = Users.query.filter_by(id = current_user).first()
 
     return user.as_dict()
+
+@core.route("/newsletter/<uuid>", methods = ['GET'])
+def get_newsletter(uuid):
+
+    digest: Digests = Digests.query.filter_by(uuid = uuid)
+    
+    if not digest:
+        return jsonify({
+            "message": "No newsletter exists",
+            "status": 404
+        })
+    
+    sect, coll = run_openai(
+        list(digest.settings["interests"]),
+        list(digest.settings["sources"]),
+        list(digest.settings["personality"])
+    )
+    response = coll
+    response["sections"] = sect
+
+    return jsonify({
+        "response": response,
+        "status": 200
+    })
 

@@ -74,11 +74,15 @@ def section_request(ag, sections, personality, news):
             sect = json.loads(section__raw.content)
         i = 0
         for a1 in v:
+            print(a1)
             for a2 in news["articles"]:
                 if a1 == a2["content"]:
                     href = a2["url"]
+                    print(href)
                     src = a2["source"]["name"]
-                    sect["body"].replace("[CITATION]", f'<a href={href}>{src}</a>', 1)
+                    print(src)
+                    sect["body"] = sect["body"].replace("[CITATION]", f'<a href={href}>{src}</a>', 1)
+                    print("Replaced stuff!!!")
         sects.append(sect)
 
     return sects
