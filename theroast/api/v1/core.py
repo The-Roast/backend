@@ -8,7 +8,7 @@ def get_digest(uuid):
 
     assert uuid and isinstance(uuid, str)
 
-    digest: Digests = Digests.objects.filter_by(uuid = uuid)
+    digest: Digests = Digests.query.filter_by(uuid = uuid).first()
     if not digest:
         return {
             "message": "Digest not found.",
@@ -20,7 +20,7 @@ def get_digest(uuid):
 @core.route("/digest", methods = ['POST'])
 def set_digest():
 
-    name = request.json["digestName"]
+    name = request.json["name"]
     settings = {
         "sources": request.json["contentSources"],
         "interests": request.json["interests"],
@@ -34,12 +34,17 @@ def set_digest():
         color = color
     )
 
+    return {
+        "message": "Created digest.",
+        "status": 200
+    }
+
 @core.route("/user/<email>", methods = ['GET'])
 def get_user(email):
 
     assert email and isinstance(email, str)
-
-    user: Users = Users.objects.filter_by(email = email)
+    
+    user: Users = Users.query.filter_by(email = email).first()
     if not user:
         return {
             "message": "User not found.",

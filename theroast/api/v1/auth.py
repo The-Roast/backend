@@ -18,6 +18,7 @@ def login():
             "status": 404
         })
     
+    global current_user
     current_user = user
 
     return jsonify({
@@ -63,6 +64,7 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
+    global current_user
     current_user = user
     
     return jsonify({
