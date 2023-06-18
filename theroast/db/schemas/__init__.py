@@ -1,3 +1,4 @@
+from email.policy import default
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 import sqlalchemy.schema as ss
@@ -68,6 +69,7 @@ class Digests(db.Model):
         default = create_settings
     )
     newsletter = ss.Column("newsletter", st.String, unique = False, nullable = True)
+    # articles = ss.Column("articles", st.JSON, unique = False, nullable = True, default = dict)
     color = ss.Column("color", st.String(7), unique = False, nullable = False, default = create_color)
 
     def as_dict(self):

@@ -67,3 +67,4 @@ def get_current_user():
     user: Users = Users.query.filter_by(id = current_user).first()
 
     return user.as_dict()
+

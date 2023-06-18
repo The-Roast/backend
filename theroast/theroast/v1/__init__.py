@@ -21,7 +21,7 @@ PERSONALITY = "smart and sarcastic but not condescending or overbearing, and nev
 # coll = collate_request(ag, sects, PERSONALITY)
 # print(coll)
 
-sects, coll = run_anthropic(interests = "literature", sources = [], personality = "informative")
+sects, coll = run_openai(interests = "literature", sources = [], personality = "informative")
 
 newsletter = f'{coll["title"]}\n\n{coll["introduction"]}' + "\n\n".join([f"{s['title']}\n{s['body']}" for s in sects]) + f'\n\n{coll["conclusion"]}'
 print(newsletter)
