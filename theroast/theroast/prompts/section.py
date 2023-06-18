@@ -16,12 +16,19 @@ SECTION_PROMPT = dedent('''\
         json["title"]: String = {Create an engaging and descriptive title based on the list_of_articles (it should not be more than a couple of words)}
         body: String = ""
         for-each String article_to_summarize in list_of_articles:
-            summary: String = {Create a concise and engaging sentence that summarizes the main point of article_to_summarize}
-            summary_with_personality = {Make summary fit with your personality. It should not be more than one or two sentences while maintaining all information in summary.}
+            summary: String = {Create a couple concise and engaging sentences that summarizes the main point of article_to_summarize}
+            summary_with_personality = {Make summary fit with your personality. It should maintain all information in summary.}
             hook: String = {Create an engaging phrase (only a few words) to hook the reader that connects back to the summary_with_personality. Add punctuation to transition to summary_with_personality at the end.}
             body = body + <b>hook</b> + summary + "\n\n"
         json["body"] = body
         return json
+    ''')
+REFORMAT_SECTION_PROMPT = dedent('''\
+    Given the broken JSON separated by $$, reformat it so that it follows the formatting and is a parseable JSON. Format your response as a JSON with the following structure:
+    {
+        "title": "Section Title",
+        "body": "Body of section of newsletter"
+    }
     ''')
 
 class SectionPrompt(Prompt):
@@ -34,3 +41,9 @@ class SectionPrompt(Prompt):
         sp = f"{SECTION_PROMPT}\n<" + "|".join(articles) + ">"
 
         return sy, sp
+
+    def reformat_prompt(self, json):
+
+        assert json
+
+        return f"{REFORMAT_SECTION_PROMPT}\n${json}$"

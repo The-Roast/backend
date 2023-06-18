@@ -24,6 +24,15 @@ CLUSTER_PROMPT = dedent('''\
             number_of_clusters--
         return json
     ''')
+REFORMAT_CLUSTER_PROMPT = dedent('''\
+    Given the broken JSON separated by $$, reformat it so that it follows the formatting and is a parseable JSON. Format your response as a JSON with the following structure:
+    {
+        "Section Name": ["list", "of", "headlines", "that", "fit", "into", "this", "section"],
+        "Section Name": ["list", "of", "headlines", "that", "fit", "into", "this", "section"],
+        ...
+        "Section Name": ["list", "of", "headlines", "that", "fit", "into", "this", "section"]
+    }
+    ''')
 
 class ClusterPrompt(Prompt):
 
@@ -34,3 +43,9 @@ class ClusterPrompt(Prompt):
         prompt = f"{CLUSTER_PROMPT}\n<" + "\t".join(headlines) + ">"
 
         return prompt if len(personality) == 0 else prompt + f"\n[[{personality}]]"
+
+    def reformat_prompt(self, json):
+
+        assert json
+
+        return f"{REFORMAT_CLUSTER_PROMPT}\n${json}$"

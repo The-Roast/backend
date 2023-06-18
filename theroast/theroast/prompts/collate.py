@@ -18,6 +18,14 @@ COLLATE_PROMPT = dedent('''\
         json["conclusion"]: String = {Create an engaging and descriptive conclusion based on the list_of_sections and your personality}
         return json
     ''')
+REFORMAT_COLLATE_PROMPT = dedent('''\
+    Given the broken JSON, reformat it so that it follows the formatting and is a parseable JSON. Format your response as a JSON with the following structure:
+    {
+        "title": "Title of newsletter",
+        "introduction": "Introduction of newsletter",
+        "conclusion": "Conclusion of newsletter"
+    }
+    ''')
 
 class CollatePrompt(Prompt):
 
@@ -26,6 +34,12 @@ class CollatePrompt(Prompt):
         assert sections and isinstance(sections, list)
 
         sy = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
-        sp = f"{COLLATE_PROMPT}\n<" + "\t".join(sections) + ">"
+        sp = f"{COLLATE_PROMPT}\n<" + "\t".join([f"{s['title']}\n{s['body']}" for s in sections]) + ">"
 
         return sy, sp
+
+    def reformat_prompt(self, json):
+
+        assert json
+
+        return f"{REFORMAT_COLLATE_PROMPT}\n${json}$"

@@ -17,6 +17,12 @@ EXTRACT_PROMPT = dedent('''\
         json["headlines"] = sections
         return json
     ''')
+REFORMAT_EXTRACT_PROMPT = dedent('''\
+    Given the broken JSON separated by $$, reformat it so that it follows the formatting and is a parseable JSON. Format your response as a JSON with the following structure:
+    {
+        "headlines": ["list", "of", "important", "headlines", "the", "user", "should", "know", "about"]
+    }
+    ''')
 
 class ExtractPrompt(Prompt):
 
@@ -25,3 +31,9 @@ class ExtractPrompt(Prompt):
         assert headlines and isinstance(headlines, list)
 
         return f"{EXTRACT_PROMPT}\n<" + "\t".join(headlines) + ">"
+
+    def reformat_prompt(self, json):
+
+        assert json
+
+        return f"{REFORMAT_EXTRACT_PROMPT}\n${json}$"

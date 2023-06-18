@@ -28,7 +28,6 @@ def login():
 @auth.route('/signup', methods = ['POST'])
 def signup():
 
-    print(request.json)
     email = request.json["email"]
     first_name = request.json["firstName"]
     last_name = request.json["lastName"]
