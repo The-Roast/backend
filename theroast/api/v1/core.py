@@ -39,5 +39,6 @@ def get_user(email):
     return response
 
 @core.route("/user", methods = ['GET'])
+@login_required
 def get_current_user():
     return current_user.as_dict()
