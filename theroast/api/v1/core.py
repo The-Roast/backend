@@ -1,13 +1,9 @@
-from crypt import methods
-from dis import dis
 from flask import Blueprint, request, jsonify
-from flask_login import login_required, current_user
 from ...db.schemas import *
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
 
 @core.route("/digest/<uuid>", methods = ['GET'])
-@login_required
 def get_digest(uuid):
 
     assert uuid and isinstance(uuid, str)
@@ -22,7 +18,6 @@ def get_digest(uuid):
     return digest.as_dict()
 
 @core.route("/digest", methods = ['POST'])
-@login_required
 def set_digest():
 
     name = request.json["digestName"]
@@ -39,11 +34,7 @@ def set_digest():
         color = color
     )
 
-    current_user.digests.append()
-
-
 @core.route("/user/<email>", methods = ['GET'])
-@login_required
 def get_user(email):
 
     assert email and isinstance(email, str)
@@ -61,6 +52,7 @@ def get_user(email):
 
 @core.route("/user", methods = ['GET'])
 def get_current_user():
-    return jsonify({
-        "auth": current_user.is_authenticated
-    })
+
+    from .auth import current_user
+
+    return current_user.as_dict()

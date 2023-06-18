@@ -3,7 +3,6 @@ import sqlalchemy.orm as so
 import sqlalchemy.schema as ss
 import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
-from flask_login import UserMixin
 from ...extensions import db
 import uuid
 import random
@@ -33,7 +32,7 @@ user_digest = db.Table(
     ss.Column("digest", ss.ForeignKey("digests.id"), primary_key = True)
 )
 
-class Users(db.Model, UserMixin):
+class Users(db.Model):
 
     __tablename__ = "users"
     __table_args__ = {"extend_existing": True}

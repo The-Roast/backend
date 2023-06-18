@@ -1,9 +1,10 @@
 from flask import Blueprint, request, redirect, url_for, jsonify, session
-from flask_login import login_user, login_required, logout_user
 from ...extensions import db
 from ...db.schemas import Digests, Users, create_color
 
 auth = Blueprint('auth', __name__)
+
+current_user: Users = None
 
 @auth.route('/login', methods = ['POST'])
 def login():
@@ -17,8 +18,8 @@ def login():
             "status": 404
         })
     
-    login_user(user, remember = True)
-    
+    current_user = user
+
     return jsonify({
         "message": "Successfully logged in.",
         "status": 200
@@ -62,11 +63,17 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
-    login_user(user, remember = True)
-
-    print(session["logged_in"])
+    current_user = user
     
     return jsonify({
         "message": "Signed in.",
         "status": 200
     })
+
+@auth.route('/logout', methods = ["GET"])
+def logout():
+    current_user = None
+    return {
+        "message": "Signed out.",
+        "status": 200
+    }
