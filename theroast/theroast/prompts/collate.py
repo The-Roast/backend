@@ -14,8 +14,8 @@ COLLATE_PROMPT = dedent('''\
             return {"message": "Invalid format"}
         json = {}
         json["title"]: String = {Create an engaging and descriptive title based on the list_of_sections (it should not be more than a couple of words)}
-        json["introduction"]: String = {Create an engaging and descriptive introduction based on the list_of_sections and your personality}
-        json["conclusion"]: String = {Create an engaging and descriptive conclusion based on the list_of_sections and your personality}
+        json["introduction"]: String = {Create an engaging and descriptive introduction based on the list_of_sections and your personality. Make sure to be subtle about your personality and match the tone and mood of list_of_sections.}
+        json["conclusion"]: String = {Create an engaging and descriptive conclusion based on the list_of_sections and your personality. Make sure to be subtle about your personality and match the tone and mood of list_of_sections.}
         return json
     ''')
 REFORMAT_COLLATE_PROMPT = dedent('''\

@@ -19,7 +19,7 @@ CLUSTER_PROMPT = dedent('''\
             cluster_of_headlines: List[String] = {Create a cluster of headlines based on list_of_headlines and your central goal}
             for-each String headline in cluster:
                 list_of_headlines.remove(headline)
-            section_name: String = {Create section name based on cluster_of_headlines so that it is engaging to the user and conforms to the desired personality_for_agent}
+            section_name: String = {Create section name based on cluster_of_headlines so that it is engaging to the user, conforms to the desired personality_for_agent and is in the speaking style of a writer}
             json[section_name] = cluster_of_headlines
             number_of_clusters--
         return json
