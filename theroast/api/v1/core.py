@@ -35,6 +35,7 @@ def set_digest():
     db.session.add(digest)
     from .auth import current_user
     current_user.digests.append(digest)
+    db.session.add(current_user)
     db.session.commit()
 
     return {
