@@ -1,0 +1,81 @@
+html {
+	scroll-behavior: smooth;
+}
+
+.conversation-wrapper {
+	display: flex;
+	width: 100%;
+	height: fit-content;
+}
+
+.left-view {
+	padding-left: 200px;
+	padding-right: 200px;
+	width: 100%;
+	height: 100vh;
+	overflow-y: scroll;
+}
+
+.left-view::-webkit-scrollbar {
+	display: none;
+}
+
+.left-view p {
+	font-size: 20px;
+}
+
+.right-view {
+	width: 50%;
+	padding-right: 150px;
+	padding-left: 50px;
+	font-weight: 600;
+	font-size: 30px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.response-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.word-enter {
+	opacity: 0;
+}
+
+.word-enter-active {
+	opacity: 1;
+	transition: opacity 300ms;
+}
+
+.recordButton {
+	margin-top: 30px;
+	border: 5px solid #43372e;
+	border-radius: 10px;
+	width: 150px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	font-family: "Grenette Pro";
+	font-size: 20px;
+	background-color: transparent;
+}
+
+#message {
+	font-size: 30px;
+	animation: fadein 2s;
+}
+
+@keyframes fadein {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
