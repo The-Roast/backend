@@ -8,7 +8,7 @@ current_user: int = None
 
 @auth.route('/login', methods = ['POST'])
 def login():
-    
+
     email = request.json["email"]
 
     user: Users = Users.query.filter_by(email = email).first()
@@ -17,7 +17,7 @@ def login():
             "message": "Invalid email.",
             "status": 404
         })
-    
+
     global current_user
     current_user = user.id
 

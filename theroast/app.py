@@ -2,7 +2,6 @@ from flask import Flask
 from flask_cors import CORS
 from theroast.db.schemas import *
 from theroast.extensions import *
-from flask_mail import Mail, Message
 
 def create_app(testing = False):
 
@@ -14,11 +13,6 @@ def create_app(testing = False):
 
     configure_blueprints(app)
     configure_extensions(app)
-    app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
-    app.config['MAIL_PORT'] = 587
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = 'apikey'
-    app.config['MAIL_PASSWORD'] = "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"
     return app
 
 
