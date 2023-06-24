@@ -1,7 +1,7 @@
 from langchain.chat_models import ChatOpenAI, ChatAnthropic
 from theroast.theroast.data.news import NewsScraper, extract_headlines, process_articles
 from theroast.config import OPENAI_API_KEY, ANTHROPIC_API_KEY
-from theroast.theroast.v1.reqs import extract_request, cluster_request, section_request, collate_request
+from theroast.theroast.lib.reqs import extract_request, cluster_request, section_request, collate_request
 import json
 
 def create_newsletter(ag, interests, sources, personality):

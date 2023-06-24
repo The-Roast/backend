@@ -8,47 +8,13 @@ from langchain.chat_models import ChatOpenAI, ChatAnthropic
 from theroast.config import OPENAI_API_KEY, ANTHROPIC_API_KEY
 
 import json
-from theroast.theroast.prompts import extract, collate, cluster, section
+from theroast.theroast.lib.prompts import collate, section
 
 gpt = ChatOpenAI(
         openai_api_key = OPENAI_API_KEY,
         model = "gpt-3.5-turbo-16k",
         temperature = 0.5
     )
-
-def extract_request(ag, headlines):
-
-    extract__raw: AIMessage = ag.predict_messages([
-        HumanMessage(content = extract.ExtractPrompt().create_prompt(headlines))
-    ])
-    extr = {}
-    try:
-        extr = json.loads(extract__raw.content)
-    except json.JSONDecodeError:
-        extract__raw = gpt.predict_messages([
-            HumanMessage(content = extract.ExtractPrompt().create_prompt(headlines)),
-            extract__raw,
-            HumanMessage(content = extract.ExtractPrompt().reformat_prompt(extract__raw.content))
-        ])
-        extr = json.loads(extract__raw.content)
-    return extr
-
-def cluster_request(ag, headlines, personality):
-
-    cluster__raw: AIMessage = ag.predict_messages([
-        HumanMessage(content = cluster.ClusterPrompt().create_prompt(headlines, personality))
-    ])
-    clus = {}
-    try:
-        clus = json.loads(cluster__raw.content)
-    except json.JSONDecodeError:
-        cluster__raw = gpt.predict_messages([
-            HumanMessage(content = cluster.ClusterPrompt().create_prompt(headlines, personality)),
-            cluster__raw,
-            HumanMessage(content = cluster.ClusterPrompt().reformat_prompt(cluster__raw.content))
-        ])
-        clus = json.loads(cluster__raw.content)
-    return clus
 
 def section_request(ag, sections, personality, news):
 
@@ -72,17 +38,6 @@ def section_request(ag, sections, personality, news):
                 HumanMessage(content = section.SectionPrompt().reformat_prompt(section__raw.content))
             ])
             sect = json.loads(section__raw.content)
-        i = 0
-        for a1 in v:
-            print(a1)
-            for a2 in news["articles"]:
-                if a1 == a2["content"]:
-                    href = a2["url"]
-                    print(href)
-                    src = a2["source"]["name"]
-                    print(src)
-                    sect["body"] = sect["body"].replace("[CITATION]", f'<a href={href}>{src}</a>', 1)
-                    print("Replaced stuff!!!")
         sects.append(sect)
 
     return sects
