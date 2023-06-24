@@ -49,12 +49,12 @@ def rank_clusters(clusters, rankings):
         vbr = [(a, rankings[a]) for a in v]
         vbr.sort(key = lambda x: x[1], reverse = True)
         total = sum([n for _, n in vbr]) / len(vbr)
-        output.append((vbr, total))
+        output.append(([a for a, _ in vbr], total))
     output.sort(key = lambda x: x[1], reverse = True)
 
     return output
 
-def filter_by_rank(clusters, threshold = 0.1):
+def filter_by_rank(clusters, threshold = 0):
 
     return [c for c in clusters if c[1] > threshold]
 
@@ -83,6 +83,7 @@ def extract_and_cluster(articles, q, target = 20):
     
     clusters = cluster(embeddings, n_neighbors = 15, n_components = 50, min_cluster_size = 3, random_state = 42)
     cluster__articles = parse_clusters(clusters.labels_, articles)
+    
 
     rankings = rerank(articles, q)
     article__ranking = parse_rankings(rankings)

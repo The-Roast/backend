@@ -22,22 +22,19 @@ def section_request(ag, sections, personality):
     for k, v in sections.items():
         
         sm, sp = section.SectionPrompt().create_prompt(v, personality)
-        section__raw: AIMessage = ag.predict_messages([
-            SystemMessage(content = sm),
-            HumanMessage(content = sp)
-        ])
+        is_valid = False
         sect = {}
-        try:
-            sect = json.loads(section__raw.content)
-        except json.JSONDecodeError:
-            section__raw = gpt.predict_messages([
+        while not is_valid:
+            section__raw: AIMessage = ag.predict_messages([
                 SystemMessage(content = sm),
-                HumanMessage(content = sp), 
-                section__raw,
-                SystemMessage(content = sm),
-                HumanMessage(content = section.SectionPrompt().reformat_prompt(section__raw.content))
+                HumanMessage(content = sp)
             ])
-            sect = json.loads(section__raw.content)
+            try:
+                sect = json.loads(section__raw.content)
+                is_valid = True
+            except json.JSONDecodeError:
+                print(section__raw.content)
+                continue
         sects.append(sect)
 
     return sects
@@ -45,20 +42,19 @@ def section_request(ag, sections, personality):
 def collate_request(ag, sections, personality):
 
     sm, cp = collate.CollatePrompt().create_prompt(sections, personality)
-    collate__raw: AIMessage = ag.predict_messages([
-        SystemMessage(content = sm),
-        HumanMessage(content = cp)
-    ])
+
+    is_valid = False
     coll = {}
-    try:
-        coll = json.loads(collate__raw.content)
-    except json.JSONDecodeError:
-        collate__raw = gpt.predict_messages([
+    while not is_valid:
+        collate__raw: AIMessage = ag.predict_messages([
             SystemMessage(content = sm),
-            HumanMessage(content = cp),
-            collate__raw,
-            SystemMessage(content = sm),
-            HumanMessage(content = collate.CollatePrompt().reformat_prompt(collate__raw.content))
+            HumanMessage(content = cp)
         ])
-        coll = json.loads(collate__raw.content)
+        try:
+            coll = json.loads(collate__raw.content)
+            is_valid = True
+        except json.JSONDecodeError:
+            print(collate__raw.content)
+            continue
+
     return coll
