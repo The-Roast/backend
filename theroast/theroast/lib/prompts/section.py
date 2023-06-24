@@ -34,7 +34,7 @@ class SectionPrompt(Prompt):
         assert articles and isinstance(articles, list)
 
         sy = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
-        sp = f"{SECTION_PROMPT}\n<" + "|".join(articles) + ">"
+        sp = f"{SECTION_PROMPT}\n<" + "\n".join([f'({a})' for a in articles]) + ">"
 
         return sy, sp
 

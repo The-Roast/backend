@@ -16,7 +16,7 @@ gpt = ChatOpenAI(
         temperature = 0.5
     )
 
-def section_request(ag, sections, personality, news):
+def section_request(ag, sections, personality):
 
     sects = []
     for k, v in sections.items():
