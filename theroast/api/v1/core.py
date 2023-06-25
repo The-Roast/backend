@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, request, jsonify
 
-from theroast.theroast.v1.models import run_openai
+from theroast.theroast.lib.models import run_openai
 from ...db.schemas import *
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
