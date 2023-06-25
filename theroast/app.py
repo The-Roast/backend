@@ -9,7 +9,7 @@ def create_app(testing = False):
     app.config.from_object("theroast.config")
     if testing:
         app.config["TESTING"] = True
-    CORS(app)
+    # CORS(app)
 
     configure_blueprints(app)
     configure_extensions(app)

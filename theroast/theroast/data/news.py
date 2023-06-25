@@ -33,7 +33,7 @@ def extract_headlines(articles):
 def process_articles(articles):
 
     '''Method for processing articles into a dictionary corresponding headlines to content'''
-
+    print(articles)
     assert articles
 
     return {a["title"]: a["content"] for a in articles["articles"]}
@@ -78,8 +78,10 @@ class NewsScraper:
                     language = "en",
                     sort_by = "relevancy",
                 )
+                print("line 81 news.py", articles)
                 break
             except newsapi_exception.NewsAPIException as e:
+                print(e)
                 c += 1
 
         return articles

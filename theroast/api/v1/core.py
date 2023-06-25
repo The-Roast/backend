@@ -32,7 +32,7 @@ def set_digest():
             "interests": request.json["interests"],
             "personality": request.json["personality"]
         }
-
+            
         for source in settings["sources"]:
             if source not in SOURCES:
                 settings["sources"].remove(source)
@@ -134,7 +134,7 @@ def get_current_user():
 @core.route("/newsletter/<uuid>", methods = ['GET'])
 def get_newsletter(uuid):
 
-    digest: Digests = Digests.query.filter_by(uuid = uuid)
+    digest: Digests = Digests.query.filter_by(uuid = uuid).first()
     
     if not digest:
         return jsonify({
@@ -145,7 +145,7 @@ def get_newsletter(uuid):
     sects, coll = run_openai(
         list(digest.settings["interests"]),
         list(digest.settings["sources"]),
-        list(digest.settings["personality"])
+        digest.settings["personality"]
     )
     response = coll
     for sect in sects:

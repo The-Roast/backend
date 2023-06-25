@@ -4,9 +4,12 @@ from theroast.theroast.lib.reqs import section_request, collate_request
 from theroast.theroast.lib.batch import extract_and_cluster
 
 def create_newsletter(ag, interests, sources, personality):
-
+    print(interests)
+    print(sources)
+    print(personality)
     ns = NewsScraper()
     news = ns.get_everything(q = " OR ".join(interests), sources = sources)   
+    print(news)
     articles = process_articles(news)
     clusters = extract_and_cluster(list(articles.values()), ",".join(interests), target = 30)
     sects = section_request(ag, clusters, personality)
