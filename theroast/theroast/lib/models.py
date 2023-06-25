@@ -1,4 +1,4 @@
-import enum
+import markdown
 from theroast.theroast.lib.extensions import ant, gpt
 from theroast.theroast.data.news import NewsScraper, process_articles
 from theroast.theroast.lib.reqs import section_request, collate_request
@@ -16,7 +16,7 @@ def create_newsletter(ag, interests, sources, personality):
     for i, c in enumerate(cc):
         sect = sects[i]
         for j, article in enumerate(c):
-            sect["body"] = sect["body"].replace(f"[{j}]", f'<a href={article__url[article][0]}>({article__url[article][1]})</a>')
+            sect["body"] = markdown.markdown(sect["body"].replace(f"[{j}]", f'<a href={article__url[article][0]}>({article__url[article][1]})</a>'))
 
     return sects, coll, articles
 
@@ -29,7 +29,9 @@ def run_anthropic(interests, sources, personality):
 def run_openai(interests, sources, personality):
     return create_newsletter(gpt, interests, sources, personality)
 
-sects, coll, articles = run_openai(["NBA"], [], "humorous")
+# sects, coll, articles = run_openai(["NBA"], [], "humorous")
 
-for sect in sects:
-    print(sect)
+# for sect in sects:
+#     print(sect)
+
+# print(coll)
