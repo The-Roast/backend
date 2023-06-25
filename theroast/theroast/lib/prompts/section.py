@@ -9,10 +9,10 @@ SECTION_PROMPT = dedent('''\
     The section should not require the reader to view the article to understand anything brought up in the section. \
     There should be no introduction, conclusion, hooks and signposting in the section. \
     The personality you have should be subtly evident in the tone and mood of the writing style in the section. \
-    If you use information you must cite the article you extracted the information from using [${number}] notation where the number is the index number of the article in the list provided.
+    If you use information you must cite the article you extracted the information from using [${number}] notation where the number is the index number of the article in the list provided. \
+    If you have multiple citations for one sentence cite it as [${number}] for each individual article (e.g. [1][2][3]).
 
-    I also want you to create a section header for the section. \
-    It should be only a few words and summarize the main point of the section in a concise and engaging way that the reader would respond to.
+    I also want you to create a section header for the section.
 
     I want your response to be formatted as strictly a JSON with the following structure:
     {

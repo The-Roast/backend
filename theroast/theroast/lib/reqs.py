@@ -8,6 +8,7 @@ from theroast.theroast.lib.prompts import collate, section
 
 def section_request(ag, sections, personality):
 
+    clusters = []
     sects = []
     for k, v in sections.items():
         
@@ -26,8 +27,9 @@ def section_request(ag, sections, personality):
                 print(section__raw.content)
                 continue
         sects.append(sect)
+        clusters.append(v)
 
-    return sects
+    return sects, clusters
 
 def collate_request(ag, sections, personality):
 

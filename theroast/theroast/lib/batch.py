@@ -82,8 +82,9 @@ def extract_and_cluster(articles, q, target = 20):
     article__embedding = {a: embeddings[i] for i, a in enumerate(articles)}
     
     clusters = cluster(embeddings, n_neighbors = 15, n_components = 50, min_cluster_size = 3, random_state = 42)
-    cluster__articles = parse_clusters(clusters.labels_, articles)
-    
+    cluster__articles = parse_clusters(clusters.labels_, articles)    
+    if -1 in cluster__articles.keys():
+        del cluster__articles[-1]
 
     rankings = rerank(articles, q)
     article__ranking = parse_rankings(rankings)
