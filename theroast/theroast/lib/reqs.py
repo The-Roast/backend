@@ -3,9 +3,6 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
-from langchain.chat_models import ChatOpenAI, ChatAnthropic
-from theroast.config import OPENAI_API_KEY, ANTHROPIC_API_KEY
-from .extensions import ant
 import json
 from theroast.theroast.lib.prompts import collate, section
 
@@ -52,10 +49,10 @@ def collate_request(ag, sections, personality):
 
     return coll
 
-def chat_request(articles, query):
+# def chat_request(articles, query):
 
-    ant.predict_messages([
-        SystemMessage(content = json.loads(articles)),
-        SystemMessage(content = "You are a news chatbot who answers any questions a reader may have about the articles in the dictionary."),
+#     ant.predict_messages([
+#         SystemMessage(content = json.loads(articles)),
+#         SystemMessage(content = "),
         
-    ])
+#     ])

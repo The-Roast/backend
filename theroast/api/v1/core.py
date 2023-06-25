@@ -149,7 +149,7 @@ def get_newsletter(uuid):
             "status": 404
         })
     
-    sects, coll, current_user[1] = run_openai(
+    sects, coll, _ = run_openai(
         list(digest.settings["interests"]),
         list(digest.settings["sources"]),
         digest.settings["personality"]
