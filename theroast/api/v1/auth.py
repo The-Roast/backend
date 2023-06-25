@@ -4,7 +4,7 @@ from ...db.schemas import Digests, Users, create_color
 
 auth = Blueprint('auth', __name__)
 
-current_user = (None, None)
+current_user = [None, None]
 
 @auth.route('/login', methods = ['POST'])
 def login():

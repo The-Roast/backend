@@ -163,4 +163,14 @@ def get_newsletter(uuid):
         "status": 200
     })
 
-# @core.route("/chat", methods = ["GET"])
+@core.route("/chat", methods = ["GET"])
+def chat():
+
+    # from .auth import current_user
+
+    # assert current_user[0] and current_user[1]
+
+    return {
+        "message": "This is dummy text.",
+        "status": 200
+    }

@@ -11,7 +11,10 @@ def create_newsletter(ag, interests, sources, personality):
     sects = section_request(ag, clusters, personality)
     coll = collate_request(ag, sects, personality)
 
-    return sects, coll, list(articles.values())
+    return sects, coll, articles
+
+def chat(articles):
+    pass
 
 def run_anthropic(interests, sources, personality):
     return create_newsletter(ant, interests, sources, personality)
