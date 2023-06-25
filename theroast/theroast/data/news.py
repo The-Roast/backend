@@ -9,7 +9,8 @@ SOURCES = ['https://abcnews.go.com', 'http://www.aljazeera.com', 'http://arstech
            'http://cnnespanol.cnn.com/', 'https://www.ccn.com', 'https://www.engadget.com',
            'http://www.ew.com', 'https://www.espn.com', 'http://www.espncricinfo.com/',
            'http://fortune.com', 'http://www.foxnews.com', 'http://www.foxsports.com',
-           'https://news.google.com', 'https://news.ycombinator.com', 'http://www.ign.com',
+        #    'https://news.google.com',
+           'https://news.ycombinator.com', 'http://www.ign.com',
            'https://mashable.com', 'http://www.medicalnewstoday.com', 'http://www.msnbc.com',
            'http://www.mtv.com/news', 'http://news.nationalgeographic.com', 'https://www.nationalreview.com/',
            'http://www.nbcnews.com', 'https://www.newscientist.com/section/news', 'https://www.newsweek.com',
@@ -74,6 +75,7 @@ class NewsScraper:
                 articles = self.cli.get_everything(
                     q = q,
                     # sources = ",".join(sources) if len(sources) > 0 else None,
+                    exclude_domains = "google.com",
                     from_param = f"{today.year:04}-{today.month:02}-{(today.day-2):02}",
                     language = "en",
                     sort_by = "relevancy",

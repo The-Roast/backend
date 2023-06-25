@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-SYSTEM_PROMPT = '''You are a newletter writer writing a piece meant to engage the reader and summarize the days content.'''
+SYSTEM_PROMPT = '''You are an unbiased newletter writer writing a piece meant to engage the reader and summarize the days content.'''
 
 class Prompt(ABC):
 
