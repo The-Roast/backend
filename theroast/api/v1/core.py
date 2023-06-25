@@ -1,8 +1,9 @@
 import json
 from flask import Blueprint, request, jsonify
-
+from theroast.theroast.data.news import SOURCES
 from theroast.theroast.lib.models import run_openai
-from ...db.schemas import *
+from ...db.schemas import Users, Digests
+from ...extensions import db
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
 
@@ -23,28 +24,87 @@ def get_digest(uuid):
 @core.route("/digest", methods = ['POST'])
 def set_digest():
 
-    name = request.json["name"]
-    settings = {
-        "sources": request.json["contentSources"],
-        "interests": request.json["interests"],
-        "personality": request.json["personality"]
-    }
-    color = request.json["color"]["hex"]
-    digest = Digests(
-        name = name,
-        settings = settings,
-        color = color
-    )
-    from .auth import current_user
-    user = Users.query.filter_by(id = current_user).first()
-    db.session.add(digest)
-    user.digests.append(digest)
-    db.session.commit()
+    if request.json["uuid"] == "":
 
-    return {
-        "message": "Created digest.",
-        "status": 200
-    }
+        name = request.json["name"]
+        settings = {
+            "sources": request.json["contentSources"],
+            "interests": request.json["interests"],
+            "personality": request.json["personality"]
+        }
+
+        for source in settings["sources"]:
+            if source not in SOURCES:
+                settings["sources"].remove(source)
+
+        color = request.json["color"]["hex"]
+        digest = Digests(
+            name = name,
+            settings = settings,
+            color = color
+        )
+        from .auth import current_user
+        user = Users.query.filter_by(id = current_user).first()
+        db.session.add(digest)
+        user.digests.append(digest)
+        db.session.commit()
+
+        return {
+            "message": "Created digest.",
+            "status": 200
+        }
+    
+    elif len(request.json["uuid"]) > 0:
+
+        digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+
+        if not digest:
+            return {
+                "message": "Invalid uuid given.",
+                "status": 404
+            }
+
+        settings = {
+            "sources": request.json["contentSources"],
+            "interests": request.json["interests"],
+            "personality": request.json["personality"]
+        }
+        for source in settings["sources"]:
+            if source not in SOURCES:
+                settings["sources"].remove(source)
+
+        digest.name = request.json["name"]
+        digest.color = request.json["color"]["hex"]
+        digest.settings = settings
+
+        db.session.commit()
+
+        return {
+            "message": "Updated digest.",
+            "status": 200
+        }
+    
+    else:
+
+        from .auth import current_user
+
+        user: Users = Users.query.filter_by(id = current_user).first()
+        digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+
+        if not digest:
+            return {
+                "message": "Invalid uuid given.",
+                "status": 404
+            }
+
+        user.digests.remove(digest)
+
+        db.session.commit()
+
+        return {
+            "message": "Deleted digest.",
+            "status": 200
+        }
 
 @core.route("/user/<email>", methods = ['GET'])
 def get_user(email):

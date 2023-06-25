@@ -1,4 +1,3 @@
-from posixpath import supports_unicode_filenames
 from langchain.schema import (
     AIMessage,
     HumanMessage,
@@ -9,12 +8,6 @@ from theroast.config import OPENAI_API_KEY, ANTHROPIC_API_KEY
 
 import json
 from theroast.theroast.lib.prompts import collate, section
-
-gpt = ChatOpenAI(
-        openai_api_key = OPENAI_API_KEY,
-        model = "gpt-3.5-turbo-16k",
-        temperature = 0.5
-    )
 
 def section_request(ag, sections, personality):
 

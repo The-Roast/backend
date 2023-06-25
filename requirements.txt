@@ -257,4 +257,4 @@ dependencies:
       - torchvision==0.15.2
       - transformers==4.30.2
       - umap-learn==0.5.3
-prefix: /Users/tanush/MiniForge/envs/TheRoast
+prefix: /home/tanush/Miniconda/envs/TheRoast

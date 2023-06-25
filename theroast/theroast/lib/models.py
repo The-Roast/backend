@@ -19,12 +19,3 @@ def run_anthropic(interests, sources, personality):
 
 def run_openai(interests, sources, personality):
     return create_newsletter(gpt, interests, sources, personality)
-
-sects, coll = run_openai(["NBA"], [], "serious and professional")
-
-print(coll["title"])
-print(coll["introduction"])
-for j in sects:
-    print(j["title"])
-    print(j["body"])
-print(coll["conclusion"])
