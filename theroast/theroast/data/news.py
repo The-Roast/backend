@@ -73,7 +73,7 @@ class NewsScraper:
             try:
                 articles = self.cli.get_everything(
                     q = q,
-                    sources = ",".join(sources) if len(sources) > 0 else None,
+                    # sources = ",".join(sources) if len(sources) > 0 else None,
                     from_param = f"{today.year:04}-{today.month:02}-{(today.day-2):02}",
                     language = "en",
                     sort_by = "relevancy",
