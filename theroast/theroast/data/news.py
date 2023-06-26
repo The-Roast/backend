@@ -1,27 +1,10 @@
 from datetime import date
 from newsapi import NewsApiClient, newsapi_exception
 from ...config import NEWS_API_KEY
+import json
+import os
 
-SOURCES = ['https://abcnews.go.com', 'http://www.aljazeera.com', 'http://arstechnica.com',
-           'https://apnews.com/', 'https://www.axios.com', 'http://www.bleacherreport.com',
-           'http://www.bloomberg.com', 'http://www.breitbart.com', 'http://www.businessinsider.com',
-           'https://www.buzzfeed.com', 'http://www.cbsnews.com', 'http://us.cnn.com',
-           'http://cnnespanol.cnn.com/', 'https://www.ccn.com', 'https://www.engadget.com',
-           'http://www.ew.com', 'https://www.espn.com', 'http://www.espncricinfo.com/',
-           'http://fortune.com', 'http://www.foxnews.com', 'http://www.foxsports.com',
-        #    'https://news.google.com',
-           'https://news.ycombinator.com', 'http://www.ign.com',
-           'https://mashable.com', 'http://www.medicalnewstoday.com', 'http://www.msnbc.com',
-           'http://www.mtv.com/news', 'http://news.nationalgeographic.com', 'https://www.nationalreview.com/',
-           'http://www.nbcnews.com', 'https://www.newscientist.com/section/news', 'https://www.newsweek.com',
-           'http://nymag.com', 'https://www.nextbigfuture.com', 'http://www.nfl.com/news',
-           'https://www.nhl.com/news', 'https://www.politico.com', 'http://www.polygon.com',
-           'http://www.recode.net', 'https://www.reddit.com/r/all', 'http://www.reuters.com',
-           'https://techcrunch.com', 'http://www.techradar.com', 'http://www.theamericanconservative.com/',
-           'http://thehill.com', 'http://www.huffingtonpost.com', 'http://thenextweb.com',
-           'http://www.theverge.com', 'http://www.wsj.com', 'https://www.washingtonpost.com',
-           'https://www.washingtontimes.com/', 'http://time.com', 'http://www.usatoday.com/news',
-           'https://news.vice.com', 'https://www.wired.com']
+SOURCES = json.load(open(os.getcwd() + "/theroast/theroast/data/sources.json", "r"))
 
 def extract_headlines(articles):
 
@@ -70,11 +53,13 @@ class NewsScraper:
         articles = {}
         c = 0
 
+        sources = [SOURCES[s.lower()] for s in sources]
+
         while c < 3:
             try:
                 articles = self.cli.get_everything(
                     q = q,
-                    # sources = ",".join(sources) if len(sources) > 0 else None,
+                    sources = ",".join(sources) if len(sources) > 0 else None,
                     exclude_domains = "google.com",
                     from_param = f"{today.year:04}-{today.month:02}-{(today.day-2):02}",
                     language = "en",
