@@ -5,7 +5,9 @@ ANTHROPIC_API_KEY = sk-ant-api03-APyMm42X8ifoT5NlyfE885jb-Vw5dW3Eit4ZylQiFZpwVNa
 
 FLASK_ENV=development
 FLASK_APP=theroast.app:create_app
+
 SECRET_KEY=np-^$4c4lf4ebsd)dhxf$@$$a2$jr3q9em9n88jw66^gf07bln
+JWT_SECRET_KEY=t1NP63m4wnBg6nyHYKdwahTpCOGI4nss
 
 POSTGRESQL_USERNAME=postgres
 POSTGRESQL_PASSWORD=missiontoZYXX21259
