@@ -7,7 +7,7 @@ function NavBar({ isSignedIn }) {
 			{isSignedIn ? (
 				<div></div>
 			) : (
-				<div id="left-div" style={{ width: "60px" }}></div>
+				<div id="left-div" style={{ width: "10px" }}></div>
 			)}
 			<NavLink to="/">
 				<img src="/logo.svg" alt="Logo" className="logo" />

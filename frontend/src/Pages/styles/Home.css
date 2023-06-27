@@ -5,21 +5,23 @@
 }
 
 .hero-section {
-	padding: 150px 50px 0px 50px;
+	padding: 100px 50px 100px 50px;
+	margin: 0px 100px 0px 100px;
 	text-align: center;
 }
 
 .hero-section h1 {
 	font-weight: bold;
-	font-size: 125px;
+	font-size: 115px;
+	color: #fefbf0;
 	text-align: center;
 	margin: 0;
 	padding: 50px;
 	font-family: "Grenette Pro", serif;
 }
 
-.subscribe-text {
-	padding-top: 100px;
+.subscribe-text-home {
+	padding-top: 50px;
 	font-size: 30px;
 	text-align: center;
 	margin: 0;
@@ -27,9 +29,13 @@
 	flex-direction: column;
 }
 
-.subscribe-text a {
-	color: #43372e;
+.subscribe-text-home a {
+	color: #fefbf0;
 	text-decoration: none;
+}
+
+.subscribe-button-home {
+	color: #fefbf0;
 }
 
 /* Media Queries */

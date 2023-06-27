@@ -7,6 +7,9 @@ import UserView from "./Pages/UserView";
 import NewsTemplate from "./Pages/NewsTemplate";
 import Conversation from "./Pages/Conversation";
 import CreateNewsTemplate from "./Pages/CreateNewsTemplate";
+import Example1 from "./Pages/example1";
+import Example2 from "./Pages/example2";
+import Example3 from "./Pages/example3";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import {
@@ -45,6 +48,18 @@ function App() {
 				<Route
 					path="/conversation"
 					element={<Conversation setIsSignedIn={setIsSignedIn} />}
+				/>
+				<Route
+					path="/example1"
+					element={<Example1 setIsSignedIn={setIsSignedIn} />}
+				/>
+				<Route
+					path="/example2"
+					element={<Example2 setIsSignedIn={setIsSignedIn} />}
+				/>
+				<Route
+					path="/example3"
+					element={<Example3 setIsSignedIn={setIsSignedIn} />}
 				/>
 				<Route
 					path=""

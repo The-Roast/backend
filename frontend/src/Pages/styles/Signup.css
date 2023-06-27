@@ -2,6 +2,12 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	height: calc(100vh - 150px);
+	overflow-y: scroll;
+}
+
+.signup::-webkit-scrollbar {
+	display: none;
 }
 
 .signup-container {
@@ -27,7 +33,7 @@
 .signup-form textarea {
 	background-color: transparent;
 	margin-bottom: 10px;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 	border: none;
 }
@@ -40,7 +46,7 @@
 .signup-form textarea::placeholder {
 	border: none;
 	color: #818181;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 	border: none;
 }
@@ -50,7 +56,7 @@
 	color: #43372e;
 	padding: 10px 20px;
 	cursor: pointer;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 }
 
@@ -86,7 +92,7 @@ label {
 	padding: 10px;
 	border-radius: 20px;
 	margin-bottom: 10px;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 	height: 50px;
 	border: none;
@@ -131,7 +137,7 @@ select {
 }
 
 .form-container {
-	font-family: "Grenette Pro";
+	font-family: "GT Alpina";
 	display: flex;
 	flex-direction: column;
 	align-items: center;

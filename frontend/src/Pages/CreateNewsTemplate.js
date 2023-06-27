@@ -55,7 +55,6 @@ function CreateNewsTemplate() {
 		preference.contentSources = contentSources.split(",").map((t) => t.trim());
 		preference.interests = interests.split(",").map((t) => t.trim());
 		preference.personality = personality;
-		console.log(preference);
 		fetch(`http://127.0.0.1:5000/v1/digest`, {
 			method: "POST",
 			headers: {

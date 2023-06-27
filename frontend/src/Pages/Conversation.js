@@ -3,6 +3,14 @@ import { useWhisper } from "@chengsokdara/use-whisper";
 import "./styles/Conversation.css";
 import XI_API_KEY from "../Config";
 import { useLocation } from "react-router-dom";
+import moebius1 from "./images/moebius1.png";
+import moebius2 from "./images/moebius2.jpeg";
+import moebius3 from "./images/moebius3.jpeg";
+import moebius4 from "./images/moebius4.jpeg";
+import moebius5 from "./images/moebius5.jpeg";
+import moebius6 from "./images/moebius6.jpeg";
+import moebius7 from "./images/moebius7.jpeg";
+import moebius8 from "./images/moebius8.jpeg";
 
 function Conversation({ setIsSignedIn }) {
 	const [isRecording, setIsRecording] = useState(false);
@@ -18,14 +26,13 @@ function Conversation({ setIsSignedIn }) {
 
 	const [newsIndex, setNewsIndex] = useState(0);
 	const [audioUrl, setAudioUrl] = useState("");
+	const audioRef = useRef(null);
 
 	const sections = Object.entries(newsletter).filter(
 		([key]) => key !== "introduction" && key !== "conclusion" && key !== "title"
 	);
 
 	const [messages, setMessages] = useState([]);
-
-	const audioRef = useRef(null);
 
 	const handleUserMessage = (e) => {
 		if (e.key === "Enter") {
@@ -48,6 +55,15 @@ function Conversation({ setIsSignedIn }) {
 		}
 	};
 
+	const handleGenerateTTS = () => {
+		const { title, introduction, conclusion, ...sections } = newsletter;
+
+		// const text = `${introduction}\n${Object.values(sections)
+		// 	.map((section) => section.replace(/<\/?a>/g, ""))
+		// 	.join("\n")}\n${conclusion}`;
+		fetchAudio(introduction);
+	};
+
 	const getBotResponse = (userInput) => {
 		// Hardcoded array of bot responses
 		const botResponses = [
@@ -64,78 +80,114 @@ function Conversation({ setIsSignedIn }) {
 
 	const fetchAudio = async (text) => {
 		console.log("Fetching audio!");
-		try {
-			const response = await fetch(
-				"https://api.elevenlabs.io/v1/text-to-speech/cjlys0iHziXap7q8d4rh?optimize_streaming_latency=0",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"xi-api-key": "8b9914b4a9e536a1f236e02385f55df9",
-						accept: "audio/mpeg",
+		const response = await fetch(
+			"https://api.elevenlabs.io/v1/text-to-speech/cjlys0iHziXap7q8d4rh?optimize_streaming_latency=0",
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"xi-api-key": "8b9914b4a9e536a1f236e02385f55df9",
+					accept: "audio/mpeg",
+				},
+				body: JSON.stringify({
+					text: text,
+					model_id: "eleven_monolingual_v1",
+					voice_settings: {
+						stability: 0.75,
+						similarity_boost: 0,
 					},
-					body: JSON.stringify({
-						text: text,
-						model_id: "eleven_monolingual_v1",
-						voice_settings: {
-							stability: 0.75,
-							similarity_boost: 0,
-						},
-					}),
-				}
-			);
-			const data = await response.blob();
-			console.log(data);
-			const audioUrl = URL.createObjectURL(data);
+				}),
+				responseType: "blob",
+			}
+		);
+		if (response.status === 200) {
+			console.log(response);
+			const blob = await response.blob();
+			console.log(blob);
+			const audioUrl = URL.createObjectURL(blob);
 			console.log(audioUrl);
-			setAudioUrl(audioUrl);
-		} catch (error) {
-			console.error("Error fetching audio:", error);
-		}
-	};
-
-	const playNextSection = () => {
-		if (newsIndex < sections.length) {
-			const sectionText = sections[newsIndex][1];
-			fetchAudio(sectionText);
-			setNewsIndex((prevIndex) => prevIndex + 1);
-		}
-	};
-
-	const playAudio = () => {
-		if (audioUrl) {
-			audioRef.current.src = audioUrl;
-			console.log("playing audio!");
-			audioRef.current.play();
+			const ttsAudio = document.getElementById("existing-audio");
+			ttsAudio.src = audioUrl;
 		} else {
-			playNextSection();
+			console.log("Error: Unable to stream audio.");
 		}
 	};
+	const [randomImage, setRandomImage] = useState(null);
 
 	useEffect(() => {
-		if (newsIndex > 0) {
-			playAudio();
+		const imageList = [
+			moebius1,
+			moebius2,
+			moebius3,
+			moebius4,
+			moebius5,
+			moebius6,
+			moebius7,
+			moebius8,
+		];
+
+		const randomIndex = Math.floor(Math.random() * imageList.length);
+		const randomImage = imageList[randomIndex];
+
+		setRandomImage(randomImage);
+	}, []);
+
+	const renderContent = (content) => {
+		const pattern = /<a>(.*?)<\/a>/g;
+		const matches = content.match(pattern);
+		if (matches) {
+			matches.forEach((match) => {
+				const htmlTag = match.replace(/<\/?a>/g, "");
+				content = content.replace(match, htmlTag);
+			});
 		}
-	}, [newsIndex]);
+		return content;
+	};
 
 	return (
 		<div className="conversation-wrapper">
 			<div className="left-view">
-				<button onClick={playAudio}>Listen to Newsletter</button>
-				<audio ref={audioRef} controls />
-				<h1>Today's News Digest</h1>
+				<div className="tts-wrapper">
+					<button
+						className="generate-button"
+						onClick={() => handleGenerateTTS()}
+					>
+						Generate TTS
+					</button>
+					<audio id="existing-audio" controls></audio>
+				</div>
+				<img
+					src={randomImage}
+					width="70%"
+					style={{ borderRadius: "20px", marginTop: "50px", opacity: "80%" }}
+				/>
+				<h1>{newsletter["title"]}</h1>
 				<p>{newsletter["introduction"]}</p>
 				{sections.map(([key, value], index) => (
 					<div key={key}>
 						<h2>{key}</h2>
-						<p>{value}</p>
+						{value.split("\n\n").map((e, index) => (
+							<div key={index}>
+								{e.split(/(?<!>)\n(?!<)/).map((subValue, subIndex) => {
+									const content = subValue.replace(/<\/?(?:ol|li)>/g, "<h2>"); // Remove <ol> and <li> tags
+									return (
+										<p
+											key={subIndex}
+											dangerouslySetInnerHTML={{
+												__html: renderContent(content),
+											}}
+										/>
+									);
+								})}
+							</div>
+						))}
 					</div>
 				))}
 
 				<h1>Conclusion</h1>
 				<p>{newsletter["conclusion"]}</p>
 			</div>
-			<div className="right-view">
+			{/* <div className="right-view">
 				<div className="notepad">
 					<div className="chat-messages">
 						{messages.map((message, index) => (
@@ -156,7 +208,7 @@ function Conversation({ setIsSignedIn }) {
 						onKeyDown={handleUserMessage}
 					/>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 }

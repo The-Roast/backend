@@ -21,7 +21,7 @@
 	border-radius: 10px;
 	padding: 15px;
 	background-color: transparent;
-	font-family: "Grenette Pro";
+	font-family: "GT Alpina";
 	font-size: 25px;
 	cursor: pointer;
 	transition: background-color 0.3s, transform 0.3s;
@@ -50,7 +50,7 @@
 	background: none;
 	border-bottom: 1px solid #ddd;
 	transition: border-color 0.3s;
-	font-family: "Grenette Pro";
+	font-family: "GT Alpina";
 	color: #43372e;
 }
 
@@ -68,14 +68,14 @@
 	margin-bottom: 5px;
 	color: #43372e;
 	font-size: 30px;
-	font-family: "Grenette Pro";
-	width: 400px;
+	font-family: "GT Alpina";
+	width: 900px;
 }
 
 .editable-input.title {
 	margin-left: 0px;
 	font-size: 40px;
-	font-family: "Grenette Pro";
+	font-family: "GT Alpina";
 	font-weight: bold;
 }
 

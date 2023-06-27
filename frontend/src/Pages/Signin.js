@@ -13,21 +13,17 @@ function Signin({ setIsSignedIn }) {
 	const [isWarningMessage, setIsWarningMessage] = useState(false);
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(email);
 		// Send the form data to the server for further processing
 		fetch("http://127.0.0.1:5000/login", {
 			method: "POST",
-			// mode: "cors",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
-				Origin: "http://localhost:3000",
 			},
 			body: JSON.stringify({ email: email }),
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				console.log(response);
 				if (response.status == 404) {
 					setWarningMessage("Invalid email.");
 					setIsWarningMessage(true);

@@ -1,96 +1,9 @@
-@font-face {
-	font-family: "Grenette Pro";
-	src: url("fonts/Grenette Pro/grenette-bold-pro.ttf") format("truetype");
-	font-weight: bold;
-}
-
-@font-face {
-	font-family: "Grenette Pro";
-	src: url("fonts/Grenette Pro/grenette-italic-pro.ttf") format("truetype");
-	font-style: italic;
-}
-
-@font-face {
-	font-family: "Grenette Pro";
-	src: url("fonts/Grenette Pro/grenette-regular-pro.ttf") format("truetype");
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Bold-Italic-Trial.otf")
-		format("opentype");
-	font-weight: bold;
-	font-style: italic;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Bold-Trial.otf")
-		format("opentype");
-	font-weight: bold;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Light-Italic-Trial.otf")
-		format("opentype");
-	font-weight: lighter;
-	font-style: italic;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Light-Trial.otf")
-		format("opentype");
-	font-weight: lighter;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Medium-Italic-Trial.otf")
-		format("opentype");
-	font-weight: normal;
-	font-style: italic;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Medium-Trial.otf")
-		format("opentype");
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Regular-Italic-Trial.otf")
-		format("opentype");
-	font-weight: normal;
-	font-style: italic;
-}
-
-@font-face {
-	font-family: "GT Alpina";
-	src: url("fonts/GT-Alpina/GT-Alpina-Standard-Regular-Trial.otf")
-		format("opentype");
-	font-weight: normal;
-	font-style: normal;
-}
-
 body {
 	font-family: "GT Alpina", sans-serif;
 }
 
-body {
-	font-family: "Grenette Pro", sans-serif;
-}
-
 .App {
-	background-color: #d9b865;
+	background-color: #fefbf0;
 	color: #43372e;
 }
 

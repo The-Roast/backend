@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "/static/css/main.57c9c15f.css",
+    "main.js": "/static/js/main.d82209a5.js",
+    "static/js/531.bb1bd1bb.chunk.js": "/static/js/531.bb1bd1bb.chunk.js",
+    "static/js/586.f6ef153b.chunk.js": "/static/js/586.f6ef153b.chunk.js",
+    "static/js/193.3a454831.chunk.js": "/static/js/193.3a454831.chunk.js",
+    "static/js/213.b15adf76.chunk.js": "/static/js/213.b15adf76.chunk.js",
+    "static/js/684.3ee1eb9d.chunk.js": "/static/js/684.3ee1eb9d.chunk.js",
+    "static/js/787.e678a66c.chunk.js": "/static/js/787.e678a66c.chunk.js",
+    "static/media/grenette-italic-pro.ttf": "/static/media/grenette-italic-pro.24c01978bd6f607832ca.ttf",
+    "static/media/grenette-bold-pro.ttf": "/static/media/grenette-bold-pro.887c5bcb86fe94a8a2e1.ttf",
+    "static/media/grenette-regular-pro.ttf": "/static/media/grenette-regular-pro.c793f4d271f2ffcda4f4.ttf",
+    "static/media/logo.svg": "/static/media/logo.078ad2ededc743abf9df5cc1fd4f9690.svg",
+    "static/media/GT-Alpina-Standard-Medium-Italic-Trial.otf": "/static/media/GT-Alpina-Standard-Medium-Italic-Trial.f7355914038e3e2fddea.otf",
+    "static/media/GT-Alpina-Standard-Regular-Italic-Trial.otf": "/static/media/GT-Alpina-Standard-Regular-Italic-Trial.bd4eed5734608a6907a4.otf",
+    "static/media/GT-Alpina-Standard-Bold-Italic-Trial.otf": "/static/media/GT-Alpina-Standard-Bold-Italic-Trial.d010db649b2118241310.otf",
+    "static/media/GT-Alpina-Standard-Light-Italic-Trial.otf": "/static/media/GT-Alpina-Standard-Light-Italic-Trial.64860c2fc6b2a135e855.otf",
+    "static/media/GT-Alpina-Standard-Medium-Trial.otf": "/static/media/GT-Alpina-Standard-Medium-Trial.21b3d548a50463d666fd.otf",
+    "static/media/GT-Alpina-Standard-Bold-Trial.otf": "/static/media/GT-Alpina-Standard-Bold-Trial.7f1b8b8c620ff540f311.otf",
+    "static/media/GT-Alpina-Standard-Light-Trial.otf": "/static/media/GT-Alpina-Standard-Light-Trial.b8e7426f374b1d5a18f1.otf",
+    "static/media/GT-Alpina-Standard-Regular-Trial.otf": "/static/media/GT-Alpina-Standard-Regular-Trial.add4415cdcdb4c88b229.otf",
+    "index.html": "/index.html",
+    "main.57c9c15f.css.map": "/static/css/main.57c9c15f.css.map",
+    "main.d82209a5.js.map": "/static/js/main.d82209a5.js.map",
+    "531.bb1bd1bb.chunk.js.map": "/static/js/531.bb1bd1bb.chunk.js.map",
+    "586.f6ef153b.chunk.js.map": "/static/js/586.f6ef153b.chunk.js.map",
+    "193.3a454831.chunk.js.map": "/static/js/193.3a454831.chunk.js.map",
+    "213.b15adf76.chunk.js.map": "/static/js/213.b15adf76.chunk.js.map",
+    "684.3ee1eb9d.chunk.js.map": "/static/js/684.3ee1eb9d.chunk.js.map",
+    "787.e678a66c.chunk.js.map": "/static/js/787.e678a66c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.57c9c15f.css",
+    "static/js/main.d82209a5.js"
+  ]
+}

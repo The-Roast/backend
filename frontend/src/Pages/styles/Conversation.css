@@ -14,20 +14,35 @@ html {
 }
 
 .left-view {
-	padding-right: 50px;
+	/* padding-right: 50px; */
+	padding-right: 150px;
 	padding-left: 150px;
 	width: 50%;
 	height: calc(100vh - 150px);
 	overflow-y: scroll;
 	padding-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .left-view::-webkit-scrollbar {
 	display: none;
 }
 
+.left-view h1 {
+	text-align: center;
+	font-size: 40px;
+}
+
+.left-view h2 p {
+	font-size: 24px;
+	font-family: "GT Alpina";
+}
+
 .left-view p {
-	font-size: 20px;
+	font-family: "GT Alpina Lighter";
+	font-size: 24px;
 	line-height: 1.5;
 	margin-bottom: 15px;
 }
@@ -37,9 +52,9 @@ html {
 	border-radius: 10px;
 	background-color: #fffdf5;
 	border: 2px solid grey;
-	margin-right: 50px;
+	margin-right: 150px;
 	padding-top: 25px;
-	padding-right: 50px;
+	padding-right: 100px;
 	padding-left: 50px;
 	font-weight: 600;
 	font-size: 30px;
@@ -137,4 +152,29 @@ html {
 	font-family: "GT Alpina", sans-serif;
 	font-size: 24px;
 	outline: none;
+}
+
+.generate-button {
+	font-family: "GT Alpina";
+	font-size: 24px;
+	background-color: transparent;
+	border: 2px solid #43372e;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+audio {
+	background-color: transparent;
+}
+
+button {
+	border: none;
+	background-color: transaprent;
+}
+
+.tts-wrapper {
+	display: flex;
+	gap: 30px;
+	align-items: center;
+	justify-content: center;
 }

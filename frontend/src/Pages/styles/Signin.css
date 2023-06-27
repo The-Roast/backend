@@ -23,7 +23,7 @@
 	background-color: transparent;
 	border: none;
 	margin-bottom: 10px;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 }
 
@@ -34,7 +34,7 @@
 .signin-form input[type="text"]::placeholder,
 .signin-form textarea::placeholder {
 	color: #818181;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 	border: none;
 }
@@ -45,7 +45,7 @@
 	padding: 10px 20px;
 	border-radius: 5px;
 	cursor: pointer;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 }
 
@@ -81,7 +81,7 @@ label {
 	padding: 10px;
 	border-radius: 20px;
 	margin-bottom: 10px;
-	font-family: "Grenette Pro", serif;
+	font-family: "GT Alpina", serif;
 	font-size: 30px;
 	height: 50px;
 	border: none;
@@ -126,7 +126,7 @@ select {
 }
 
 .form-container {
-	font-family: "Grenette Pro";
+	font-family: "GT Alpina";
 	display: flex;
 	flex-direction: column;
 	align-items: center;

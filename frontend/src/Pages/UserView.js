@@ -31,7 +31,6 @@ const UserView = (isSignedIn) => {
 				})
 					.then((response) => response.json())
 					.then((response) => {
-						console.log(response);
 						const newPreferences = [...preferences];
 						response.digests.map(function (digest) {
 							newPreferences.push(digest);
@@ -42,7 +41,6 @@ const UserView = (isSignedIn) => {
 	}
 
 	const handleSquareClick = (preference) => {
-		console.log(preference);
 		let path = preference.name.toLowerCase();
 		if (path === "pumpkin spice") {
 			path = "pumpkin-spice";

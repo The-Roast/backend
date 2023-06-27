@@ -61,7 +61,6 @@ function Signup(isSignedIn, setIsSignedIn) {
 		};
 
 		// Send the form data to the server for further processing
-		console.log(formData);
 		fetch("http://127.0.0.1:5000/signup", {
 			method: "POST",
 			headers: {
@@ -72,7 +71,6 @@ function Signup(isSignedIn, setIsSignedIn) {
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				console.log(response);
 				if (response.status == 404) {
 					setWarningMessage("Use a different email.");
 					setIsWarningMessage(true);

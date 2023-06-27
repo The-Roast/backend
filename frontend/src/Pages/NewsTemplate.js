@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { SliderPicker } from "react-color";
+import Loading from "../Components/Loading";
 import "./styles/NewsTemplate.css";
 
 function NewsTemplate() {
@@ -15,6 +16,7 @@ function NewsTemplate() {
 	);
 	const [interests, setInterests] = useState(preference.interests.join(", "));
 	const [personality, setPersonality] = useState(preference.personality);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleTitleChange = (event) => {
 		setTitle(event.target.value);
@@ -48,7 +50,6 @@ function NewsTemplate() {
 		preference.contentSources = contentSources.split(",").map((t) => t.trim());
 		preference.interests = interests.split(",").map((t) => t.trim());
 		preference.personality = personality;
-		console.log(preference);
 		fetch(`http://127.0.0.1:5000/v1/digest`, {
 			method: "POST",
 			headers: {
@@ -69,11 +70,9 @@ function NewsTemplate() {
 		preference.contentSources = contentSources.split(",").map((t) => t.trim());
 		preference.interests = interests.split(",").map((t) => t.trim());
 		preference.personality = personality;
-		console.log(preference);
 
 		const uuid = preference.uuid;
-
-		console.log(uuid);
+		setIsLoading(true);
 		fetch(`http://127.0.0.1:5000/v1/newsletter/` + uuid, {
 			method: "get",
 			headers: {
@@ -83,12 +82,13 @@ function NewsTemplate() {
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				console.log(response);
 				navigate("/conversation", { state: { newsletter: response.response } });
 			});
 	};
 
-	return (
+	return isLoading ? (
+		<Loading />
+	) : (
 		<div className="news-template">
 			<div className="button-wrapper">
 				<button
