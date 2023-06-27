@@ -15,17 +15,26 @@ def login():
     email = request.json["email"]
     user: Users = Users.query.filter_by(email = email).first()
     if not user:
-        return {"message": "Email is invalid."}, 404
+        return {
+            "response": {"message": "Email is invalid."},
+            "ok": False
+        }, 404
 
     authorized = user.check_password(request.get_json["password"])
     if not authorized:
-        return {"message": "Password is invalid"}, 401
+        return {
+            "response": {"message": "Password is invalid"},
+            "ok": False
+        }, 401
 
     expires = datetime.timedelta(days=7)
     access_token = create_access_token(identity = str(user.id), expires_delta = expires)
     refresh_token = create_refresh_token(identity = str(user.id), expires_delta = expires)
 
-    return {"access_token": access_token, "refresh_token": refresh_token}, 200
+    return {
+        "response": {"access_token": access_token, "refresh_token": refresh_token},
+        "ok": True
+    }, 200
 
 @auth.route('/signup', methods = ['POST'])
 def signup():
@@ -42,7 +51,10 @@ def signup():
     user = Users.query.filter_by(email = email).first()
 
     if user:
-        return {"message": "Use a different email."}, 405
+        return {
+            "response": {"message": "Use a different email."},
+            "ok": False
+        }, 405
 
     user = Users(
         email = email,
@@ -64,13 +76,19 @@ def signup():
     db.session.add(user)
     db.session.commit()
 
-    return {"id": str(user.id)}, 200
+    return {
+        "response": {"id": str(user.id)},
+        "ok": True
+    }, 200
 
 @auth.route('/logout', methods = ["GET", "POST"])
 @jwt_required()
 def logout():
 
-    return {"message": "Signed out."}, 200
+    return {
+        "response": {"message": "Signed out."},
+        "ok": True
+    }, 200
 
 @auth.route("/refresh")
 @jwt_required(refresh = True)
@@ -79,4 +97,7 @@ def refresh():
     current_user = get_jwt_identity()
     token = create_access_token(identity = current_user, fresh = False)
 
-    return {"access_token": token}, 200
+    return {
+        "response": {"access_token": token},
+        "ok": True
+    }, 200
