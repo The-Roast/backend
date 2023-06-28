@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     create_access_token, create_refresh_token,
     jwt_required, get_jwt_identity
 )
+from ...theroast.data.news import SOURCES
 import datetime
 
 auth = Blueprint('auth', __name__)
@@ -44,8 +45,8 @@ def signup():
     last_name = request.json["last_name"]
     password = request.json["password"]
     digest_name = request.json["digest_name"]
-    interests = request.json["interests"]
-    sources = request.json["sources"]
+    interests = [i.lower().strip() for i in request.json["interests"].split(",")]
+    sources = [SOURCES[s.lower()] for s in request.json["sources"].split(",") if s.lower() in SOURCES.keys()]
     personality = request.json["personality"]
 
     user = Users.query.filter_by(email = email).first()

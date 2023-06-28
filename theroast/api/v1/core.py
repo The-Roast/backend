@@ -111,6 +111,8 @@ def set_digest():
             "ok": True
         }, 200
 
+# @core.route("/digest", methods = [''])
+
 @core.route("/user/<id>", methods = ['GET'])
 @jwt_required()
 def get_user(id):
