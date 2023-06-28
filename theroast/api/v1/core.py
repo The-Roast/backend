@@ -33,85 +33,79 @@ def set_digest():
     id = get_jwt_identity()
     current_user = Users.query.filter_by(id = id).first()
 
-    if request.json["uuid"] == "":
-
-        name = request.json["name"]
-        settings = {
-            "sources": request.json["sources"],
-            "interests": request.json["interests"],
-            "personality": request.json["personality"]
-        }
-            
-        for source in settings["sources"]:
-            if source not in SOURCES:
-                settings["sources"].remove(source)
-
-        color = request.json["color"]["hex"]
-        digest = Digests(
-            name = name,
-            settings = settings,
-            color = color
-        )
-
-        db.session.add(digest)
-        current_user.digests.append(digest)
-        db.session.commit()
-
-        return {
-            "response": {"uuid": str(digest.uuid)},
-            "ok": True
-        }, 200
+    name = request.json["name"]
+    settings = {
+        "sources": [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()],
+        "interests": [i.lower().strip() for i in request.json["interests"]],
+        "personality": request.json["personality"]
+    }
+    color = request.json["color"]["hex"]
     
-    elif len(request.json["uuid"]) > 0:
+    digest = Digests(
+        name = name,
+        settings = settings,
+        color = color
+    )
 
-        digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+    db.session.add(digest)
+    current_user.digests.append(digest)
+    db.session.commit()
 
-        if not digest:
-            return {
-                "response": {"message": "Invalid uuid given."},
-                "ok": False
-            }, 404
+    return {
+        "response": {"uuid": str(digest.uuid)},
+        "ok": True
+    }, 200
 
-        settings = {
-            "sources": request.json["sources"],
-            "interests": request.json["interests"],
-            "personality": request.json["personality"]
-        }
-        for source in settings["sources"]:
-            if source not in SOURCES:
-                settings["sources"].remove(source)
+@core.route("/digest", methods = ['PUT'])
+@jwt_required()
+def update_digest():
 
-        digest.name = request.json["name"]
-        digest.color = request.json["color"]["hex"]
-        digest.settings = settings
+    digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
 
-        db.session.commit()
-
+    if not digest:
         return {
-            "response": {"uuid": str(digest.uuid)},
-            "ok": True
-        }, 200
-    
-    else:
+            "response": {"message": "Invalid uuid given."},
+            "ok": False
+        }, 404
 
-        digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+    digest.settings = {
+        "sources": [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()],
+        "interests": [i.lower().strip() for i in request.json["interests"]],
+        "personality": request.json["personality"]
+    }
+    digest.name = request.json["name"]
+    digest.color = request.json["color"]["hex"]
 
-        if not digest:
-            return {
-                "response": {"message": "Invalid uuid given."},
-                "ok": False
-            }, 404
+    db.session.commit()
 
-        current_user.digests.remove(digest)
+    return {
+        "response": {"uuid": str(digest.uuid)},
+        "ok": True
+    }, 200
 
-        db.session.commit()
+@core.route("/digest", methods = ['DELETE'])
+@jwt_required()
+def delete_digest():
 
+    id = get_jwt_identity()
+    current_user = Users.query.filter_by(id = id).first()
+
+    digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+
+    if not digest:
         return {
-            "response": {"message": "Deleted digest."},
-            "ok": True
-        }, 200
+            "response": {"message": "Invalid uuid given."},
+            "ok": False
+        }, 404
 
-# @core.route("/digest", methods = [''])
+    current_user.digests.remove(digest)
+
+    db.session.commit()
+
+    return {
+        "response": {"message": "Deleted digest."},
+        "ok": True
+    }, 200
 
 @core.route("/user/<id>", methods = ['GET'])
 @jwt_required()

@@ -46,7 +46,7 @@ def signup():
     password = request.json["password"]
     digest_name = request.json["digest_name"]
     interests = [i.lower().strip() for i in request.json["interests"].split(",")]
-    sources = [SOURCES[s.lower()] for s in request.json["sources"].split(",") if s.lower() in SOURCES.keys()]
+    sources = [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()]
     personality = request.json["personality"]
 
     user = Users.query.filter_by(email = email).first()
