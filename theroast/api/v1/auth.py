@@ -21,7 +21,7 @@ def login():
             "ok": False
         }, 404
 
-    authorized = user.check_password(request.get_json["password"])
+    authorized = user.check_password(request.json["password"])
     if not authorized:
         return {
             "response": {"message": "Password is invalid"},

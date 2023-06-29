@@ -131,11 +131,17 @@ select {
 }
 
 .form-container {
+	height: calc(100vh - 150px);
+	overflow-y: scroll;
 	font-family: "Grenette Pro";
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	color: #43372e;
+}
+
+.form-container::-webkit-scrollbar {
+	display: none;
 }
 
 .name-wrapper {

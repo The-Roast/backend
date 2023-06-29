@@ -8,7 +8,7 @@ function CreateNewsTemplate() {
 	const [unsavedChanges, setUnsavedChanges] = useState(false);
 	const [title, setTitle] = useState("");
 	const [color, setColor] = useState("");
-	const [contentSources, setContentSources] = useState("");
+	const [sources, setSources] = useState("");
 	const [interests, setInterests] = useState("");
 	const [personality, setPersonality] = useState("");
 
@@ -32,8 +32,8 @@ function CreateNewsTemplate() {
 		setUnsavedChanges(true);
 	};
 
-	const handleContentSourcesChange = (event) => {
-		setContentSources(event.target.value);
+	const handleSourcesChange = (event) => {
+		setSources(event.target.value);
 		setUnsavedChanges(true);
 	};
 
@@ -45,27 +45,29 @@ function CreateNewsTemplate() {
 		let preference = {
 			name: "",
 			color: { hex: "" },
-			contentSources: [],
-			interests: [],
+			sources: "",
+			interests: "",
 			personality: "",
 			uuid: "",
 		};
 		preference.name = title;
 		preference.color.hex = color;
-		preference.contentSources = contentSources.split(",").map((t) => t.trim());
-		preference.interests = interests.split(",").map((t) => t.trim());
+		preference.sources = sources;
+		preference.interests = interests;
 		preference.personality = personality;
 		console.log(preference);
+
+		const access_token = localStorage.getItem("access_token");
+		const refresh_token = localStorage.getItem("refresh_token");
 		fetch(`http://127.0.0.1:5000/v1/digest`, {
 			method: "POST",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
+				Authorization: "Bearer " + access_token,
 			},
 			body: JSON.stringify(preference),
-		})
-			.then((response) => response.json())
-			.then((response) => {});
+		});
 		navigate("/user-view");
 	};
 
@@ -117,8 +119,8 @@ function CreateNewsTemplate() {
 					<input
 						type="text"
 						className="editable-input"
-						value={contentSources}
-						onChange={handleContentSourcesChange}
+						value={sources}
+						onChange={handleSourcesChange}
 					/>
 					<hr className="editable-line" />
 				</label>

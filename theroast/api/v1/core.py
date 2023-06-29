@@ -36,9 +36,10 @@ def set_digest():
     name = request.json["name"]
     settings = {
         "sources": [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()],
-        "interests": [i.lower().strip() for i in request.json["interests"]],
+        "interests": [i.lower().strip() for i in request.json["interests"].split(",")],
         "personality": request.json["personality"]
     }
+
     color = request.json["color"]["hex"]
     
     digest = Digests(
@@ -70,7 +71,7 @@ def update_digest():
 
     digest.settings = {
         "sources": [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()],
-        "interests": [i.lower().strip() for i in request.json["interests"]],
+        "interests": [i.lower().strip() for i in request.json["interests"].split(",")],
         "personality": request.json["personality"]
     }
     digest.name = request.json["name"]

@@ -2,10 +2,16 @@ import "./styles/Signin.css";
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Signin({ setIsSignedIn }) {
+function Signin() {
 	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
+	};
+
+	const handlePasswordChange = (e) => {
+		setPassword(e.target.value);
 	};
 
 	const navigate = useNavigate();
@@ -23,16 +29,19 @@ function Signin({ setIsSignedIn }) {
 				"Content-Type": "application/json",
 				Origin: "http://localhost:3000",
 			},
-			body: JSON.stringify({ email: email }),
+			body: JSON.stringify({ email: email, password: password }),
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				console.log(response);
-				if (response.status == 404) {
+				if (!response.ok) {
 					setWarningMessage("Invalid email.");
 					setIsWarningMessage(true);
 				} else {
-					setIsSignedIn(true);
+					localStorage.setItem("access_token", response.response.access_token);
+					localStorage.setItem(
+						"refresh_token",
+						response.response.refresh_token
+					);
 					navigate("/user-view");
 				}
 			});
@@ -56,6 +65,14 @@ function Signin({ setIsSignedIn }) {
 						value={email}
 						onChange={handleEmailChange}
 						ref={emailInput}
+						required
+					/>
+					<input
+						type="text"
+						placeholder="Password"
+						name="password"
+						value={password}
+						onChange={handlePasswordChange}
 						required
 					/>
 					{isWarningMessage ? (

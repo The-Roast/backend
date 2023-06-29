@@ -9,15 +9,14 @@ from ...extensions import db
 import uuid
 import random
 
-def create_color(color = None):
-    
+def create_color(color=None):
     if color:
         return color
-    
-    color = random.randrange(0, 2**24)
+
+    color = random.randrange(0, 2 ** 24)
     color = hex(color)
-    color = "#" + color[2:]
-    
+    color = "#" + color[2:].zfill(6)
+
     return color
 
 def create_settings():
