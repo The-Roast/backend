@@ -4,19 +4,19 @@ import sqlalchemy.orm as so
 import sqlalchemy.schema as ss
 import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
+from flask_bcrypt import generate_password_hash, check_password_hash
 from ...extensions import db
 import uuid
 import random
 
-def create_color(color = None):
-    
+def create_color(color=None):
     if color:
         return color
-    
-    color = random.randrange(0, 2**24)
+
+    color = random.randrange(0, 2 ** 24)
     color = hex(color)
-    color = "#" + color[2:]
-    
+    color = "#" + color[2:].zfill(6)
+
     return color
 
 def create_settings():
@@ -45,7 +45,13 @@ class Users(db.Model):
     first_name = ss.Column("first_name", st.String, unique = False, nullable = True)
     last_name = ss.Column("last_name", st.String, unique = False, nullable = True)
     email = ss.Column("email", st.String, unique = True, nullable = False)
-    password = ss.Column("password", st.String, unique = False, nullable = True)
+    password = ss.Column("password", st.String, unique = False, nullable = False)
+
+    def hash_password(self):
+        self.password = generate_password_hash(self.password).decode('utf-8')
+    
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def as_dict(self):
         return {

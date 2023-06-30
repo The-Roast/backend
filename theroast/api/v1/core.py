@@ -4,10 +4,12 @@ from theroast.theroast.data.news import SOURCES
 from theroast.theroast.lib.models import run_openai
 from ...db.schemas import Users, Digests
 from ...extensions import db
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
 
 @core.route("/digest/<uuid>", methods = ['GET'])
+@jwt_required()
 def get_digest(uuid):
 
     assert uuid and isinstance(uuid, str)
@@ -15,139 +17,138 @@ def get_digest(uuid):
     digest: Digests = Digests.query.filter_by(uuid = uuid).first()
     if not digest:
         return {
-            "message": "Digest not found.",
-            "status": 404
-        }
+            "response": {"message": "Digest not found."},
+            "ok": False
+         }, 404
 
-    return digest.as_dict()
+    return {
+        "response": digest.as_dict(),
+        "ok": True
+    }, 200
 
 @core.route("/digest", methods = ['POST'])
+@jwt_required()
 def set_digest():
 
-    from .auth import current_user
-    assert current_user[0]
+    id = get_jwt_identity()
+    current_user = Users.query.filter_by(id = id).first()
 
-    if request.json["uuid"] == "":
+    name = request.json["name"]
+    settings = {
+        "sources": [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()],
+        "interests": [i.lower().strip() for i in request.json["interests"].split(",")],
+        "personality": request.json["personality"]
+    }
 
-        name = request.json["name"]
-        settings = {
-            "sources": request.json["contentSources"],
-            "interests": request.json["interests"],
-            "personality": request.json["personality"]
-        }
-            
-        for source in settings["sources"]:
-            if source not in SOURCES:
-                settings["sources"].remove(source)
-
-        color = request.json["color"]["hex"]
-        digest = Digests(
-            name = name,
-            settings = settings,
-            color = color
-        )
-
-        user = Users.query.filter_by(id = current_user[0]).first()
-        db.session.add(digest)
-        user.digests.append(digest)
-        db.session.commit()
-
-        return {
-            "message": "Created digest.",
-            "status": 200
-        }
+    color = request.json["color"]["hex"]
     
-    elif len(request.json["uuid"]) > 0:
+    digest = Digests(
+        name = name,
+        settings = settings,
+        color = color
+    )
 
-        digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+    db.session.add(digest)
+    current_user.digests.append(digest)
+    db.session.commit()
 
-        if not digest:
-            return {
-                "message": "Invalid uuid given.",
-                "status": 404
-            }
+    return {
+        "response": {"uuid": str(digest.uuid)},
+        "ok": True
+    }, 200
 
-        settings = {
-            "sources": request.json["contentSources"],
-            "interests": request.json["interests"],
-            "personality": request.json["personality"]
-        }
-        for source in settings["sources"]:
-            if source not in SOURCES:
-                settings["sources"].remove(source)
+@core.route("/digest", methods = ['PUT'])
+@jwt_required()
+def update_digest():
 
-        digest.name = request.json["name"]
-        digest.color = request.json["color"]["hex"]
-        digest.settings = settings
+    digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
 
-        db.session.commit()
-
+    if not digest:
         return {
-            "message": "Updated digest.",
-            "status": 200
-        }
-    
-    else:
+            "response": {"message": "Invalid uuid given."},
+            "ok": False
+        }, 404
 
-        user: Users = Users.query.filter_by(id = current_user[0]).first()
-        digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+    digest.settings = {
+        "sources": [SOURCES[s.lower().strip()] for s in request.json["sources"].split(",") if s.lower().strip() in SOURCES.keys()],
+        "interests": [i.lower().strip() for i in request.json["interests"].split(",")],
+        "personality": request.json["personality"]
+    }
+    digest.name = request.json["name"]
+    digest.color = request.json["color"]["hex"]
 
-        if not digest:
-            return {
-                "message": "Invalid uuid given.",
-                "status": 404
-            }
+    db.session.commit()
 
-        user.digests.remove(digest)
+    return {
+        "response": {"uuid": str(digest.uuid)},
+        "ok": True
+    }, 200
 
-        db.session.commit()
+@core.route("/digest", methods = ['DELETE'])
+@jwt_required()
+def delete_digest():
 
+    id = get_jwt_identity()
+    current_user = Users.query.filter_by(id = id).first()
+
+    digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+
+    if not digest:
         return {
-            "message": "Deleted digest.",
-            "status": 200
-        }
+            "response": {"message": "Invalid uuid given."},
+            "ok": False
+        }, 404
 
-@core.route("/user/<email>", methods = ['GET'])
-def get_user(email):
+    current_user.digests.remove(digest)
 
-    assert email and isinstance(email, str)
-    
-    user: Users = Users.query.filter_by(email = email).first()
+    db.session.commit()
+
+    return {
+        "response": {"message": "Deleted digest."},
+        "ok": True
+    }, 200
+
+@core.route("/user/<id>", methods = ['GET'])
+@jwt_required()
+def get_user(id):
+
+    user: Users = Users.query.filter_by(id = id).first()
     if not user:
         return {
-            "message": "User not found.",
-            "status": 404
-        }
+            "response": {"message": "User not found."},
+            "ok": False
+        }, 404
+
     response = user.as_dict()
     response["digests"] = [d.as_dict() for d in user.digests]
 
-    return response
+    return {
+        "response": response,
+        "ok": True
+    }, 200
 
 @core.route("/user", methods = ['GET'])
+@jwt_required()
 def get_current_user():
 
-    from .auth import current_user
+    id = get_jwt_identity()
 
-    assert current_user[0]
-
-    user: Users = Users.query.filter_by(id = current_user[0]).first()
-
-    return user.as_dict()
+    return {
+        "response": {"id": id},
+        "ok": True
+    }, 200
 
 @core.route("/newsletter/<uuid>", methods = ['GET'])
+@jwt_required()
 def get_newsletter(uuid):
-
-    from .auth import current_user
-
-    assert current_user[0]
 
     digest: Digests = Digests.query.filter_by(uuid = uuid).first()
     
     if not digest:
-        return jsonify({
-            "message": "No newsletter exists",
-            "status": 404
-        })
+        return {
+            "response": {"message": "No newsletter exists"},
+            "ok": False
+        }, 404
     
     sects, coll, _ = run_openai(
         list(digest.settings["interests"]),
@@ -158,19 +159,16 @@ def get_newsletter(uuid):
     for sect in sects:
         response[sect["title"]] = sect["body"]
 
-    return jsonify({
+    return {
         "response": response,
-        "status": 200
-    })
+        "ok": True
+    }, 200
 
 @core.route("/chat", methods = ["GET"])
+@jwt_required()
 def chat():
 
-    # from .auth import current_user
-
-    # assert current_user[0] and current_user[1]
-
     return {
-        "message": "This is dummy text.",
-        "status": 200
-    }
+        "response": {"message": "This is dummy text."},
+        "ok": True
+    }, 200

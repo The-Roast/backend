@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/UserView.css";
 
-const UserView = (isSignedIn) => {
+const UserView = () => {
 	const [firstName, setFirstName] = useState("");
 	const [hoveredSquare, setHoveredSquare] = useState(null);
 	let navigate = useNavigate();
+	const { state } = useLocation();
+	const isSignedIn = state; // Read values passed on state
 	const [preferences, setPreferences] = useState([]);
 
 	useEffect(() => {
@@ -13,26 +15,31 @@ const UserView = (isSignedIn) => {
 	}, []);
 
 	function getPreferences() {
+		const access_token = localStorage.getItem("access_token");
+		const refresh_token = localStorage.getItem("refresh_token");
 		fetch("http://127.0.0.1:5000/v1/user", {
 			method: "get",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
+				Authorization: "Bearer " + access_token,
 			},
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				fetch(`http://127.0.0.1:5000/v1/user/${response.email}`, {
+				console.log(response);
+				fetch(`http://127.0.0.1:5000/v1/user/${response.response.id}`, {
 					method: "get",
 					headers: {
 						Accept: "application/json",
 						"Content-Type": "application/json",
+						Authorization: "Bearer " + access_token,
 					},
 				})
 					.then((response) => response.json())
 					.then((response) => {
 						const newPreferences = [...preferences];
-						response.digests.map(function (digest) {
+						response.response.digests.map(function (digest) {
 							newPreferences.push(digest);
 						});
 						setPreferences(newPreferences);

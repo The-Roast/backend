@@ -11,7 +11,9 @@ import Example1 from "./Pages/example1";
 import Example2 from "./Pages/example2";
 import Example3 from "./Pages/example3";
 import Navbar from "./Components/Navbar";
-import Footer from "./Components/Footer";
+import Example1 from "./Pages/example1";
+import Example2 from "./Pages/example2";
+import Example3 from "./Pages/example3";
 import {
 	BrowserRouter as Router,
 	Routes,
@@ -21,58 +23,21 @@ import {
 import { useState } from "react";
 
 function App() {
-	const [isSignedIn, setIsSignedIn] = useState(false);
-	// console.log(isSignedIn);
 	return (
 		<Router>
-			<Navbar isSignedIn={isSignedIn} />
+			<Navbar isSignedIn={false} />
 			<Routes>
 				<Route path="/" element={<Home />} />
-				<Route
-					path="/sign-up"
-					element={
-						<Signup isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
-					}
-				/>
-				<Route
-					path="/sign-in"
-					element={<Signin setIsSignedIn={setIsSignedIn} />}
-				/>
-				<Route
-					exact
-					path="/user-view"
-					element={<UserView isSignedIn={isSignedIn} />}
-				/>
+				<Route path="/sign-up" element={<Signup />} />
+				<Route path="/sign-in" element={<Signin />} />
+				<Route exact path="/user-view" element={<UserView />} />
 				<Route path="/user-view/:flavor" element={<NewsTemplate />} />
 				<Route path="/create-digest" element={<CreateNewsTemplate />} />
-				<Route
-					path="/conversation"
-					element={<Conversation setIsSignedIn={setIsSignedIn} />}
-				/>
-				<Route
-					path="/example1"
-					element={<Example1 setIsSignedIn={setIsSignedIn} />}
-				/>
-				<Route
-					path="/example2"
-					element={<Example2 setIsSignedIn={setIsSignedIn} />}
-				/>
-				<Route
-					path="/example3"
-					element={<Example3 setIsSignedIn={setIsSignedIn} />}
-				/>
-				<Route
-					path=""
-					element={
-						isSignedIn ? (
-							<Route element={<Navigate to="/user-view" />} />
-						) : (
-							<Route element={<Navigate to="/sign-up" />} />
-						)
-					}
-				/>
+				<Route path="/example1" element={<Example1 />} />
+				<Route path="/example2" element={<Example2 />} />
+				<Route path="/example3" element={<Example3 />} />
+				<Route path="/conversation" element={<Conversation />} />
 			</Routes>
-			{/* <Footer /> */}
 		</Router>
 	);
 }

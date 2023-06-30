@@ -1,37 +1,49 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import "./styles/Signup.css";
 import { NavLink, useNavigate } from "react-router-dom";
 
-function Signup(isSignedIn, setIsSignedIn) {
-	const [firstName, setFirstName] = useState("");
-	const [lastName, setLastName] = useState("");
+function Signup() {
+	const [first_name, setfirst_name] = useState("");
+	const [last_name, setlast_name] = useState("");
 	const [email, setEmail] = useState("");
 	const [interests, setInterests] = useState("");
-	const [contentSources, setContentSources] = useState("");
+	const [sources, setsources] = useState("");
 	const [personality, setPersonality] = useState("");
-	const [digestName, setDigestName] = useState("");
+	const [digest_name, setdigest_name] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirm_password, setConfirmPassword] = useState("");
 	const [warningMessage, setWarningMessage] = useState("");
 	const [isWarningMessage, setIsWarningMessage] = useState(false);
+	const passwordWarningMessage = "Passwords don't match!";
+	const [isMismatchedPassword, setIsMismatchedPassword] = useState(false);
 	const navigate = useNavigate();
 
-	const handleFirstNameChange = (e) => {
-		setFirstName(e.target.value);
+	const handlefirst_nameChange = (e) => {
+		setfirst_name(e.target.value);
 	};
 
-	const handleLastNameChange = (e) => {
-		setLastName(e.target.value);
+	const handlelast_nameChange = (e) => {
+		setlast_name(e.target.value);
 	};
 
 	const handleEmailChange = (e) => {
 		setEmail(e.target.value);
 	};
 
+	const handlePasswordChange = (e) => {
+		setPassword(e.target.value);
+	};
+
+	const handleConfirmPasswordChange = (e) => {
+		setConfirmPassword(e.target.value);
+	};
+
 	const handleInterestsChange = (e) => {
 		setInterests(e.target.value);
 	};
 
-	const handleContentSourcesChange = (e) => {
-		setContentSources(e.target.value);
+	const handlesourcesChange = (e) => {
+		setsources(e.target.value);
 	};
 
 	const handlePersonalityChange = (e) => {
@@ -39,25 +51,24 @@ function Signup(isSignedIn, setIsSignedIn) {
 	};
 
 	const handleDigestNameChange = (e) => {
-		setDigestName(e.target.value);
+		setdigest_name(e.target.value);
 	};
-
-	// if (isSignedIn) {
-	// }
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-
+		if (password !== confirm_password) {
+			setIsMismatchedPassword(true);
+			return;
+		}
 		const formData = {
-			firstName,
-			lastName,
+			first_name,
+			last_name,
 			email,
-			interests: interests.split(",").map((interest) => interest.trim()),
-			contentSources: contentSources
-				.split(",")
-				.map((interest) => interest.trim()),
+			interests: interests,
+			sources: sources,
 			personality: personality,
-			digestName: digestName,
+			digest_name: digest_name,
+			password: password,
 		};
 
 		// Send the form data to the server for further processing
@@ -75,7 +86,32 @@ function Signup(isSignedIn, setIsSignedIn) {
 					setWarningMessage("Use a different email.");
 					setIsWarningMessage(true);
 				} else {
-					navigate("/user-view");
+					fetch("http://127.0.0.1:5000/login", {
+						method: "POST",
+						headers: {
+							Accept: "application/json",
+							"Content-Type": "application/json",
+							Origin: "http://localhost:3000",
+						},
+						body: JSON.stringify({ email: email, password: password }),
+					})
+						.then((response) => response.json())
+						.then((response) => {
+							if (!response.ok) {
+								setWarningMessage("Invalid email.");
+								setIsWarningMessage(true);
+							} else {
+								localStorage.setItem(
+									"access_token",
+									response.response.access_token
+								);
+								localStorage.setItem(
+									"refresh_token",
+									response.response.refresh_token
+								);
+								navigate("/user-view", { state: { isSignedIn: true } });
+							}
+						});
 				}
 			});
 	};
@@ -98,18 +134,18 @@ function Signup(isSignedIn, setIsSignedIn) {
 						<input
 							type="text"
 							placeholder="First Name"
-							name="firstName"
-							value={firstName}
-							onChange={handleFirstNameChange}
+							name="first_name"
+							value={first_name}
+							onChange={handlefirst_nameChange}
 							// ref={nameInput}
 							required
 						/>
 						<input
 							type="text"
 							placeholder="Last Name"
-							name="lastName"
-							value={lastName}
-							onChange={handleLastNameChange}
+							name="last_name"
+							value={last_name}
+							onChange={handlelast_nameChange}
 							required
 						/>
 					</div>
@@ -121,8 +157,31 @@ function Signup(isSignedIn, setIsSignedIn) {
 						onChange={handleEmailChange}
 						required
 					/>
+					{isMismatchedPassword ? (
+						<div className="warning-message">
+							<p>{passwordWarningMessage}</p>
+						</div>
+					) : (
+						<div></div>
+					)}
+					<input
+						type="text"
+						placeholder="Password"
+						name="password"
+						value={password}
+						onChange={handlePasswordChange}
+						required
+					/>
+					<input
+						type="text"
+						placeholder="Confirm Password"
+						name="confirm_password"
+						value={confirm_password}
+						onChange={handleConfirmPasswordChange}
+						required
+					/>
 					<h1>Personalization</h1>
-					<label>Interests*</label>
+					<label>Interests</label>
 					<textarea
 						placeholder="Tech updates, finance news, formula one..."
 						name="interests"
@@ -132,14 +191,13 @@ function Signup(isSignedIn, setIsSignedIn) {
 						required
 					></textarea>
 
-					<label>Content Sources*</label>
+					<label>Content Sources</label>
 					<textarea
-						placeholder="nytimes.com, politico.com..."
-						name="contentSources"
-						value={contentSources}
-						onChange={handleContentSourcesChange}
+						placeholder="NY Times, Politico..."
+						name="sources"
+						value={sources}
+						onChange={handlesourcesChange}
 						style={{ height: "200px" }}
-						required
 					></textarea>
 
 					<label>Daily Digest Personality</label>
@@ -149,15 +207,17 @@ function Signup(isSignedIn, setIsSignedIn) {
 						name="personality"
 						value={personality}
 						onChange={handlePersonalityChange}
+						required
 					/>
 
 					<label>Digest Name</label>
 					<input
 						type="text"
 						placeholder="Alex's Digest"
-						name="digestName"
-						value={digestName}
+						name="digest_name"
+						value={digest_name}
 						onChange={handleDigestNameChange}
+						required
 					/>
 					{isWarningMessage ? (
 						<div className="warning-message">

@@ -11,10 +11,8 @@ function NewsTemplate() {
 	const { preference } = state; // Read values passed on state
 	const [title, setTitle] = useState(preference.name);
 	const [color, setColor] = useState(preference.color.hex);
-	const [contentSources, setContentSources] = useState(
-		preference.contentSources.join(", ")
-	);
-	const [interests, setInterests] = useState(preference.interests.join(", "));
+	const [sources, setSources] = useState(preference.sources);
+	const [interests, setInterests] = useState(preference.interests);
 	const [personality, setPersonality] = useState(preference.personality);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -38,8 +36,8 @@ function NewsTemplate() {
 		setUnsavedChanges(true);
 	};
 
-	const handleContentSourcesChange = (event) => {
-		setContentSources(event.target.value);
+	const handleSourcesChange = (event) => {
+		setSources(event.target.value);
 		setUnsavedChanges(true);
 	};
 
@@ -47,8 +45,8 @@ function NewsTemplate() {
 		setUnsavedChanges(false);
 		preference.name = title;
 		preference.color.hex = color;
-		preference.contentSources = contentSources.split(",").map((t) => t.trim());
-		preference.interests = interests.split(",").map((t) => t.trim());
+		preference.sources = sources;
+		preference.interests = interests;
 		preference.personality = personality;
 		fetch(`http://127.0.0.1:5000/v1/digest`, {
 			method: "POST",
@@ -67,17 +65,21 @@ function NewsTemplate() {
 	const handleGenerate = () => {
 		preference.name = title;
 		preference.color.hex = color;
-		preference.contentSources = contentSources.split(",").map((t) => t.trim());
-		preference.interests = interests.split(",").map((t) => t.trim());
+		preference.sources = sources;
+		preference.interests = interests;
 		preference.personality = personality;
 
 		const uuid = preference.uuid;
-		setIsLoading(true);
+
+		console.log(uuid);
+		const access_token = localStorage.getItem("access_token");
+		const refresh_token = localStorage.getItem("refresh_token");
 		fetch(`http://127.0.0.1:5000/v1/newsletter/` + uuid, {
 			method: "get",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
+				Authorization: "Bearer " + access_token,
 			},
 		})
 			.then((response) => response.json())
@@ -136,8 +138,8 @@ function NewsTemplate() {
 					<input
 						type="text"
 						className="editable-input"
-						value={contentSources}
-						onChange={handleContentSourcesChange}
+						value={sources}
+						onChange={handleSourcesChange}
 					/>
 					<hr className="editable-line" />
 				</label>

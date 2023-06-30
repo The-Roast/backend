@@ -14,6 +14,10 @@ ENV = os.getenv("FLASK_ENV")
 DEBUG = ENV == "development"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+# JWT_BLACKLIST_ENABLED = True
+# JWT_BLACKLIST_TOKEN_CHECKS = ["access", "refresh"]
+
 DB_USERNAME = os.getenv("POSTGRESQL_USERNAME")
 DB_PASSWORD = os.getenv("POSTGRESQL_PASSWORD")
 DB_NAME = os.getenv("POSTGRESQL_DATABASE")
