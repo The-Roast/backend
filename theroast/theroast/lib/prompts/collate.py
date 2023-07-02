@@ -29,7 +29,7 @@ class CollatePrompt(Prompt):
 
         assert sections and isinstance(sections, list)
 
-        sy = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
+        sy = SYSTEM_PROMPT.replace("{PERSONALITY}", personality if personality else "typical").replace("{INTERESTS}", "NBA")
         sp = f"{COLLATE_PROMPT}\n<" + "\t".join([f"{s['title']}\n{s['body']}" for s in sections]) + ">"
 
         return sy, sp

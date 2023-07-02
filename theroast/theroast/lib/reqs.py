@@ -23,8 +23,9 @@ def section_request(ag, sections, personality):
             try:
                 sect = json.loads(section__raw.content)
                 is_valid = True
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
                 print(section__raw.content)
+                print(e)
                 continue
         sects.append(sect)
         clusters.append(v)
