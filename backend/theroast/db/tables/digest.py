@@ -12,7 +12,7 @@ import datetime
 import random
 
 if TYPE_CHECKING:
-    from .digest import Digest
+    from .newsletter import Newsletter
 
 def create_color(color=None):
     if color:
@@ -38,5 +38,10 @@ class Digest(Base):
 
     uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
+    newsletters: so.Mapped[List["Newsletter"]] = so.relationship()
+
     name: so.Mapped[str] = so.mapped_column("name")
-    
+    settings: so.Mapped[NestedMutableJson] = so.mapped_column("settings", default=create_settings)
+    color: so.Mapped[str] = so.mapped_column()
+
+    is_enabled: so.Mapped[str]
