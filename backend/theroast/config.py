@@ -90,6 +90,7 @@ class ServerSettings(BaseSettings):
         '''Meta class for ServerSettings'''
 
         case_sensitive = True
+        env_file = ".env"
 
 class APISettings(BaseSettings):
 
@@ -105,6 +106,7 @@ class APISettings(BaseSettings):
         '''Meta class for APISettings'''
 
         case_sensitive = True
+        env_file = ".env"
 
-config = ServerSettings()
-apis = APISettings()
+server_config = ServerSettings()
+api_config = APISettings()
