@@ -1,20 +1,34 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, List
 
-from sqlalchemy import Boolean, Column, Integer, String
-from sqlalchemy.orm import relationship
+import sqlalchemy as sa
+import sqlalchemy.orm as so
+import sqlalchemy.schema as ss
+import sqlalchemy.types as st
+from sqlalchemy_json import NestedMutableJson
 
-from theroast.db import Base
+from theroast.db.base import Base
+from uuid import uuid4
+import datetime
 
 if TYPE_CHECKING:
-    from .item import Item  # noqa: F401
+    from .digest import Digest
 
 
 class User(Base):
 
-    id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String, index=True)
-    email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    is_active = Column(Boolean(), default=True)
-    is_superuser = Column(Boolean(), default=False)
-    items = relationship("Item", back_populates="owner")
+    '''Table definition for User'''
+
+    uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
+
+    digests: so.Mapped[List["Digest"]] = so.relationship()
+
+    name: so.Mapped[str] = so.mapped_column("name")
+    email: so.Mapped[str] = so.mapped_column("email", unique=True, index=True)
+    password: so.Mapped[str] = so.mapped_column("password")
+
+    is_active: so.Mapped[bool] = so.mapped_column("is_active", default=True)
+    is_superuser: so.Mapped[bool] = so.mapped_column("is_superuser", default=False)
+
+    created_at: so.Mapped[datetime.datetime] = so.mapped_column("created_at", default=datetime.datetime.utcnow)
+    updated_at: so.Mapped[datetime.datetime] = so.mapped_column("updated_at", default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    deleted_at: so.Mapped[Optional[datetime.datetime]] = so.mapped_column("deleted_at")
