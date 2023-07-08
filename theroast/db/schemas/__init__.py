@@ -82,8 +82,8 @@ class Digests(db.Model):
         return {
             "uuid": self.uuid,
             "name": self.name,
-            "contentSources": dict(self.settings)["sources"],
-            "interests": dict(self.settings)["interests"],
+            "contentSources": ", ".join(dict(self.settings)["sources"]),
+            "interests": ", ".join(dict(self.settings)["interests"]),
             "personality": dict(self.settings)["personality"],
             "newsletter": self.newsletter,
             "color": {
