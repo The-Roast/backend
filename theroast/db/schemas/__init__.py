@@ -6,6 +6,7 @@ import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
 from flask_bcrypt import generate_password_hash, check_password_hash
 from ...extensions import db
+import datetime
 import uuid
 import random
 
@@ -27,25 +28,23 @@ def create_settings():
         "personality": "normal"
     }
 
-user_digest = db.Table(
-    "user_digest",
-    ss.Column("user", ss.ForeignKey("users.id"), primary_key = True),
-    ss.Column("digest", ss.ForeignKey("digests.id"), primary_key = True)
-)
-
 class Users(db.Model):
 
     __tablename__ = "users"
     __table_args__ = {"extend_existing": True}
 
-    id = ss.Column("id", st.Integer, primary_key = True)
+    id = ss.Column("uuid", st.UUID(as_uuid = True), primary_key = True, index = True, default = uuid.uuid4)
 
-    digests = db.relationship("Digests", secondary = user_digest)
+    digests = db.relationship("Digests")
 
-    first_name = ss.Column("first_name", st.String, unique = False, nullable = True)
-    last_name = ss.Column("last_name", st.String, unique = False, nullable = True)
-    email = ss.Column("email", st.String, unique = True, nullable = False)
+    first_name = ss.Column("first_name", st.String, unique = False, nullable = False)
+    last_name = ss.Column("last_name", st.String, unique = False, nullable = False)
+    email = ss.Column("email", st.String, unique = True, index = True, nullable = False)
     password = ss.Column("password", st.String, unique = False, nullable = False)
+
+    created_at = ss.Column("created_at", st.DateTime, unique = False, nullable = False, default = datetime.datetime.utcnow)
+    updated_at = ss.Column("updated_at", st.DateTime, unique = False, nullable = False, default = datetime.datetime.utcnow, onupdate = datetime.datetime.utcnow)
+    deleted_at = ss.Column("deleted_at", st.DateTime, unique = False, nullable = True)
 
     def hash_password(self):
         self.password = generate_password_hash(self.password).decode('utf-8')
@@ -65,18 +64,19 @@ class Digests(db.Model):
     __tablename__ = "digests"
     __table_args__ = {"extend_existing": True}
 
-    id = ss.Column("id", st.Integer, primary_key = True)
+    uuid = ss.Column("uuid", st.UUID(as_uuid = True), primary_key = True, index = True, default = uuid.uuid4)
 
-    uuid = ss.Column("uuid", st.UUID(as_uuid = True), unique = True, nullable = False, default = uuid.uuid4)
     name = ss.Column("name", st.String, unique = False, nullable = True)
     settings = ss.Column(
         "settings",
         NestedMutableJson, unique = False, nullable = False,
         default = create_settings
     )
-    newsletter = ss.Column("newsletter", st.String, unique = False, nullable = True)
-    # articles = ss.Column("articles", st.JSON, unique = False, nullable = True, default = dict)
     color = ss.Column("color", st.String(7), unique = False, nullable = False, default = create_color)
+
+    created_at = ss.Column("created_at", st.DateTime, unique = False, nullable = False, default = datetime.datetime.utcnow)
+    updated_at = ss.Column("updated_at", st.DateTime, unique = False, nullable = False, default = datetime.datetime.utcnow, onupdate = datetime.datetime.utcnow)
+    deleted_at = ss.Column("deleted_at", st.DateTime, unique = False, nullable = True)
 
     def as_dict(self):
         return {
@@ -85,8 +85,19 @@ class Digests(db.Model):
             "contentSources": dict(self.settings)["sources"],
             "interests": dict(self.settings)["interests"],
             "personality": dict(self.settings)["personality"],
-            "newsletter": self.newsletter,
             "color": {
                 "hex": self.color
             }
         }
+
+class Newsletter(db.Model):
+
+    __tablename__ = "newsletters"
+    __table_args__ = {"extend_existing": True}
+
+    uuid = ss.Column("uuid", st.UUID(as_uuid = True), primary_key = True, index = True, default = uuid.uuid4)
+
+    data = ss.Column("data", NestedMutableJson, unique = False, nullable = False)
+    articles = db.relationship("Articles")
+
+    created_at = ss.Column("created_at", st.DateTime, unique = False, nullable = False, default = datetime.datetime.utcnow)
