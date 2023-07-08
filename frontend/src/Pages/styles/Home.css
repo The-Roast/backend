@@ -5,7 +5,7 @@
 }
 
 .hero-section {
-	padding: 50px 50px 0px 50px;
+	margin: 50px 150px 50px 150px;
 	text-align: center;
 }
 
@@ -14,16 +14,14 @@
 	font-size: 115px;
 	color: #fefbf0;
 	text-align: center;
-	margin: 0;
 	padding: 50px;
 	font-family: "Grenette Pro", serif;
 }
 
 .subscribe-text-home {
-	padding-top: 50px;
+	padding: 50px;
 	font-size: 30px;
 	text-align: center;
-	margin: 0;
 	display: flex;
 	flex-direction: column;
 }

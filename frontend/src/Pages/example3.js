@@ -12,7 +12,7 @@ import moebius6 from "./images/moebius6.jpeg";
 import moebius7 from "./images/moebius7.jpeg";
 import moebius8 from "./images/moebius8.jpeg";
 
-function Example3({ setIsSignedIn }) {
+function Example3() {
 	const [isRecording, setIsRecording] = useState(false);
 	const [showResponse, setShowResponse] = useState(false);
 	const [response, setResponse] = useState("");
@@ -45,7 +45,6 @@ function Example3({ setIsSignedIn }) {
 	};
 
 	useEffect(() => {
-		setIsSignedIn(true);
 		console.log(newsletter);
 	}, []);
 
@@ -203,7 +202,7 @@ function Example3({ setIsSignedIn }) {
 				<h1>Conclusion</h1>
 				<p>{newsletter["conclusion"]}</p>
 			</div>
-			{/* <div className="right-view">
+			<div className="right-view">
 				<div className="notepad">
 					<div className="chat-messages">
 						{messages.map((message, index) => (
@@ -224,7 +223,7 @@ function Example3({ setIsSignedIn }) {
 						onKeyDown={handleUserMessage}
 					/>
 				</div>
-			</div> */}
+			</div>
 		</div>
 	);
 }

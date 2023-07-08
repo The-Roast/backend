@@ -12,7 +12,7 @@ import moebius6 from "./images/moebius6.jpeg";
 import moebius7 from "./images/moebius7.jpeg";
 import moebius8 from "./images/moebius8.jpeg";
 
-function Example2({ setIsSignedIn }) {
+function Example2() {
 	const [isRecording, setIsRecording] = useState(false);
 	const [showResponse, setShowResponse] = useState(false);
 	const [response, setResponse] = useState("");
@@ -41,7 +41,6 @@ function Example2({ setIsSignedIn }) {
 	};
 
 	useEffect(() => {
-		setIsSignedIn(true);
 		console.log(newsletter);
 	}, []);
 

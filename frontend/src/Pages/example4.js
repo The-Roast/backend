@@ -3,16 +3,8 @@ import { useWhisper } from "@chengsokdara/use-whisper";
 import "./styles/Conversation.css";
 import XI_API_KEY from "../Config";
 import { useLocation } from "react-router-dom";
-import moebius1 from "./images/moebius1.png";
-import moebius2 from "./images/moebius2.jpeg";
-import moebius3 from "./images/moebius3.jpeg";
-import moebius4 from "./images/moebius4.jpeg";
-import moebius5 from "./images/moebius5.jpeg";
-import moebius6 from "./images/moebius6.jpeg";
-import moebius7 from "./images/moebius7.jpeg";
-import moebius8 from "./images/moebius8.jpeg";
 
-function Example1() {
+function Example3() {
 	const [isRecording, setIsRecording] = useState(false);
 	const [showResponse, setShowResponse] = useState(false);
 	const [response, setResponse] = useState("");
@@ -37,7 +29,6 @@ function Example1() {
 			"Get ready for a whirlwind tour of the latest news in streaming and television! From YouTube TV's new multiview feature to the importance of a TV license, we've got you covered. And if you're a sports fan, we've got an exciting sports news roundup, a deep dive into the rise of women's football, and updates on retro-style sports games and more. Plus, don't miss the potential cage match between Elon Musk and Mark Zuckerberg. Let's dive in!",
 		title: "The Latest in Streaming and Television",
 	};
-
 	useEffect(() => {
 		console.log(newsletter);
 	}, []);
@@ -130,25 +121,6 @@ function Example1() {
 			console.log("Error: Unable to stream audio.");
 		}
 	};
-	const [randomImage, setRandomImage] = useState(null);
-
-	useEffect(() => {
-		const imageList = [
-			moebius1,
-			moebius2,
-			moebius3,
-			moebius4,
-			moebius5,
-			moebius6,
-			moebius7,
-			moebius8,
-		];
-
-		const randomIndex = Math.floor(Math.random() * imageList.length);
-		const randomImage = imageList[randomIndex];
-
-		setRandomImage(randomImage);
-	}, []);
 
 	const renderContent = (content) => {
 		const pattern = /<a>(.*?)<\/a>/g;
@@ -162,39 +134,23 @@ function Example1() {
 		return content;
 	};
 
+	const numPages = 5;
+
 	return (
 		<div className="conversation-wrapper">
 			<div className="left-view">
-				<div className="tts-wrapper">
-					<button
-						className="generate-button"
-						onClick={() => handleGenerateTTS()}
-					>
-						Generate TTS
-					</button>
-					<audio id="existing-audio" controls></audio>
+				<div className="left-view-scroll">
+					{Array.from({ length: numPages }, (_, index) => (
+						<div
+							className={`newsletter-page ${
+								index === numPages - 1 ? "last-page" : ""
+							}`}
+							key={index}
+						>
+							<h1>Page {index + 1}</h1>
+						</div>
+					))}
 				</div>
-				<img
-					src={randomImage}
-					width="70%"
-					style={{ borderRadius: "20px", marginTop: "50px", opacity: "80%" }}
-				/>
-				<h1>{newsletter["title"]}</h1>
-				<p>{newsletter["introduction"]}</p>
-				{sections.map(([key, value], index) => (
-					<div key={key}>
-						<h2>{key}</h2>
-						{value.split("\n\n").map((e, index) => (
-							<p
-								key={index}
-								dangerouslySetInnerHTML={{ __html: renderContent(e) }}
-							/>
-						))}
-					</div>
-				))}
-
-				<h1>Conclusion</h1>
-				<p>{newsletter["conclusion"]}</p>
 			</div>
 			<div className="right-view">
 				<div className="notepad">
@@ -222,4 +178,4 @@ function Example1() {
 	);
 }
 
-export default Example1;
+export default Example3;
