@@ -146,7 +146,7 @@ def get_newsletter(uuid):
     
     if not digest:
         return {
-            "response": {"message": "No newsletter exists"},
+            "response": {"message": "No digest exists"},
             "ok": False
         }, 404
     
