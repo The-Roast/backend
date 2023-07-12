@@ -10,13 +10,11 @@ from theroast.db.base import Base
 from uuid import uuid4
 import datetime
 
-if TYPE_CHECKING:
-    from .digest import Digest
-
-
 class User(Base):
 
     '''Table definition for User'''
+
+    __tablename__ = "user"
 
     uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
