@@ -1,17 +1,11 @@
-from typing import TYPE_CHECKING, Optional, List
+from typing import Optional, List
 
-import sqlalchemy as sa
-import sqlalchemy.orm as so
-import sqlalchemy.schema as ss
-import sqlalchemy.types as st
-from sqlalchemy_json import NestedMutableJson
-
-from theroast.db.base import Base
 from uuid import uuid4
 from datetime import datetime
+import sqlalchemy.orm as so
+import sqlalchemy.types as st
 
-if TYPE_CHECKING:
-    from . import newsletter_article
+from theroast.db.base_class import Base
 
 class Article(Base):
 
@@ -21,7 +15,7 @@ class Article(Base):
 
     uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
-    newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary=newsletter_article, back_populates="articles")
+    newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary="newsletter_article", back_populates="articles")
 
     source: so.Mapped[Optional[str]] = so.mapped_column("source", index=True)
     author: so.Mapped[Optional[str]] = so.mapped_column("author", index=True)

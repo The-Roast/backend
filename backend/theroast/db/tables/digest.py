@@ -1,15 +1,14 @@
-from typing import TYPE_CHECKING, Optional, List
+from typing import Optional, List
 
-import sqlalchemy as sa
+from uuid import uuid4
+from datetime import datetime
+import random
 import sqlalchemy.orm as so
 import sqlalchemy.schema as ss
 import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
 
-from theroast.db.base import Base
-from uuid import uuid4
-from datetime import datetime
-import random
+from theroast.db.base_class import Base
 
 def create_color(color=None):
 
