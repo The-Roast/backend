@@ -17,10 +17,9 @@ class Newsletter(Base):
 
     uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
+    digest: so.Mapped["Digest"] = so.relationship(back_populates = "newsletters")
+    digest_uuid: so.Mapped[Optional[st.UUID]] = so.mapped_column("digest_uuid", ss.ForeignKey("digest.uuid", ondelete = "SET NULL"))
     articles: so.Mapped[List["Article"]] = so.relationship(secondary="newsletter_article", back_populates="newsletters")
-    
-    digest: so.Mapped[List["Digest"]] = so.relationship(back_populates = "newsletters")
-    digest_uuid: so.Mapped[Optional[st.UUID]] = ss.Column("digest_uuid", ss.ForeignKey("digest.uuid", ondelete = "SET NULL"))
 
     data: so.Mapped[NestedMutableJson] = so.mapped_column("data")
     html: so.Mapped[Optional[str]] = so.mapped_column("html")

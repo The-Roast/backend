@@ -15,7 +15,7 @@ class User(Base):
 
     uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
-    digests: so.Mapped[List["Digest"]] = so.relationship()
+    digests: so.Mapped[List["Digest"]] = so.relationship(back_populates="user", cascade = "all, delete, delete-orphan")
 
     name: so.Mapped[str] = so.mapped_column("name")
     email: so.Mapped[str] = so.mapped_column("email", unique=True, index=True)
