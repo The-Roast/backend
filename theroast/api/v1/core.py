@@ -3,8 +3,10 @@ from flask import Blueprint, request, jsonify
 from theroast.theroast.data.news import SOURCES
 from theroast.theroast.lib.models import run_openai
 from ...db.schemas import Users, Digests
-from ...extensions import db
+from ...extensions import db, mail
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from ...config import MAIL_USERNAME
+from flask_mail import Message
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
 
@@ -172,3 +174,10 @@ def chat():
         "response": {"message": "This is dummy text."},
         "ok": True
     }, 200
+
+@core.route("/email", methods = ["GET"])
+def email():
+    msg = Message('Hello', sender = MAIL_USERNAME, recipients = ['tanushchop@@gmail.com'])
+    msg.body = "Hello Flask message sent from Flask-Mail"
+    mail.send(msg)
+    return "Sent"

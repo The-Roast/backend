@@ -24,6 +24,7 @@ def configure_extensions(app):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    mail.init_app(app)
 
 def configure_blueprints(app):
 

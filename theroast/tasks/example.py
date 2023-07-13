@@ -1,5 +1,7 @@
 from theroast.extensions import celery
+import time
 
 @celery.task
-def dummy_task():
+def send_email(newsletter):
+    time.sleep(5)
     return "OK"

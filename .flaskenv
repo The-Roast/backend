@@ -15,3 +15,10 @@ RESULT_BACKEND = redis://localhost:6379
 POSTGRESQL_USERNAME = postgres
 POSTGRESQL_PASSWORD = 299792458
 POSTGRESQL_DATABASE = theroast
+
+MAIL_SERVER = smtp.gmail.com
+MAIL_PORT = 485
+MAIL_USERNAME = fishtuna908@gmail.com
+MAIL_PASSWORD = auwhdiuawh!23
+MAIL_USE_TLS = False
+MAIL_USE_SSL = True
