@@ -9,6 +9,9 @@ SECRET_KEY = np-^$4c4lf4ebsd)dhxf$@$$a2$jr3q9em9n88jw66^gf07bln
 
 JWT_SECRET_KEY = t1NP63m4wnBg6nyHYKdwahTpCOGI4nss
 
+CELERY_BROKER_URL = redis://localhost:6379
+RESULT_BACKEND = redis://localhost:6379
+
 POSTGRESQL_USERNAME = postgres
 POSTGRESQL_PASSWORD = 299792458
 POSTGRESQL_DATABASE = theroast
