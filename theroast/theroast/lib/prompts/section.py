@@ -3,20 +3,18 @@ from textwrap import dedent
 from . import Prompt, SYSTEM_PROMPT
 
 SECTION_PROMPT = dedent('''\
-    Given the list of articles separated by <>, I want you to create a section of a newsletter solely based on the information within the list of articles provided.
-
-    This section should be detailed and comprehensive detailing the main points of each article in list of articles that a reader of a newsletter would find interesting to learn about. \
-    The section should not require the reader to view the article to understand anything brought up in the section. \
-    There should be no introduction, conclusion, hooks and signposting in the section. \
-    The personality you have should be subtly evident in the tone and mood of the writing style in the section. \
-    If you use information you must cite the article you extracted the information from using [${number}] notation where the number is the index number of the article in the list provided. \
-
-    I also want you to create a section header for the section.
-
-    I want your response to be formatted as strictly a JSON with the following structure:
+    Given a list of news articles marked by "<>", create a comprehensive and engaging newsletter section by summarizing their key points, eliminating the need for the reader to refer back to the original pieces. \
+    Any newline should Use the "\n" token to represent a newline in the text. \
+    Cite each paraphrased or borrowed piece of information using the notation [${index}], where index refers to the 0-indexed position of the article in the list. \
+    These citations should blend seamlessly into the text. Formulate a gripping title for this section that mirrors its main theme. \
+    Balance summaries and exact quotes from the articles, giving precedence to quotes to enhance the reader experience. \
+    Highlight noteworthy findings, author opinions, or key interview insights, remembering to attribute these views to the articles themselves, not the AI. \
+    In case of contradictory views within the articles, include both, correctly attributing each to its source article. \
+    While there is no stringent word limit, strive for balance to keep the reader engaged. \
+    The resulting output must strictly adhere to the JSON format as follows:
     {
-        "title": "Section header you generated",
-        "body": "Final section you generated"
+    "title": "Generated section title",
+    "body": "Crafted section content"
     }''')
 REFORMAT_SECTION_PROMPT = dedent('''\
     Given the broken JSON separated by $$, reformat it so that it follows the formatting and is a parseable JSON. Format your response as a JSON with the following structure:
@@ -27,11 +25,11 @@ REFORMAT_SECTION_PROMPT = dedent('''\
 
 class SectionPrompt(Prompt):
 
-    def create_prompt(self, articles, personality):
+    def create_prompt(self, articles, personality, interests = None):
 
         assert articles and isinstance(articles, list)
 
-        sy = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
+        sy = SYSTEM_PROMPT.replace("{PERSONALITY}", personality if personality else "typical").replace("{INTERESTS}", "NBA")
         sp = f"{SECTION_PROMPT}\n<" + "\n".join([f'({a})' for a in articles]) + ">"
 
         return sy, sp
