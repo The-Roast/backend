@@ -29,9 +29,9 @@ def run_anthropic(interests, sources, personality):
 def run_openai(interests, sources, personality):
     return create_newsletter(gpt, interests, sources, personality)
 
-sects, coll, articles = run_openai(["sneakers"], [], "serious")
+# sects, coll, articles = run_openai(["sneakers"], [], "serious")
 
-for sect in sects:
-    print(sect)
+# for sect in sects:
+#     print(sect)
 
-print(coll)
+# print(coll)
