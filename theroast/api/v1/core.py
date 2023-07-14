@@ -3,8 +3,11 @@ from flask import Blueprint, request, jsonify
 from theroast.theroast.data.news import SOURCES
 from theroast.theroast.lib.models import run_openai
 from ...db.schemas import Users, Digests
-from ...extensions import db
+from ...extensions import db, mail
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from ...config import MAIL_USERNAME
+from flask_mail import Message
+from textwrap import dedent
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
 
@@ -146,7 +149,7 @@ def get_newsletter(uuid):
     
     if not digest:
         return {
-            "response": {"message": "No newsletter exists"},
+            "response": {"message": "No digest exists"},
             "ok": False
         }, 404
     
