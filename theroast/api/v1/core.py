@@ -236,6 +236,7 @@ def create_newsletter(uuid):
     data = structure
     data["sections"] = sections
 
+    #add newsletters tie to articles
     newsletter = Newsletters(
         data = data,
         digest = digest
@@ -251,7 +252,16 @@ def create_newsletter(uuid):
 
 
 @core.route("/digest/<digest_uuid>/newsletter/<newsletter_uuid>", methods = ['PUT'])
-def regenerate_newsletter(digest_uuid, newsletter_uuid)
+def regenerate_newsletter(digest_uuid, newsletter_uuid):
+
+    digest: Digests = Digests.query.filter_by(uuid = uuid).first()
+    
+    if not digest:
+        return {
+            "response": {"message": "Digest not found."},
+            "ok": False
+        }, 404
+
 
 @core.route("/newsletter/<uuid>", methods = ['GET'])
 @jwt_required()
