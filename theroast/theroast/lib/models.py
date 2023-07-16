@@ -30,9 +30,9 @@ def generate_newsletter(news, interests, personality, ag = "gpt"):
     clusters = extract_and_cluster(articles, ",".join(interests), target = 30)
     sections, cc, structure = run_openai(clusters, personality) if ag == "gpt" \
                                 else run_anthropic(clusters, personality)
-    sections = parse_markdown(sections, clusters, article__url)
+    sections = parse_markdown(sections, cc, article__url)
 
-    return sections, structure, articles
+    return sections, structure
 
 def chat(articles):
     pass
