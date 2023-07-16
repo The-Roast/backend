@@ -137,7 +137,8 @@ class Articles(db.Model):
 
     newsletters = db.relationship("Newsletters", secondary = newsletter_article, back_populates = "articles")
 
-    source = ss.Column("source", st.String, index = True)
+    source_id = ss.Column("source_id", st.String, index = True)
+    source_name = ss.Column("source_name", st.String, index = True)
     author = ss.Column("author", st.String, index = True)
     title = ss.Column("title", st.String)
     content = ss.Column("content", st.String, nullable = False)
@@ -149,7 +150,8 @@ class Articles(db.Model):
     def as_dict(self):
         return {
             "uuid": self.uuid,
-            "source": self.source,
+            "source_id": self.source_id,
+            "source_name": self.source_name,
             "author": self.author,
             "title": self.title,
             "content": self.content,

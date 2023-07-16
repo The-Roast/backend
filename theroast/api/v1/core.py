@@ -234,6 +234,7 @@ def create_newsletter(uuid):
     data = coll
     data["sections"] = sects
     Newsletters(
+
         data = data,
         digest = digest
     )
@@ -257,7 +258,14 @@ def create_newsletter(uuid):
 @jwt_required()
 def get_newsletter(uuid):
 
-
+    newsletter: Newsletters = Newsletters.query.filter_by(uuid = uuid).first()
+    if not newsletter:
+        return {
+            "response": {"message": "Newsletter not found."},
+            "ok": False
+        }, 404
+    
+    return newsletter.as_dict(exclude_data = False)
 
 @core.route("/chat", methods = ["GET"])
 @jwt_required()
