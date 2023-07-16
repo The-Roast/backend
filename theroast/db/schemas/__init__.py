@@ -116,6 +116,7 @@ class Newsletters(db.Model):
     # cover = ss.Column("cover", st.BLOB)
     data = ss.Column("data", NestedMutableJson, nullable = False)
     # html = ss.Column("html", st.String, nullable = False)
+    clicks = ss.Column("clicks", st.Integer, nullable = False, default = lambda x: 0)
 
     created_at = ss.Column("created_at", st.DateTime, nullable = False, default = datetime.datetime.utcnow)
 

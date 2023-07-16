@@ -1,7 +1,7 @@
 import json
 from flask import Blueprint, request, jsonify
 from theroast.theroast.data.news import SOURCES
-from theroast.theroast.lib.models import create_newsletter
+from theroast.theroast.lib.models import generate_newsletter, get_news, parse_markdown
 from ...db.schemas import Users, Digests, Newsletters
 from ...extensions import db, mail
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -226,33 +226,32 @@ def create_newsletter(uuid):
             "ok": False
         }, 404
     
-    sects, coll, articles = create_newsletter(
-        list(digest.settings["interests"]),
-        list(digest.settings["sources"]),
-        digest.settings["personality"],
-    )
-    data = coll
-    data["sections"] = sects
-    Newsletters(
+    interests = digest.settings["interests"]
+    sources = digest.settings["sources"]
+    personality = digest.settings["personality"]
 
+    articles = get_news(interests, sources)
+    sections, structure = generate_newsletter(articles, interests, personality)
+    
+    data = structure
+    data["sections"] = sections
+
+    newsletter = Newsletters(
         data = data,
         digest = digest
     )
-    response = coll
-    for sect in sects:
-        response[sect["title"]] = sect["body"]
-
+    db.session.add(newsletter)
+    db.session.commit()
 
     return {
-        "response": response,
+        "response": {"uuid": newsletter.uuid},
         "ok": True
     }, 200
 
 
 
 @core.route("/digest/<digest_uuid>/newsletter/<newsletter_uuid>", methods = ['PUT'])
-@core.route("/newsletter/<uuid>", methods = ['GET'])
-@core.route("/newsletter/<uuid>", methods = ['DELETE'])
+def regenerate_newsletter(digest_uuid, newsletter_uuid)
 
 @core.route("/newsletter/<uuid>", methods = ['GET'])
 @jwt_required()
@@ -264,8 +263,25 @@ def get_newsletter(uuid):
             "response": {"message": "Newsletter not found."},
             "ok": False
         }, 404
-    
-    return newsletter.as_dict(exclude_data = False)
+    newsletter.clicks += 1
+
+    return {
+        "response": newsletter.as_dict(exclude_data = False),
+        "ok": True
+    }, 200
+
+@core.route("/newsletter/<uuid>", methods = ['DELETE'])
+def delete_newsletter(uuid):
+
+    newsletter: Newsletters = Newsletters.query.filter_by(uuid = uuid).first()
+    if not newsletter:
+        return {
+            "response": {"message": "Newsletter not found."},
+            "ok": False
+        }, 404
+
+    db.session.delete(newsletter)
+    db.session.commit()
 
 @core.route("/chat", methods = ["GET"])
 @jwt_required()
