@@ -113,16 +113,15 @@ class Newsletters(db.Model):
     digest = db.relationship("Digests", back_populates = "newsletters")
     digest_uuid = ss.Column("digest_uuid", st.UUID(as_uuid = True), ss.ForeignKey("digests.uuid", ondelete = "SET NULL"), nullable = True)
 
+    # cover = ss.Column("cover", st.BLOB)
     data = ss.Column("data", NestedMutableJson, nullable = False)
-    html = ss.Column("html", st.String, nullable = False)
+    # html = ss.Column("html", st.String, nullable = False)
 
     created_at = ss.Column("created_at", st.DateTime, nullable = False, default = datetime.datetime.utcnow)
 
     def as_dict(self, exclude_data = True):
         d = {
             "uuid": self.uuid,
-            "digest_uuid": self.digest_uuid,
-            "html": self.html,
             "created_at": self.created_at
         }
         if not exclude_data:

@@ -3,7 +3,7 @@ import math
 import umap
 import hdbscan
 from sklearn.metrics.pairwise import cosine_similarity
-from .extensions import co, st
+from .extensions import CO, ST
 
 def cluster(embeddings, n_neighbors = 5, n_components = 50, min_cluster_size = 2, random_state = None):
 
@@ -38,7 +38,7 @@ def parse_rankings(rankings):
 
 def rerank(articles, q):
 
-    rankings = co.rerank(query = q, model = "rerank-english-v2.0", documents = articles)
+    rankings = CO.rerank(query = q, model = "rerank-english-v2.0", documents = articles)
 
     return rankings
 
@@ -78,7 +78,7 @@ def extract(clusters, articles, proportion, floor = 0.75):
 
 def extract_and_cluster(articles, q, target = 20):
 
-    embeddings = st.encode(articles)    
+    embeddings = ST.encode(articles)    
     article__embedding = {a: embeddings[i] for i, a in enumerate(articles)}
     
     clusters = cluster(embeddings, n_neighbors = 15, n_components = 50, min_cluster_size = 3, random_state = 42)

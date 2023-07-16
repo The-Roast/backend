@@ -1,12 +1,10 @@
 import json
 from flask import Blueprint, request, jsonify
 from theroast.theroast.data.news import SOURCES
-from theroast.theroast.lib.models import run_openai
-from ...db.schemas import Users, Digests
+from theroast.theroast.lib.models import create_newsletter
+from ...db.schemas import Users, Digests, Newsletters
 from ...extensions import db, mail
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ...config import MAIL_USERNAME
-from flask_mail import Message
 from textwrap import dedent
 
 core = Blueprint('core', __name__, url_prefix = "/v1")
@@ -33,8 +31,8 @@ def get_digest(uuid):
 @jwt_required()
 def set_digest():
 
-    id = get_jwt_identity()
-    current_user = Users.query.filter_by(id = id).first()
+    uuid = get_jwt_identity()
+    current_user = Users.query.filter_by(uuid = uuid).first()
 
     name = request.json["name"]
     settings = {
@@ -42,7 +40,6 @@ def set_digest():
         "interests": [i.lower().strip() for i in request.json["interests"].split(",")],
         "personality": request.json["personality"]
     }
-
     color = request.json["color"]["hex"]
     
     digest = Digests(
@@ -60,11 +57,11 @@ def set_digest():
         "ok": True
     }, 200
 
-@core.route("/digest", methods = ['PUT'])
+@core.route("/digest/<uuid>", methods = ['PUT'])
 @jwt_required()
-def update_digest():
+def update_digest(uuid):
 
-    digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
+    digest: Digests = Digests.query.filter_by(uuid = uuid).first()
 
     if not digest:
         return {
@@ -91,8 +88,8 @@ def update_digest():
 @jwt_required()
 def delete_digest():
 
-    id = get_jwt_identity()
-    current_user = Users.query.filter_by(id = id).first()
+    uuid = get_jwt_identity()
+    current_user = Users.query.filter_by(uuid = uuid).first()
 
     digest: Digests = Digests.query.filter_by(uuid = request.json["uuid"]).first()
 
@@ -103,6 +100,7 @@ def delete_digest():
         }, 404
 
     current_user.digests.remove(digest)
+    db.session.delete(digest)
 
     db.session.commit()
 
@@ -111,11 +109,22 @@ def delete_digest():
         "ok": True
     }, 200
 
-@core.route("/user/<id>", methods = ['GET'])
+@core.route("/user", methods = ['GET'])
 @jwt_required()
-def get_user(id):
+def get_current_user():
 
-    user: Users = Users.query.filter_by(id = id).first()
+    uuid = get_jwt_identity()
+
+    return {
+        "response": {"uuid": uuid},
+        "ok": True
+    }, 200
+
+@core.route("/user/<uuid>", methods = ['GET'])
+@jwt_required()
+def get_user(uuid):
+
+    user: Users = Users.query.filter_by(uuid = uuid).first()
     if not user:
         return {
             "response": {"message": "User not found."},
@@ -130,42 +139,125 @@ def get_user(id):
         "ok": True
     }, 200
 
-@core.route("/user", methods = ['GET'])
+@core.route("/user", methods = ['PUT'])
 @jwt_required()
-def get_current_user():
+def update_user():
 
-    id = get_jwt_identity()
+    uuid = get_jwt_identity()
+    current_user: Users = Users.query.filter_by(uuid = uuid).first()
+
+    email = request.json["email"] # Not viable in future as need to check
+    first_name = request.json["first_name"]
+    last_name = request.json["last_name"]
+    old_password = request.json["old_password"]
+    new_password = request.json["new_password"] # Not viable in future as need to check
+
+    if old_password and not current_user.check_password(old_password):
+        return {
+            "response": {"message": "Incorrect password is not valid."},
+            "ok": True
+        }, 403
+
+    elif old_password and current_user.check_password(old_password):
+        current_user.password = new_password
+        current_user.hash_password()
+
+    current_user.email = email if email else current_user.email
+    current_user.first_name = first_name if first_name else current_user.first_name
+    current_user.last_name = last_name if last_name else current_user.last_name
+
+    db.session.commit()
 
     return {
-        "response": {"id": id},
+        "response": {"uuid": str(current_user.uuid)},
         "ok": True
     }, 200
 
-@core.route("/newsletter/<uuid>", methods = ['GET'])
+@core.route("/user", methods = ['DELETE'])
 @jwt_required()
-def get_newsletter(uuid):
+def delete_user():
+
+    uuid = get_jwt_identity()
+    current_user: Users = Users.query.filter_by(uuid = uuid).first()
+    db.session.delete(current_user)
+
+    db.session.commit()
+
+    return {
+        "response": {"message": "Deleted user"},
+        "ok": True
+    }, 200
+
+# Get Newsletters by Digest -> "GET /digest/<uuid>/newsletters" -> Stipulation argument within digest
+# Create Newsletter By Digest -> "GET /digest/<uuid>/create"
+# Update Newsletter By Digest ->  "PUT /digest/<digest_uuid>/newsletter/<newsletter_uuid>"
+# Get Newsletter By UUID -> "GET /newsletter/<uuid>"
+# Delete Newsletter By UUID -> "DELETE /newsletter/<uuid>"
+
+@core.route("/digest/<uuid>/newsletters", methods = ['GET'])
+@jwt_required()
+def get_digest_history(uuid):
+
+    digest: Digests = Digests.query.filter_by(uuid = uuid).first() 
+    if not digest:
+        return {
+            "response": {"message": "Digest not found"},
+            "ok": False
+        }, 404
+    newsletters = [n.as_dict() for n in sorted(digest.newsletters, lambda x: x.created_at)]
+
+    return {
+        "response": {
+            "newsletters": newsletters,
+            "digest_uuid": uuid
+        },
+        "ok": True
+    }, 200
+
+@core.route("/digest/<uuid>/create")
+@jwt_required()
+def create_newsletter(uuid):
 
     digest: Digests = Digests.query.filter_by(uuid = uuid).first()
     
     if not digest:
         return {
-            "response": {"message": "No digest exists"},
+            "response": {"message": "Digest not found."},
             "ok": False
         }, 404
     
-    sects, coll, _ = run_openai(
+    sects, coll, articles = create_newsletter(
         list(digest.settings["interests"]),
         list(digest.settings["sources"]),
-        digest.settings["personality"]
+        digest.settings["personality"],
+    )
+    data = coll
+    data["sections"] = sects
+    Newsletters(
+        data = data,
+        digest = digest
     )
     response = coll
     for sect in sects:
         response[sect["title"]] = sect["body"]
 
+
     return {
         "response": response,
         "ok": True
     }, 200
+
+
+
+@core.route("/digest/<digest_uuid>/newsletter/<newsletter_uuid>", methods = ['PUT'])
+@core.route("/newsletter/<uuid>", methods = ['GET'])
+@core.route("/newsletter/<uuid>", methods = ['DELETE'])
+
+@core.route("/newsletter/<uuid>", methods = ['GET'])
+@jwt_required()
+def get_newsletter(uuid):
+
+
 
 @core.route("/chat", methods = ["GET"])
 @jwt_required()

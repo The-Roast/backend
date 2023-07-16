@@ -20,7 +20,7 @@ def process_articles(articles):
     print(articles)
     assert articles
 
-    return {a["title"]: a["content"] for a in articles["articles"]}
+    return [a["content"] for a in articles["articles"]]
 
 def extract_articles(articles, section):
 
