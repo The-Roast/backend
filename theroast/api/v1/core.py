@@ -251,16 +251,25 @@ def create_newsletter(uuid):
 
 
 
-@core.route("/digest/<digest_uuid>/newsletter/<newsletter_uuid>", methods = ['PUT'])
-def regenerate_newsletter(digest_uuid, newsletter_uuid):
+@core.route("/newsletter/<uuid>", methods = ['PUT'])
+def regenerate_newsletter(uuid):
 
-    digest: Digests = Digests.query.filter_by(uuid = uuid).first()
+    newsletter: Newsletters = Newsletters.query.filter_by(uuid = uuid).first()
     
-    if not digest:
+    if not newsletter:
         return {
-            "response": {"message": "Digest not found."},
+            "response": {"message": "Newsletter not found."},
             "ok": False
         }, 404
+
+    articles = newsletter.articles
+    digest: Digests = newsletter.digest
+    interests = digest.settings["interests"]
+    sources = digest.settings["sources"]
+    personality = digest.settings["personality"]
+
+
+
 
 
 @core.route("/newsletter/<uuid>", methods = ['GET'])
