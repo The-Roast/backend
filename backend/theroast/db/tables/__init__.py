@@ -3,6 +3,8 @@ import sqlalchemy.schema as ss
 
 from theroast.db.base_class import Base
 
+BLANK = ""
+
 newsletter_article = sa.Table(
     "newsletter_article",
     Base.metadata,

@@ -1,7 +1,7 @@
 from typing import Optional, List
-
 from uuid import uuid4
 from datetime import datetime
+
 import sqlalchemy.orm as so
 import sqlalchemy.types as st
 
