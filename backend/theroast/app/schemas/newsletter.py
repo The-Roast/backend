@@ -29,9 +29,6 @@ class NewsletterInDBBase(NewsletterBase):
 class Newsletter(NewsletterInDBBase):
     pass
 
-class Newsletters(BaseModel):
-    newsletters: List[Newsletter]
-
 class NewsletterInDB(NewsletterInDBBase):
     created_at: datetime
     updated_at: datetime
