@@ -42,7 +42,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         # database tables. The `db` parameter is passed to each method of the `CRUDBase` class to
         # execute the corresponding database queries.
         stmt = insert(self.model).values(db_obj)
-        _ = db.execute(stmt)
+        db.execute(stmt)
         db.commit()
         db.refresh(db_obj)
         return db_obj
@@ -67,8 +67,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
 
-    def remove(self, db: Session, *, id: int) -> ModelType:
-        obj = db.query(self.model).get(id)
-        db.delete(obj)
+    def remove(self, db: Session, *, uuid: int) -> ModelType:
+        stmt = delete(self.model).where(uuid == uuid)
+        db.execute(stmt)
         db.commit()
-        return obj
+        return 
