@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from uuid import uuid4
-import datetime
+from datetime import datetime
 import sqlalchemy.orm as so
 import sqlalchemy.types as st
 
@@ -25,6 +25,6 @@ class User(Base):
     is_active: so.Mapped[bool] = so.mapped_column("is_active", default=True)
     is_superuser: so.Mapped[bool] = so.mapped_column("is_superuser", default=False)
 
-    created_at: so.Mapped[datetime.datetime] = so.mapped_column("created_at", default=datetime.datetime.utcnow)
-    updated_at: so.Mapped[datetime.datetime] = so.mapped_column("updated_at", default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
-    deleted_at: so.Mapped[Optional[datetime.datetime]] = so.mapped_column("deleted_at")
+    created_at: so.Mapped[datetime] = so.mapped_column("created_at", default=datetime.utcnow)
+    updated_at: so.Mapped[datetime] = so.mapped_column("updated_at", default=datetime.utcnow, onupdate=datetime.utcnow)
+    deleted_at: so.Mapped[Optional[datetime]] = so.mapped_column("deleted_at")

@@ -36,11 +36,10 @@ class Digest(Base):
     user_uuid: so.Mapped[st.UUID] = ss.Column("user_uuid", ss.ForeignKey("user.uuid"))
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
-    name: so.Mapped[str] = so.mapped_column("name", default=BLANK)
-    interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", default=list)
-    sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", default=list)
-    personality: so.Mapped[str] = so.mapped_column("personality", default=BLANK)
-
+    name: so.Mapped[Optional[str]] = so.mapped_column("name")
+    interests: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("interests")
+    sources: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("sources")
+    personality: so.Mapped[Optional[str]] = so.mapped_column("personality")
     color: so.Mapped[st.String(7)] = so.mapped_column("color", default=create_color)
 
     is_enabled: so.Mapped[bool] = so.mapped_column("is_enabled", index=True, default=True)

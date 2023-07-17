@@ -4,9 +4,9 @@ from pydantic import BaseModel, UUID4, EmailStr, ConfigDict
 class UserBase(BaseModel):
     first_name: Optional[str]
     last_name: Optional[str]
-    email: Optional[EmailStr] = None
+    email: Optional[EmailStr]
     is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
+    is_superuser: bool = False
 
 class UserCreate(UserBase):
     first_name: str
@@ -21,10 +21,12 @@ class UserUpdate(UserBase):
 class UserInDBBase(UserBase):
     model_config = ConfigDict(from_attributes=True)
     uuid: UUID4
+    first_name: str
+    last_name: str
+    email: EmailStr
 
 class User(UserInDBBase):
-    email: EmailStr
+    pass
 
 class UserInDB(UserInDBBase):
-    email: EmailStr
     password: str
