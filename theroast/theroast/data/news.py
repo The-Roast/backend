@@ -50,11 +50,19 @@ class NewsScraper:
         assert q
 
         today = datetime.today() - timedelta(days = 1)
-        print(f"{today.year:04}-{today.month:02}-{(today.day-2):02}")
         articles = {}
         c = 0
 
-        sources = [SOURCES[s.lower()] for s in sources if s.lower() in SOURCES or s.lower() in SOURCES.values()]
+        sources_modified = []
+        for s in sources:
+            s = s.lower()
+            if s in SOURCES:
+                sources_modified.append(SOURCES[s])
+                continue
+            elif s in SOURCES.values():
+                sources_modified.append(s)
+                continue
+        sources = sources_modified
 
         while c < 3:
             try:
