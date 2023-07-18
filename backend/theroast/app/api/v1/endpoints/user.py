@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from theroast.config import server_config
 from theroast.app import schemas
+from theroast.db import tables, crud
 
 router = APIRouter()
 

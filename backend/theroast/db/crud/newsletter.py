@@ -48,4 +48,4 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         return Newsletter.created_at != Newsletter.updated_at
 
 
-Newsletter = CRUDNewsletter(Newsletter)
+newsletter = CRUDNewsletter(Newsletter)
