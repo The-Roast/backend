@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Union
 from uuid import UUID
 from sqlalchemy.orm import Session
-from sqlalchemy import select, insert, desc
+from sqlalchemy import select, insert, update, desc
 
 from theroast.db.crud.base import CRUDBase
 from theroast.db.tables.newsletter import Newsletter
@@ -10,8 +10,18 @@ from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
 
 class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
 
-    def get_multi_by_digest(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]):
+    def get_multi_by_digest__date(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]):
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
+        if skip and limit:
+            stmt = stmt.offset(skip).limit(limit)
+        elif skip:
+            stmt = stmt.offset(skip)
+        elif limit:
+            stmt = stmt.limit(limit)
+        return db.execute(stmt).fetchall()
+    
+    def get_multi_by_digest__clicks(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]):
+        stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
         if skip and limit:
             stmt = stmt.offset(skip).limit(limit)
         elif skip:
@@ -34,7 +44,7 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         db.refresh(db_obj)
         return db_obj
 
-    def is_regenerated(self, Newsletter: Newsletter) -> bool:
+    def is_updated(self, Newsletter: Newsletter) -> bool:
         return Newsletter.created_at != Newsletter.updated_at
 
 
