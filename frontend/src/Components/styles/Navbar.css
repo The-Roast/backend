@@ -3,7 +3,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 10px 150px 10px 150px;
+	/* padding: 10px 150px 10px 150px; */
 }
 
 .logo {
@@ -36,4 +36,16 @@
 	.sign-in-nav p {
 		font-size: 20px;
 	}
+}
+
+.logout-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+
+.logout-button p {
+	font-size: 25px;
+	font-family: "GT Alpina";
+	color: #43372e;
 }

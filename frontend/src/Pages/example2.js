@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWhisper } from "@chengsokdara/use-whisper";
-import "./styles/Conversation.css";
-import XI_API_KEY from "../Config";
+import "./styles/Newsletter.css";
 import { useLocation } from "react-router-dom";
 import moebius1 from "./images/moebius1.png";
 import moebius2 from "./images/moebius2.jpeg";
@@ -165,7 +164,7 @@ function Example2() {
 	};
 
 	return (
-		<div className="conversation-wrapper">
+		<div className="Newsletter-wrapper">
 			<div className="left-view">
 				<div className="tts-wrapper">
 					<button

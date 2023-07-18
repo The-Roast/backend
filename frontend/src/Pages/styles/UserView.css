@@ -1,94 +1,126 @@
-body {
-	font-family: "GT Alpina";
-}
-
 .main-container {
-	background-color: #fefbf0;
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	padding: 0px 150px;
+	justify-content: center;
+	width: 100%;
 }
 
 .main {
 	text-align: left;
+	height: calc(100vh - 200px);
+	padding: 100px 300px;
+	overflow-y: scroll;
 }
 
-.greeting {
-	font-size: 50px;
-	font-weight: bold;
-	margin-bottom: 10px;
+.title-card {
+	font-family: "Futura";
+	background-color: white;
+	padding: 25px 0px;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	border: 5px black solid;
+	text-align: center;
 }
 
-.welcome {
-	font-size: 50px;
+.title-card h1 {
+	margin: 0px;
+	font-size: 140px;
+	font-weight: 500;
+	text-transform: uppercase;
 }
 
 .grid {
 	padding-top: 50px;
 	display: grid;
-	grid-template-columns: repeat(4, 1fr);
-	grid-gap: 50px;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 100px 60px;
 }
 
-.square {
+.card {
+	background-color: #fcf9e1;
 	position: relative;
-	width: 250px;
-	height: 250px;
-	border-radius: 10px;
-	border: 5px solid transparent;
-	overflow: hidden;
+	min-width: 280px;
+	/* min-height: 280px; */
+	aspect-ratio: 1 / 1;
+	padding: 10px 30px;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: 1;
-	transition: all ease-in-out 0.3s;
 }
 
 .content {
-	width: 200px;
-	height: 200px;
 	display: flex;
 	flex-direction: column;
+	gap: 20px;
+	text-align: left;
+	min-width: 100%;
+	padding: 0px 20px 20px 20px;
+}
+
+.content h1 {
+	font-size: 40px;
+	margin: 10px 0px 0px 0px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.content p {
+	font-weight: 300;
+	margin: 0px;
+	min-width: 100px;
+	max-width: 100px;
+	color: #808080;
+	font-size: 14px;
+}
+
+.content h6 {
+	font-weight: 300;
+	margin: 0px;
+	font-size: 20px;
+	margin-bottom: -2px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.content hr {
+	width: 100%;
+	border: none;
+	background-color: #808080;
+	height: 1px;
+	margin: 0px;
+}
+
+.content span {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: nowrap;
+}
+
+.content-header {
+	justify-content: space-between;
+}
+
+.createDigest {
+	position: relative;
+	min-width: 280px;
+	aspect-ratio: 1 / 1;
+	padding: 10px 30px;
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 20px;
-	border-radius: 10px;
-	opacity: 1;
-	transition: opacity 0.5s;
 }
 
-.flavor {
-	font-size: 40px;
-	font-weight: normal;
-	margin-bottom: 10px;
-	text-align: center;
-}
-
-.name {
-	font-size: 40px;
-	font-weight: bold;
-	opacity: 1;
-	transition: opacity 0.5s;
+.createDigest svg {
+	cursor: pointer;
 }
 
 @media (max-width: 768px) {
 	.grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
-}
-
-.create-digest {
-	position: relative;
-	width: 250px;
-	height: 250px;
-	border-radius: 10px;
-	border: 5px solid #43372e;
-	overflow: hidden;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 1;
 }

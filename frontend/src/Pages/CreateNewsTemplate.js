@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { SliderPicker } from "react-color";
+import Grid from "../Components/SettingsGrid";
 import "./styles/NewsTemplate.css";
+import SERVER_API_URL from "../Config";
 
 function CreateNewsTemplate() {
 	const navigate = useNavigate();
@@ -59,7 +61,7 @@ function CreateNewsTemplate() {
 
 		const access_token = localStorage.getItem("access_token");
 		const refresh_token = localStorage.getItem("refresh_token");
-		fetch(`http://127.0.0.1:5000/v1/digest`, {
+		fetch(`${SERVER_API_URL}/v1/digest`, {
 			method: "POST",
 			headers: {
 				Accept: "application/json",
@@ -67,76 +69,47 @@ function CreateNewsTemplate() {
 				Authorization: "Bearer " + access_token,
 			},
 			body: JSON.stringify(preference),
-		});
-		navigate("/user-view");
+		})
+			.then((response) => response.json())
+			.then((response) => {
+				navigate("/main");
+			});
 	};
+
+	const data = [
+		{ preference: "Title", value: title, onChange: handleTitleChange },
+		{
+			preference: "Personality",
+			value: personality,
+			onChange: handlePersonalityChange,
+		},
+		{
+			preference: "Interests",
+			value: interests,
+			onChange: handleInterestsChange,
+		},
+		{ preference: "Sources", value: sources, onChange: handleSourcesChange },
+		{ preference: "Color", value: color, onChange: handleColorChange },
+	];
 
 	return (
 		<div className="news-template">
-			<div className="button-wrapper">
-				<button
-					onClick={() => {
-						navigate(-1);
-					}}
-				>
-					Back
-				</button>
+			<div className="title-card">
+				<h1>Settings</h1>
 			</div>
-			<h1 className="title">Settings:</h1>
 			<div className="preference-wrapper">
-				<h2>
-					<input
-						type="text"
-						className="editable-input title"
-						value={title}
-						onChange={handleTitleChange}
-						style={{ color: color }}
-					/>
-					<hr className="editable-line" />
-				</h2>
-				<label>
-					Personality:
-					<input
-						type="text"
-						className="editable-input"
-						value={personality}
-						onChange={handlePersonalityChange}
-					/>
-					<hr className="editable-line" />
-				</label>
-				<label>
-					Interests:
-					<input
-						type="text"
-						className="editable-input"
-						value={interests}
-						onChange={handleInterestsChange}
-					/>
-					<hr className="editable-line" />
-				</label>
-				<label>
-					Content Sources:
-					<input
-						type="text"
-						className="editable-input"
-						value={sources}
-						onChange={handleSourcesChange}
-					/>
-					<hr className="editable-line" />
-				</label>
-				<div className="color-picker">
-					<div className="color-values-wrapper">
-						<label className="color-label">Color:</label>
-						<div className="color-values">
-							<div className="color-hex">{color}</div>
-						</div>
-					</div>
-					<div className="color-picker-container">
-						<SliderPicker color={color} onChange={handleColorChange} />
-					</div>
-				</div>
+				<Grid data={data} />
 			</div>
-			<div style={{ display: "flex", justifyContent: "center", gap: "40px" }}>
+			<div className="button-row-wrapper">
+				<div className="button-wrapper">
+					<button
+						onClick={() => {
+							navigate(-1);
+						}}
+					>
+						Back
+					</button>
+				</div>
 				<div className="button-wrapper">
 					<button onClick={handleSave} disabled={!unsavedChanges}>
 						Save preferences

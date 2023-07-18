@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWhisper } from "@chengsokdara/use-whisper";
-import "./styles/Conversation.css";
-import XI_API_KEY from "../Config";
+import "./styles/Newsletter.css";
 import { useLocation } from "react-router-dom";
 import moebius1 from "./images/moebius1.png";
 import moebius2 from "./images/moebius2.jpeg";
@@ -12,7 +11,7 @@ import moebius6 from "./images/moebius6.jpeg";
 import moebius7 from "./images/moebius7.jpeg";
 import moebius8 from "./images/moebius8.jpeg";
 
-function Conversation() {
+function Newsletter() {
 	const [isRecording, setIsRecording] = useState(false);
 	const [showResponse, setShowResponse] = useState(false);
 	const [response, setResponse] = useState("");
@@ -144,7 +143,7 @@ function Conversation() {
 	};
 
 	return (
-		<div className="conversation-wrapper">
+		<div className="Newsletter-wrapper">
 			<div className="left-view">
 				<div className="tts-wrapper">
 					<button
@@ -212,4 +211,4 @@ function Conversation() {
 	);
 }
 
-export default Conversation;
+export default Newsletter;

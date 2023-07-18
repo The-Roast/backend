@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date
 from newsapi import NewsApiClient, newsapi_exception
 from ...config import NEWS_API_KEY
 import json
@@ -49,11 +49,10 @@ class NewsScraper:
         assert self.cli
         assert q
 
-        today = datetime.today() - timedelta(days = 1)
-        print(f"{today.year:04}-{today.month:02}-{(today.day-2):02}")
+        today = date.today()
         articles = {}
         c = 0
-
+        
         sources = [SOURCES[s.lower()] for s in sources if s.lower() in SOURCES or s.lower() in SOURCES.values()]
 
         while c < 3:
@@ -62,7 +61,7 @@ class NewsScraper:
                     q = q,
                     sources = ",".join(sources) if len(sources) > 0 else None,
                     exclude_domains = "google.com",
-                    from_param = f"{today.year:04}-{today.month:02}-{(today.day):02}",
+                    from_param = f"{today.year:04}-{today.month:02}-{(today.day-2):02}",
                     language = "en",
                     sort_by = "relevancy",
                 )

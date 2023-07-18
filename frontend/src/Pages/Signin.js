@@ -1,6 +1,7 @@
 import "./styles/Signin.css";
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import SERVER_API_URL from "../Config";
 
 function Signin() {
 	const [email, setEmail] = useState("");
@@ -17,10 +18,10 @@ function Signin() {
 	const navigate = useNavigate();
 	const [warningMessage, setWarningMessage] = useState("");
 	const [isWarningMessage, setIsWarningMessage] = useState(false);
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		// Send the form data to the server for further processing
-		fetch("http://127.0.0.1:5000/login", {
+		fetch(`${SERVER_API_URL}/login`, {
 			method: "POST",
 			headers: {
 				Accept: "application/json",
@@ -31,7 +32,7 @@ function Signin() {
 			.then((response) => response.json())
 			.then((response) => {
 				if (!response.ok) {
-					setWarningMessage("Invalid email.");
+					setWarningMessage("Invalid email or password.");
 					setIsWarningMessage(true);
 				} else {
 					localStorage.setItem("access_token", response.response.access_token);
@@ -39,7 +40,11 @@ function Signin() {
 						"refresh_token",
 						response.response.refresh_token
 					);
-					navigate("/user-view");
+					var delayInMilliseconds = 300; //1 second
+
+					setTimeout(function () {
+						navigate("/main");
+					}, delayInMilliseconds);
 				}
 			});
 	};
@@ -54,24 +59,40 @@ function Signin() {
 		<div className="sign-in">
 			<div className="form-container">
 				<form className="signin-form" onSubmit={handleSubmit}>
-					{/* <label></label> */}
-					<input
-						type="text"
-						placeholder="Email"
-						name="email"
-						value={email}
-						onChange={handleEmailChange}
-						ref={emailInput}
-						required
-					/>
-					<input
-						type="text"
-						placeholder="Password"
-						name="password"
-						value={password}
-						onChange={handlePasswordChange}
-						required
-					/>
+					<div
+						style={{ paddingBottom: "50px" }}
+						className="back-button-wrapper"
+					>
+						<button
+							onClick={() => {
+								navigate(-1);
+							}}
+						>
+							Back
+						</button>
+					</div>
+					<div className="input-container">
+						<p>Email:</p>
+						<input
+							type="text"
+							name="email"
+							value={email}
+							onChange={handleEmailChange}
+							ref={emailInput}
+							required
+						/>
+					</div>
+					<div className="input-container">
+						<p>Password:</p>
+						<input
+							type="text"
+							name="password"
+							value={password}
+							onChange={handlePasswordChange}
+							required
+						/>
+					</div>
+
 					{isWarningMessage ? (
 						<div className="warning-message">
 							<p>{warningMessage}</p>
@@ -79,7 +100,7 @@ function Signin() {
 					) : (
 						<div></div>
 					)}
-					<div style={{ paddingTop: "100px" }} className="button-wrapper">
+					<div style={{ paddingTop: "50px" }} className="button-wrapper">
 						<input type="submit" value="Sign in" />
 					</div>
 				</form>

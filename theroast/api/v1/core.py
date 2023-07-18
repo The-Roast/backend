@@ -121,7 +121,6 @@ def get_user(id):
 
     response = user.as_dict()
     response["digests"] = [d.as_dict() for d in user.digests]
-
     return {
         "response": response,
         "ok": True

@@ -1,0 +1,54 @@
+.settings-grid {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+	font-size: 40px;
+}
+
+.settings-grid th,
+.settings-grid td {
+	border: 3px solid black;
+	padding: 8px 20px;
+	text-align: left;
+}
+
+.settings-grid tr {
+	height: 70px;
+}
+
+.settings-grid th {
+	background-color: #d9d9d9;
+	font-family: "Futura", sans-serif;
+	font-weight: 500;
+	font-size: 40px;
+	text-transform: uppercase;
+}
+
+.settings-grid .data-row {
+	background-color: #fcf9e1;
+	font-size: 20px;
+}
+
+.settings-grid .data-row td:first-child {
+	width: 70px;
+	font-size: 40px;
+	padding: 8px;
+}
+
+.settings-grid .data-row td:first-child ul {
+	margin: 0px;
+	display: flex;
+	justify-content: center;
+}
+
+.settings-grid .data-row td:nth-child(2),
+.settings-grid .data-row td:nth-child(3) input {
+	font-size: 30px;
+}
+
+tr th:first-child {
+	width: 70px;
+	height: 70px;
+	padding: 0px;
+	margin: 0px;
+}

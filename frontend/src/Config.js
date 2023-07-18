@@ -1,1 +1,3 @@
-const XI_API_KEY = "8b9914b4a9e536a1f236e02385f55df9";
+const SERVER_API_URL = "http://127.0.0.1:5000";
+
+export default SERVER_API_URL;

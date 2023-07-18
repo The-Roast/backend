@@ -1,10 +1,9 @@
 .sign-in {
-	padding-top: 300px;
-	padding-bottom: 300px;
-	font-size: 30px;
-	/* display: flex;
+	display: flex;
 	flex-direction: column;
-	align-items: center; */
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
 }
 
 .signin-form {
@@ -15,16 +14,29 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	align-items: stretch;
+	align-items: center;
 }
 
 .signin-form input[type="text"],
 .signin-form textarea {
-	background-color: transparent;
+	flex: 1 1 auto;
 	border: none;
-	margin-bottom: 10px;
+	border-bottom: 1px solid black;
+	margin-bottom: 1px;
+	background-color: transparent;
 	font-family: "GT Alpina", serif;
-	font-size: 30px;
+	font-size: 20px;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-background-clip: text;
+	-webkit-background-color: transaprent;
+	-webkit-border: none;
+	-webkit-margin-bottom: 10px;
+	-webkit-font-family: "GT Alpina", serif;
 }
 
 .signin-form textarea {
@@ -35,18 +47,18 @@
 .signin-form textarea::placeholder {
 	color: #818181;
 	font-family: "GT Alpina", serif;
-	font-size: 30px;
 	border: none;
 }
 
 .signin-form input[type="submit"] {
-	border: 2px solid #43372e;
-	color: #43372e;
+	border: 2px solid black;
+	color: black;
 	padding: 10px 20px;
 	border-radius: 5px;
 	cursor: pointer;
 	font-family: "GT Alpina", serif;
-	font-size: 30px;
+	background-color: transparent;
+	font-size: 20px;
 }
 
 textarea:focus,
@@ -55,7 +67,6 @@ input:focus {
 }
 
 label {
-	font-size: 30px;
 	display: flex;
 	width: 100%;
 }
@@ -75,14 +86,13 @@ label {
 }
 
 .list-item select {
-	background-color: #fefbf0;
-	color: #43372e;
+	background-color: white;
+	color: black;
 	width: 100%;
 	padding: 10px;
 	border-radius: 20px;
 	margin-bottom: 10px;
 	font-family: "GT Alpina", serif;
-	font-size: 30px;
 	height: 50px;
 	border: none;
 }
@@ -92,7 +102,7 @@ select {
 	-moz-appearance: none;
 	appearance: none;
 	background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/#43372es/16x16/br_down.png")
-		#fefbf0 no-repeat 96% !important;
+		white no-repeat 96% !important;
 }
 
 .select-items {
@@ -109,7 +119,7 @@ select {
 }
 
 .subscribe-text a {
-	color: #43372e;
+	color: black;
 	text-decoration: none;
 }
 
@@ -122,7 +132,7 @@ select {
 	background: none;
 	border: none;
 	font-size: 50px;
-	color: #43372e;
+	color: black;
 }
 
 .form-container {
@@ -130,7 +140,10 @@ select {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	color: #43372e;
+	color: black;
+	background-color: #fcf9e1;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+	padding: 100px 200px;
 }
 
 .name-wrapper {
@@ -143,30 +156,24 @@ select {
 	flex-basis: 30%; /* Each input occupies the full width on smaller screens */
 }
 
-.button-wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.button-wrapper input {
-	background-color: #fefbf0;
-}
-
-.already-signed-in {
-	font-size: 30px;
-	padding-top: 10px;
-	padding-bottom: 30px;
-	color: #43372e;
-}
-
-.already-signed-in a {
-	color: #43372e;
+.back-button-wrapper button {
+	border: 2px solid black;
+	color: black;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	font-family: "GT Alpina", serif;
+	background-color: transparent;
+	font-size: 20px;
 }
 
 .prefix {
 	font-size: 25px;
 	padding-right: 15px;
+}
+
+.input-container p {
+	font-size: 20px;
 }
 
 /* Media Queries */
