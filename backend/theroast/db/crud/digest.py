@@ -1,5 +1,4 @@
-from typing import Any, Dict, List, Optional, Union
-from uuid import UUID
+from typing import List, Optional, UUID4
 from sqlalchemy.orm import Session
 from sqlalchemy import select, insert
 
@@ -10,7 +9,7 @@ from theroast.app.schemas.digest import DigestCreate, DigestUpdate
 
 class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
 
-    def get_multi_by_owner(self, db: Session, *, user_uuid: UUID, skip: Optional[int], limit: Optional[int]) -> List[Digest]:
+    def get_multi_by_owner(self, db: Session, *, user_uuid: UUID4, skip: Optional[int], limit: Optional[int]) -> List[Digest]:
         stmt = select(Digest).where(Digest.user_uuid == user_uuid)
         if skip and limit:
             stmt = stmt.offset(skip).limit(limit)
@@ -20,9 +19,9 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
             stmt = stmt.limit(limit)
         return db.execute(stmt).fetchall()
 
-    def create_with_owner(self, db: Session, *, obj_in: DigestCreate, user_uuid: UUID) -> Digest:
+    def create_with_owner(self, db: Session, *, obj_in: DigestCreate, user_uuid: UUID4) -> Digest:
         stmt = insert(Digest).values(
-            user_uuid=obj_in.user_uuid,
+            user_uuid=user_uuid,
             name=obj_in.name,
             interests=obj_in.interests,
             sources=obj_in.sources,

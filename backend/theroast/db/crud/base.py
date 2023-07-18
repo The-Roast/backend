@@ -1,10 +1,8 @@
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, UUID4
-from datetime import datetime
-from uuid import UUID
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, delete
 
 from theroast.db.base_class import Base
 
@@ -25,7 +23,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    def get(self, db: Session, uuid: Any) -> Optional[ModelType]:
+    def get(self, db: Session, uuid: UUID4) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
         return db.execute(stmt).first()
 
@@ -64,8 +62,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
     
-    def remove(self, db: Session, *, uuid: UUID) -> ModelType:
+    def remove(self, db: Session, *, uuid: UUID4) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid)
-        result = db.execute(stmt).first()
+        db_obj = db.execute(stmt).first()
         db.commit()
-        return result
+        return db_obj

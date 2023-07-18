@@ -1,7 +1,7 @@
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, UUID4
 from uuid import UUID
 from sqlalchemy.orm import Session
-from sqlalchemy import select, insert, update, desc
+from sqlalchemy import select, insert
 
 from theroast.db.crud.base import CRUDBase
 from theroast.db.tables.newsletter import Newsletter
@@ -10,7 +10,7 @@ from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
 
 class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
 
-    def get_multi_by_digest__date(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]):
+    def get_multi_by_digest__date(self, db: Session, *, digest_uuid: UUID4, skip: Optional[int], limit: Optional[int]):
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
         if skip and limit:
             stmt = stmt.offset(skip).limit(limit)
@@ -20,7 +20,7 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             stmt = stmt.limit(limit)
         return db.execute(stmt).fetchall()
     
-    def get_multi_by_digest__clicks(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]):
+    def get_multi_by_digest__clicks(self, db: Session, *, digest_uuid: UUID4, skip: Optional[int], limit: Optional[int]):
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
         if skip and limit:
             stmt = stmt.offset(skip).limit(limit)
