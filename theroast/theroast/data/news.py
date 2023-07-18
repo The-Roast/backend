@@ -49,11 +49,20 @@ class NewsScraper:
         assert self.cli
         assert q
 
-        today = date.today()
+        today = datetime.today() - timedelta(days = 1)
         articles = {}
         c = 0
-        
-        sources = [SOURCES[s.lower()] for s in sources if s.lower() in SOURCES or s.lower() in SOURCES.values()]
+
+        sources_modified = []
+        for s in sources:
+            s = s.lower()
+            if s in SOURCES:
+                sources_modified.append(SOURCES[s])
+                continue
+            elif s in SOURCES.values():
+                sources_modified.append(s)
+                continue
+        sources = sources_modified
 
         while c < 3:
             try:
