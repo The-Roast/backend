@@ -54,7 +54,7 @@ class NewsScraper:
         articles = {}
         c = 0
 
-        sources = [SOURCES[s.lower()] for s in sources]
+        sources = [SOURCES[s.lower()] for s in sources if s.lower() in SOURCES or s.lower() in SOURCES.values()]
 
         while c < 3:
             try:
