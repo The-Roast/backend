@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime, timedelta
 from newsapi import NewsApiClient, newsapi_exception
 from ...config import NEWS_API_KEY
 import json
