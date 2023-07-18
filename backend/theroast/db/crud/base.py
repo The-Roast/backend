@@ -1,5 +1,6 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
-
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, UUID4
+from datetime import datetime
+from uuid import UUID
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -25,22 +26,18 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     def get(self, db: Session, uuid: Any) -> Optional[ModelType]:
-        query = select(self.model).filter_by(uuid=uuid)
-        return db.execute(query).first()
+        stmt = select(self.model).where(self.model.uuid == uuid)
+        return db.execute(stmt).first()
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
         stmt = select(self.model).offset(skip).limit(limit)
-        return db.execute(stmt).all()
+        return db.execute(stmt).fetchall()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data)  # type: ignore
-        # `db` is a parameter of type `Session` that represents the database session. It is used to
-        # interact with the database and perform CRUD operations (Create, Read, Update, Delete) on the
-        # database tables. The `db` parameter is passed to each method of the `CRUDBase` class to
-        # execute the corresponding database queries.
+        db_obj = self.model(**obj_in_data)
         stmt = insert(self.model).values(db_obj)
         db.execute(stmt)
         db.commit()
@@ -66,9 +63,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.commit()
         db.refresh(db_obj)
         return db_obj
-
-    def remove(self, db: Session, *, uuid: int) -> ModelType:
-        stmt = delete(self.model).where(uuid == uuid)
-        db.execute(stmt)
+    
+    def remove(self, db: Session, *, uuid: UUID) -> ModelType:
+        stmt = delete(self.model).where(self.model.uuid == uuid)
+        result = db.execute(stmt).first()
         db.commit()
-        return 
+        return result
