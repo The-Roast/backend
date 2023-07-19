@@ -47,9 +47,10 @@ def run_openai(clusters, personality):
     coll = collate_request(MODELS["gpt"], sects, personality)
     return sects, cc, coll
 
-# sects, coll, articles = run_openai(["sneakers"], [], "serious")
+news = get_news(["sneakers"], [])
+sections, structure = generate_newsletter(news, ["sneakers"], "serious")
 
-# for sect in sects:
-#     print(sect)
+for sect in sections:
+    print(sect)
 
-# print(coll)
+print(structure)
