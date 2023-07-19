@@ -5,4 +5,4 @@ class Claude(MLBase):
 
     def __init__(self):
         self.api_key = api_config.ANTHROPIC_API_KEY
-        
+        self.model = 
