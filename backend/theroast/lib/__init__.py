@@ -1,10 +1,103 @@
 import newspaper
 from newspaper import news_pool
+import time
 
 urls = [
-'http://www.baltimorenews.net/index.php/sid/234363921',
-'http://www.baltimorenews.net/index.php/sid/234323971',
-'http://www.atlantanews.net/index.php/sid/234323891',
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
+'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
 'http://www.wpbf.com/news/funeral-held-for-gabby-desouza/33874572',  
 ]
 
@@ -15,11 +108,18 @@ class SingleSource(newspaper.Source):
 
 sources = [SingleSource(articleURL=u) for u in urls]
 
-news_pool.set(sources)
+s = time.time()
+
+news_pool.set(sources, threads_per_source=2)
 news_pool.join()
 
 for source in sources:
-    print(source.articles)
     for article in source.articles:
         article.parse()
-        print(article.title)
+
+# for url in urls:
+#     article = newspaper.Article(url)
+#     article.download()
+#     article.parse()
+
+print(time.time() - s)
