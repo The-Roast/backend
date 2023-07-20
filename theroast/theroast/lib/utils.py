@@ -5,9 +5,7 @@ NON_SECTIONS = ["title", "introduction", "conclusion"]
 def construct_newsletter_html(data):
 
     
-    k = list(data.keys())
-    sh = [s for s in k if s not in NON_SECTIONS]
-    body = "\n".join([f"<h3>{t}</h3>\n<p>{data[t]}</p>" for t in sh])
+    body = "\n".join([f"<h3>{section['title']}</h3>\n<p>{section['body']}</p>" for section in data["sections"]])
 
     return dedent(f'''\
         <div>

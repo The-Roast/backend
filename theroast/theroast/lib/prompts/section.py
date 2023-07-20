@@ -1,6 +1,7 @@
 
 from textwrap import dedent
 from . import Prompt, SYSTEM_PROMPT
+import inspect
 
 SECTION_PROMPT = dedent('''\
     Given the list of articles separated by <>, I want you to create a section of a newsletter solely based on the information within the list of articles provided.
@@ -33,6 +34,11 @@ class SectionPrompt(Prompt):
 
         sy = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
         sp = f"{SECTION_PROMPT}\n<" + "\n".join([f'({a})' for a in articles]) + ">"
+
+
+        print(inspect.cleandoc(str(sy)))
+        for a in articles:
+            print(len(a))
 
         return sy, sp
 

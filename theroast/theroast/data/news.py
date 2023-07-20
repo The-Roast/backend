@@ -2,6 +2,7 @@ from datetime import date
 from newsapi import NewsApiClient, newsapi_exception
 from ...config import NEWS_API_KEY
 import json
+from newspaper import Article
 import os
 
 SOURCES = json.load(open(os.getcwd() + "/theroast/theroast/data/sources.json", "r"))
@@ -17,10 +18,30 @@ def extract_headlines(articles):
 def process_articles(articles):
 
     '''Method for processing articles into a dictionary corresponding headlines to content'''
-    print(articles)
+
     assert articles
 
-    return [a["content"] for a in articles["articles"]]
+    content = []
+    for article in articles["articles"]:
+        url = article["url"]
+        try:
+            _article: Article = Article(url=url, language='en')
+            _article.download()
+            _article.parse()
+            content.append({
+                "title": str(_article.title),
+                "text": str(_article.text),
+                "authors": _article.authors,
+                "published_date": str(_article.publish_date),
+                "top_image": str(_article.top_image),
+                "videos": _article.movies,
+                "keywords": _article.keywords,
+                "summary": str(_article.summary)
+            })
+        except Exception as e:
+            content.append(None)
+
+    return content
 
 def extract_articles(articles, section):
 

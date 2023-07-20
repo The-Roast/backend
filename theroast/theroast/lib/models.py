@@ -3,10 +3,12 @@ from theroast.theroast.lib.extensions import MODELS, NEWS
 from theroast.theroast.data.news import NewsScraper, process_articles
 from theroast.theroast.lib.reqs import section_request, collate_request
 from theroast.theroast.lib.batch import extract_and_cluster
+from theroast.theroast.lib.utils import construct_newsletter_html
 
 def get_news(interests, sources):
     news = NEWS.get_everything(q = " OR ".join(interests), sources = sources)
-    return news
+    articles = process_articles(news)
+    return news, articles
 
 def parse_markdown(sections, clusters, article__url):
 
@@ -23,14 +25,19 @@ def parse_markdown(sections, clusters, article__url):
     
     return parsed
 
-def generate_newsletter(news, interests, personality, ag = "gpt"):
+def generate_newsletter(news, articles, interests, personality, ag = "gpt"):
 
-    articles = [a["content"] for a in news["articles"]]
-    article__url = {a["content"]: [a["url"], a["source"]["name"]] for a in news["articles"]}
-    clusters = extract_and_cluster(articles, ",".join(interests), target = 30)
+    art_ctnt = []
+    art_url = {}
+    for i, article in enumerate(articles):
+        if not article:
+            continue
+        art_ctnt.append(article["text"])
+        art_url[article["text"]] = [news["articles"][i]["url"], news["articles"][i]["source"]["name"]]
+    clusters = extract_and_cluster(art_ctnt, ",".join(interests), target = 30)
     sections, cc, structure = run_openai(clusters, personality) if ag == "gpt" \
                                 else run_anthropic(clusters, personality)
-    sections = parse_markdown(sections, cc, article__url)
+    sections = parse_markdown(sections, cc, art_url)
 
     return sections, structure
 
@@ -47,10 +54,8 @@ def run_openai(clusters, personality):
     coll = collate_request(MODELS["gpt"], sects, personality)
     return sects, cc, coll
 
-news = get_news(["sneakers"], [])
-sections, structure = generate_newsletter(news, ["sneakers"], "serious")
+# news, articles = get_news(["politics"], [])
+# sections, structure = generate_newsletter(news, articles, ["politics"], "serious", "gpt")
+# structure["sections"] = sections
 
-for sect in sections:
-    print(sect)
-
-print(structure)
+# construct_newsletter_html(structure)
