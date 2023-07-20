@@ -4,7 +4,7 @@ from langchain.schema import (
     SystemMessage
 )
 import json
-from theroast.theroast.lib.prompts import collate, section
+from theroast.lib.ai.prompts import collate, section
 
 def section_request(ag, sections, personality):
 
