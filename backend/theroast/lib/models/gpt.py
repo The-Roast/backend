@@ -20,5 +20,5 @@ class GPT(MLBase):
 gpt: GPT = GPT({
     "temperature": 0.5,
     "max_tokens": 2048,
-    "model": "claude-2"
+    "model": "gpt-3.5-turbo-16k"
 })
