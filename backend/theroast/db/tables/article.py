@@ -22,6 +22,7 @@ class Article(Base):
     authors: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("authors", index=True)
     title: so.Mapped[Optional[str]] = so.mapped_column("title")
     content: so.Mapped[str] = so.mapped_column("content")
+    keywords: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("keywords", index=True)
     url: so.Mapped[str] = so.mapped_column("url", index=True)
 
     published_at: so.Mapped[datetime] = so.mapped_column("published_at")

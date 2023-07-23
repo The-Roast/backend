@@ -1,5 +1,6 @@
 from typing import Optional, List
 from newspaper import Article, Source, news_pool
+from ....db.base import Digest
 
 class URLSource(Source):
     def __init__(self, url):
@@ -29,11 +30,12 @@ class NewsContent():
                 "content": article.text,
                 "authors": article.authors,
                 "published_at": article.publish_date,
-                "url": article.url
+                "url": article.url,
+                "keywords": article.keywords
             })
         return articles
 
-    def get_content(self, urls):
+    def get_content(self, urls: List[str]):
         self._build_sources(urls)
         articles = self._process()
         return articles
