@@ -1,62 +1,54 @@
-import os
-import json
+from typing import Callable, Optional
 from datetime import date
-from newsapi import NewsApiClient, NewsAPIException
-from ...config import NEWS_API_KEY
+from newsapi import NewsApiClient, newsapi_exception
+from theroast.db.base import Digest
+from theroast.config import api_config
 
-class NewsScraper:
-    '''Wrapper class for scraping news using NewsAPI'''
-    
+MAX_TRIES = 3
+EXCLUDE_DOMAINS = "google.com"
+LANGUAGE = "en"
+
+class NewsSources:    
     def __init__(self):
-        if not NEWS_API_KEY:
-            raise ValueError("NEWS_API_KEY not set")
-        
-        self.cli = NewsApiClient(NEWS_API_KEY)
+        """
+        Source object with default methods for Getting Data.
+        """
+        if not api_config.NEWS_API_KEY: raise ValueError("NEWS_API_KEY not set")
+        self.cli: NewsApiClient = NewsApiClient(api_config.NEWS_API_KEY)
 
-    def _get_data(self, query, sources, method, **kwargs):
-        if not self.cli:
-            raise ValueError("NewsApiClient not initialized")
-        
-        if not query:
-            raise ValueError("Query not specified")
-
-        sources = [SOURCES[s.lower()] for s in sources]
+    def _get_data(self, digest: Digest, method: Callable, **kwargs):
+        if not self.cli: raise ValueError("NewsApiClient not initialized")
+        if not digest.interests: raise ValueError("Interests not specified")
+        interests = " OR ".join(digest.interests)
+        sources = ",".join(digest.sources)
         for _ in range(MAX_TRIES):
             try:
-                return method(
-                    q=query,
-                    sources=",".join(sources) if sources else None,
-                    exclude_domains="google.com",
-                    language="en",
-                    sort_by="relevancy",
-                    **kwargs,
-                )
-            except NewsAPIException as e:
-                print(e)
-        return {}
+                return method(q=interests, sources=sources, **kwargs)
+            except newsapi_exception.NewsAPIException as error:
+                print(error)
+        return None
 
-    def get_everything(self, query, sources):
-        '''Method for getting all news articles with a specific query'''
+    def get_sources(self, language: Optional[str]=LANGUAGE, **kwargs):
+        if not self.cli: raise ValueError("NewsApiClient not initialized")
+        return self.cli.get_sources(language=language, **kwargs)
+
+    def get_all(self, digest: Digest):
+        if not digest: raise ValueError("Digest not specified")
         today = date.today()
         return self._get_data(
-            query,
-            sources,
+            digest,
             self.cli.get_everything,
-            from_param=f"{today.year:04}-{today.month:02}-{(today.day-2):02}"
+            from_param=f"{today.year:04}-{today.month:02}-{(today.day-2):02}",
+            exclude_domains=EXCLUDE_DOMAINS
         )
 
-    def get_category(self, query, category):
-        '''Method for getting all news articles with a specific query and category'''
-        if not category:
-            raise ValueError("Category not specified")
-            
-        return self._get_data(query, category, self.cli.get_top_headlines, category=category, country="us")
-
-def extract_headlines(articles):
-    '''Method for extracting descriptions in a format ready for LLM'''
-    if not articles:
-        raise ValueError("No articles provided")
-    return list(articles.keys())
+    def get_top(self, digest: Digest):
+        if not digest: raise ValueError("Digest not specified")
+        return self._get_data(
+            digest,
+            self.cli.get_top_headlines,
+            country="us"
+        )
 
 def process_articles(articles):
     '''Method for processing articles into a dictionary corresponding headlines to content'''
