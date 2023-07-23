@@ -1,14 +1,11 @@
 from typing import Callable, Optional
 from datetime import date
 from newsapi import NewsApiClient, newsapi_exception
+import newspaper
 from theroast.db.base import Digest
 from theroast.config import api_config
 
-MAX_TRIES = 3
-EXCLUDE_DOMAINS = "google.com"
-LANGUAGE = "en"
-
-class NewsSources:    
+class NewsSources():
     def __init__(self):
         """
         Source object with default methods for Getting Data.
@@ -16,7 +13,7 @@ class NewsSources:
         if not api_config.NEWS_API_KEY: raise ValueError("NEWS_API_KEY not set")
         self.cli: NewsApiClient = NewsApiClient(api_config.NEWS_API_KEY)
 
-    def _get_data(self, digest: Digest, method: Callable, **kwargs):
+    def _get_newsapi(self, digest: Digest, method: Callable, **kwargs):
         if not self.cli: raise ValueError("NewsApiClient not initialized")
         if not digest.interests: raise ValueError("Interests not specified")
         interests = " OR ".join(digest.interests)
@@ -35,7 +32,7 @@ class NewsSources:
     def get_all(self, digest: Digest):
         if not digest: raise ValueError("Digest not specified")
         today = date.today()
-        return self._get_data(
+        return self._get_newsapi(
             digest,
             self.cli.get_everything,
             from_param=f"{today.year:04}-{today.month:02}-{(today.day-2):02}",
@@ -44,24 +41,8 @@ class NewsSources:
 
     def get_top(self, digest: Digest):
         if not digest: raise ValueError("Digest not specified")
-        return self._get_data(
+        return self._get_newsapi(
             digest,
             self.cli.get_top_headlines,
             country="us"
         )
-
-def process_articles(articles):
-    '''Method for processing articles into a dictionary corresponding headlines to content'''
-    if not articles or "articles" not in articles:
-        raise ValueError("Invalid articles data")
-    return {a["title"]: a["content"] for a in articles["articles"]}
-
-def extract_articles(articles, section):
-    '''Method for extracting articles based on corresponding id numbers'''
-    if not articles or "articles" not in articles:
-        raise ValueError("Invalid articles data")
-
-    content = {}
-    for key, value in section.items():
-        content[key] = [articles["articles"][i] for i in value]
-    return content

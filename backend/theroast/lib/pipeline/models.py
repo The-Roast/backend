@@ -1,8 +1,8 @@
 import markdown
-from theroast.lib.extensions import ant, gpt
+from theroast.lib.models import ant, gpt
 from theroast.lib.sources.news import NewsScraper, process_articles
-from theroast.lib.reqs import section_request, collate_request
-from theroast.lib.batch import extract_and_cluster
+from backend.theroast.lib.pipeline.reqs import section_request, collate_request
+from backend.theroast.lib.pipeline.batch import extract_and_cluster
 
 def create_newsletter(ag, interests, sources, personality):
     ns = NewsScraper()

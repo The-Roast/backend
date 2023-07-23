@@ -4,6 +4,7 @@ from datetime import datetime
 
 import sqlalchemy.orm as so
 import sqlalchemy.types as st
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
 
@@ -18,7 +19,7 @@ class Article(Base):
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary="newsletter_article", back_populates="articles")
 
     source: so.Mapped[Optional[str]] = so.mapped_column("source", index=True)
-    author: so.Mapped[Optional[str]] = so.mapped_column("author", index=True)
+    authors: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("authors", index=True)
     title: so.Mapped[Optional[str]] = so.mapped_column("title")
     content: so.Mapped[str] = so.mapped_column("content")
     url: so.Mapped[str] = so.mapped_column("url", index=True)
