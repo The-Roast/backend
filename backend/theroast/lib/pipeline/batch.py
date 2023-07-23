@@ -7,7 +7,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from ..models import COHERE, ST_ENCODER
 
-def cluster(embeddings, n_neighbors=5, n_components=50, min_cluster_size=2, random_state=None):
+def cluster(
+        embeddings,
+        n_neighbors=5,
+        n_components=50,
+        min_cluster_size=2,
+        random_state=None
+    ):
     _embeddings = umap.UMAP(
         n_neighbors=n_neighbors,
         n_components=n_components, 
@@ -48,7 +54,12 @@ def rank_clusters(clusters, rankings):
 def filter_by_rank(clusters, threshold=0):
     return [cluster for cluster in clusters if cluster[1] > threshold]
 
-def extract(cluster_articles, article_embeddings, proportion, floor=0.75):
+def extract(
+        cluster_articles,
+        article_embeddings,
+        proportion,
+        floor=0.75
+    ):
     output = {}
     for cluster, articles in cluster_articles.items():
         _extracted_articles = []
