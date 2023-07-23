@@ -7,9 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from ..models import COHERE, ST_ENCODER
 
-
 def cluster(embeddings, n_neighbors=5, n_components=50, min_cluster_size=2, random_state=None):
-    """Cluster the embeddings using UMAP and HDBSCAN."""
     _embeddings = umap.UMAP(
         n_neighbors=n_neighbors,
         n_components=n_components, 
@@ -23,30 +21,21 @@ def cluster(embeddings, n_neighbors=5, n_components=50, min_cluster_size=2, rand
     ).fit(_embeddings)
     return clusters
 
-
 def parse_clusters(labels, articles):
-    """Group articles into clusters based on the labels."""
     clusters = defaultdict(list)
     for i, label in enumerate(labels):
         clusters[label].append(articles[i])
-    
     return clusters
 
-
 def parse_rankings(rankings):
-    """Parse rankings into a dictionary with text as keys and relevance_score as values."""
     output = {ranking.document['text']: ranking.relevance_score for ranking in rankings}
     return output
 
-
 def rerank(articles, q):
-    """Rerank the articles using the specified model."""
     rankings = COHERE.rerank(query=q, model="rerank-english-v2.0", documents=articles)
     return rankings
 
-
 def rank_clusters(clusters, rankings):
-    """Rank clusters based on the average relevance score of its articles."""
     output = []
     for cluster, articles in clusters.items():
         vbr = [(article, rankings[article]) for article in articles]
@@ -56,10 +45,8 @@ def rank_clusters(clusters, rankings):
     output.sort(key=lambda x: x[1], reverse=True)
     return output
 
-
 def filter_by_rank(clusters, threshold=0):
     return [cluster for cluster in clusters if cluster[1] > threshold]
-
 
 def extract(cluster_articles, article_embeddings, proportion, floor=0.75):
     output = {}
@@ -74,7 +61,6 @@ def extract(cluster_articles, article_embeddings, proportion, floor=0.75):
             _extracted_articles = _extracted_articles[:math.ceil(len(articles) * proportion)]
         output[cluster] = _extracted_articles
     return output
-
 
 def extract_and_cluster(articles, q, target=20):
     embeddings = ST_ENCODER.encode(articles)    
