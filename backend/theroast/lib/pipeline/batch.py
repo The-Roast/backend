@@ -3,7 +3,7 @@ import math
 import umap
 import hdbscan
 from sklearn.metrics.pairwise import cosine_similarity
-from .extensions import co, st
+from ..models import co, st
 
 def cluster(embeddings, n_neighbors = 5, n_components = 50, min_cluster_size = 2, random_state = None):
 
