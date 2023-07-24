@@ -4,57 +4,59 @@ from langchain.schema import (
     SystemMessage
 )
 import json
-from theroast.lib.ai.prompts import collate, section
+from ..prompts import CollatePrompt, SectionPrompt
 
-def section_request(ag, sections, personality):
+def _predict_message(ag, system_content: str, human_content: str) -> dict:
+    """
+    Predict and parse a message given system and human content.
 
-    clusters = []
-    sects = []
-    for k, v in sections.items():
-        
-        sm, sp = section.SectionPrompt().create_prompt(v, personality)
-        is_valid = False
-        sect = {}
-        while not is_valid:
-            section__raw: AIMessage = ag.predict_messages([
-                SystemMessage(content = sm),
-                HumanMessage(content = sp)
-            ])
-            try:
-                sect = json.loads(section__raw.content)
-                is_valid = True
-            except json.JSONDecodeError:
-                print(section__raw.content)
-                continue
-        sects.append(sect)
-        clusters.append(v)
-
-    return sects, clusters
-
-def collate_request(ag, sections, personality):
-
-    sm, cp = collate.CollatePrompt().create_prompt(sections, personality)
-
+    :param ag: Agent used for prediction
+    :param system_content: Content of system message
+    :param human_content: Content of human message
+    :return: The predicted message as a dictionary
+    """
     is_valid = False
-    coll = {}
+    result = {}
     while not is_valid:
-        collate__raw: AIMessage = ag.predict_messages([
-            SystemMessage(content = sm),
-            HumanMessage(content = cp)
+        str_message: AIMessage = ag.predict_messages([
+            SystemMessage(content = system_content),
+            HumanMessage(content = human_content)
         ])
+
         try:
-            coll = json.loads(collate__raw.content)
+            result = json.loads(str_message.content)
             is_valid = True
         except json.JSONDecodeError:
-            print(collate__raw.content)
+            print(f"Error parsing message: {str_message.content}")
             continue
+    return result
 
-    return coll
+def section(ag, sections, personality):
+    """
+    Create section based on the sections dictionary and personality.
 
-# def chat_request(articles, query):
+    :param ag: Agent used for prediction
+    :param sections: Dictionary of sections
+    :param personality: The personality for the prompt creation
+    :return: A tuple of sections and clusters
+    """
+    clusters = []
+    _sections = []
+    for k, v in sections.items():
+        sm, sp = SectionPrompt().create_prompt(v, personality)
+        dict_sect = _predict_message(ag, sm, sp)
+        _sections.append(dict_sect)
+        clusters.append(v)
+    return _sections, clusters
 
-#     ant.predict_messages([
-#         SystemMessage(content = json.loads(articles)),
-#         SystemMessage(content = "),
-        
-#     ])
+def collate(ag, sections, personality):
+    """
+    Collate sections based on the sections dictionary and personality.
+
+    :param ag: Agent used for prediction
+    :param sections: Dictionary of sections
+    :param personality: The personality for the prompt creation
+    :return: A dictionary of collated sections
+    """
+    sm, cp = CollatePrompt().create_prompt(sections, personality)
+    return _predict_message(ag, sm, cp)
