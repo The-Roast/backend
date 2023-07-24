@@ -1,5 +1,5 @@
 from typing import Optional, List
-from uuid import uuid4
+from uuid import uuid4, UUID
 from datetime import datetime
 
 import sqlalchemy.orm as so
@@ -14,7 +14,7 @@ class Article(Base):
 
     __tablename__ = "article"
 
-    uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
+    uuid: so.Mapped[UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary="newsletter_article", back_populates="articles")
 

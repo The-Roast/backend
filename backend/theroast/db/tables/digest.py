@@ -33,7 +33,7 @@ class Digest(Base):
     uuid: so.Mapped[UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
     user: so.Mapped["User"] = so.relationship(back_populates="digests")
-    user_uuid: so.Mapped[st.UUID] = ss.Column("user_uuid", ss.ForeignKey("user.uuid"))
+    user_uuid: so.Mapped[UUID] = ss.Column("user_uuid", ss.ForeignKey("user.uuid"))
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
     name: so.Mapped[Optional[str]] = so.mapped_column("name")
