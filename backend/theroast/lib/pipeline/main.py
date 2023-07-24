@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 import markdown
 from ..models import CLAUDE, GPT
 from ..sources.news import NewsSource 
@@ -19,29 +19,30 @@ def scrape_articles(digest: Digest) -> List[Dict[str, Any]]:
     articles = NEWS.get_all(q=query, sources=digest.sources)
     return articles
 
-def parse_markdown(sections, clusters, article_urls):
+def parse_markdown(sections: List[dict], clusters: List[str], urls: Dict[str, List[str]]) -> List[dict]:
     html_sects = []
     for i, cluster in enumerate(clusters):
         sect_cntnt = sections[i]
+        if not sect_cntnt:
+            continue
         for j, article in enumerate(cluster):
             sect_cntnt["body"] = markdown.markdown(sect_cntnt["body"].replace(
                 f"[{j}]",
-                f'<a href={article_urls[article][0]}>({article_urls[article][1]})</a>'
+                f'<a href={urls[article][0]}>({urls[article][1]})</a>'
             ))
         html_sects.append(sect_cntnt)
     return html_sects
 
-def run_model(agent: BaseChatModel, clusters, digest: Digest):
-    """Runs the model to generate sections and collate requests"""
-    sects, cc = section(agent, clusters, digest.personality)
-    coll = collate(agent, sects, digest.personality)
-    return sects, cc, coll
+def run_model(agent: BaseChatModel, clusters: List[List[str]], digest: Digest) -> Tuple[List[dict], dict]:
+    sections = section(agent, clusters, digest.personality)
+    structure = collate(agent, sections, digest.personality)
+    return sections, structure
 
 def generate_newsletter(
         articles: Optional[List[Dict[str, Any]]],
         digest: Digest,
         agent: str = "GPT"
-    ):
+    ) -> Tuple[List[dict], dict]:
     if not articles:
         articles = scrape_articles(digest)
     content = []
@@ -52,6 +53,6 @@ def generate_newsletter(
         content.append(article["content"])
         article_url[article["content"]] = [article["url"], article["source"]["name"]]
     clusters = batch(content, ",".join(digest.sources), target=30)
-    sections, clusters, structure = run_model(MODELS[agent], clusters, digest.personality)
-    sections = parse_markdown(sections, clusters, article_url)
+    sections, structure = run_model(MODELS[agent], clusters, digest.personality)
+    sections = parse_markdown(sections, list(clusters.values()), article_url)
     return sections, structure

@@ -24,7 +24,6 @@ def _predict_message(ag: BaseChatModel, system_content: str, human_content: str)
             SystemMessage(content = system_content),
             HumanMessage(content = human_content)
         ])
-
         try:
             result = json.loads(str_message.content)
             is_valid = True
@@ -33,23 +32,21 @@ def _predict_message(ag: BaseChatModel, system_content: str, human_content: str)
             continue
     return result
 
-def section(ag: BaseChatModel, sections: Dict[int, List[str]], personality: str) -> Tuple[List[dict], List[List[str]]]:
+def section(ag: BaseChatModel, clusters: Dict[int, List[str]], personality: str) -> List[dict]:
     """
     Create section based on the sections dictionary and personality.
 
     :param ag: Agent used for prediction
-    :param sections: Dictionary of sections
+    :param clusters: Dictionary of clusters
     :param personality: The personality for the prompt creation
     :return: A tuple of sections and clusters
     """
-    clusters = []
-    _sections = []
-    for k, v in sections.items():
+    sections = []
+    for k, v in clusters.items():
         sm, sp = SectionPrompt().create_prompt(v, personality)
         dict_sect = _predict_message(ag, sm, sp)
-        _sections.append(dict_sect)
-        clusters.append(v)
-    return _sections, clusters
+        sections.append(dict_sect)
+    return sections
 
 def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
     """
