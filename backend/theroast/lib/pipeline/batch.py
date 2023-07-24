@@ -1,65 +1,112 @@
+from typing import Optional, List, Dict, Any
 import math
 from collections import defaultdict
+import numpy as np
 
-import hdbscan
-import umap
+from hdbscan import HDBSCAN
+from umap import UMAP
 from sklearn.metrics.pairwise import cosine_similarity
+from cohere.client import Reranking
 
 from ..models import COHERE, ST_ENCODER
 
-def cluster(
-        embeddings,
-        n_neighbors=5,
-        n_components=50,
-        min_cluster_size=2,
-        random_state=None
-    ):
-    _embeddings = umap.UMAP(
-        n_neighbors=n_neighbors,
-        n_components=n_components, 
-        metric='cosine', 
-        random_state=random_state
-    ).fit_transform(embeddings)
-    clusters = hdbscan.HDBSCAN(
-        min_cluster_size=min_cluster_size,
-        metric='euclidean', 
-        cluster_selection_method='eom'
-    ).fit(_embeddings)
-    return clusters
 
-def parse_clusters(labels, articles):
+def _parse_clusters(labels: List[int], articles: List[str]) -> Dict[int, List[str]]:
+    """
+    Parse clusters from labels and articles.
+
+    :param labels: List of labels
+    :param articles: List of articles
+    :return: A dictionary of clusters
+    """
+    if len(labels) != len(articles):
+        raise ValueError("Labels and Articles should have same length")
     clusters = defaultdict(list)
-    for i, label in enumerate(labels):
-        clusters[label].append(articles[i])
+    for label, article in zip(labels, articles):
+        clusters[label].append(article)
+    clusters.pop(-1, None)
     return clusters
 
-def parse_rankings(rankings):
-    output = {ranking.document['text']: ranking.relevance_score for ranking in rankings}
+def _parse_rankings(rankings: Reranking) -> Dict[str, float]:
+    """
+    Parse rankings from a list.
+
+    :param rankings: List of rankings
+    :return: A dictionary of rankings
+    """
+    output = {}
+    for ranking in rankings:
+        if 'text' in ranking.document and 'relevance_score' in ranking:
+            output[ranking.document['text']] = ranking.relevance_score
+            continue
+        raise KeyError("Key not found in ranking or document")
     return output
 
-def rerank(articles, q):
-    rankings = COHERE.rerank(query=q, model="rerank-english-v2.0", documents=articles)
-    return rankings
 
-def rank_clusters(clusters, rankings):
+def _cluster(
+        embeddings: Any,
+        n_neighbors: int = 15,
+        n_components: int = 5,
+        min_cluster_size: int = 3,
+        random_state: int = 42
+    ) -> HDBSCAN:
+    """
+    Cluster the embeddings.
+
+    :param embeddings: Article embeddings
+    :param n_neighbors: Number of neighbors to consider
+    :param n_components: Number of components to keep
+    :param min_cluster_size: Minimum cluster size
+    :param random_state: Random state for reproducibility
+    :return: Clusters
+    """
+    _embeddings = UMAP(n_neighbors=n_neighbors, n_components=n_components, metric='cosine', random_state=random_state).fit_transform(embeddings)
+    return HDBSCAN(min_cluster_size=min_cluster_size).fit(_embeddings)
+
+
+def _rank(articles: List[str], query: str) -> Reranking:
+    """
+    Rank the clusters based on their average score.
+
+    :param clusters: Dictionary of clusters
+    :param rankings: Dictionary of rankings
+    :return: List of tuples containing articles and their average score
+    """
+    return COHERE.rerank(query=query, model="rerank-english-v2.0", documents=articles)
+
+
+def _rank_clusters(clusters: Dict[int, List[str]], rankings: Dict[str, float]) -> List[tuple]:
+    """
+    Rank the clusters based on their average score.
+
+    :param clusters: Dictionary of clusters
+    :param rankings: Dictionary of rankings
+    :return: List of tuples containing articles and their average score
+    """
     output = []
     for cluster, articles in clusters.items():
-        vbr = [(article, rankings[article]) for article in articles]
-        vbr.sort(key=lambda x: x[1], reverse=True)
-        average_score = sum(score for _, score in vbr) / len(vbr)
-        output.append(([article for article, _ in vbr], average_score))
-    output.sort(key=lambda x: x[1], reverse=True)
-    return output
+        article_scores = [(article, rankings.get(article, 0)) for article in articles]
+        article_scores.sort(key=lambda x: x[1], reverse=True)
+        average_score = np.mean([score for _, score in article_scores])
+        output.append(([article for article, _ in article_scores], average_score))
+    return sorted(output, key=lambda x: x[1], reverse=True)
 
-def filter_by_rank(clusters, threshold=0):
-    return [cluster for cluster in clusters if cluster[1] > threshold]
 
-def extract(
-        cluster_articles,
-        article_embeddings,
-        proportion,
-        floor=0.75
-    ):
+def _extract(
+        cluster_articles: Dict[int, List[str]],
+        article_embeddings: Dict[str, Any],
+        proportion: float,
+        floor: float = 0.75
+    ) -> Dict[int, List[str]]:
+    """
+    Extract the articles that are most relevant based on cosine similarity.
+
+    :param cluster_articles: Dictionary containing cluster id and corresponding articles
+    :param article_embeddings: Dictionary containing article and its corresponding embedding
+    :param proportion: Proportion of articles to retain
+    :param floor: Threshold for cosine similarity
+    :return: Dictionary of articles after extraction
+    """
     output = {}
     for cluster, articles in cluster_articles.items():
         _extracted_articles = []
@@ -73,23 +120,33 @@ def extract(
         output[cluster] = _extracted_articles
     return output
 
-def extract_and_cluster(articles, q, target=20):
-    embeddings = ST_ENCODER.encode(articles)    
+
+def batch(
+        articles: List[str],
+        query: str,
+        target: int = 20,
+        threshold: float = 0.0
+    ) -> Dict[int, List[str]]:
+    """
+    Batch process the articles to obtain the most relevant articles based on a query.
+
+    :param articles: List of articles
+    :param query: Query for ranking
+    :param target: Target number of articles to retain
+    :param threshold: Threshold for relevance score
+    :return: Dictionary of final selected articles
+    """
+    embeddings = ST_ENCODER.encode(articles)
     article_embedding = {article: embeddings[i] for i, article in enumerate(articles)}
-    clusters = cluster(
-        embeddings, 
-        n_neighbors=15, 
-        n_components=5,
-        min_cluster_size=3, 
-        random_state=42
-    )
-    cluster_articles = parse_clusters(clusters.labels_, articles)
-    if -1 in cluster_articles.keys():
-        del cluster_articles[-1]
-    rankings = rerank(articles, q)
-    article_ranking = parse_rankings(rankings)
-    cbr = rank_clusters(cluster_articles, article_ranking)
-    cbr = filter_by_rank(cbr)
-    extraction_proportion = target / sum(len(c[0]) for c in cbr)
-    output = extract(cluster_articles, article_embedding, proportion=extraction_proportion)
-    return output
+    
+    clusters = _cluster(embeddings).labels_
+    cluster_articles = _parse_clusters(clusters, articles)
+    
+    rankings = _rank(articles, query)
+    article_ranking = _parse_rankings(rankings)
+    
+    clusters_by_rank = _rank_clusters(cluster_articles, article_ranking)
+    clusters_by_rank = [cluster for cluster in clusters_by_rank if cluster[1] > threshold]
+    
+    extraction_proportion = target / sum(len(cluster[0]) for cluster in clusters_by_rank)
+    return _extract(cluster_articles, article_embedding, proportion=extraction_proportion)
