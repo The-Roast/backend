@@ -3,10 +3,12 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
+from langchain.chat_models.base import BaseChatModel
+from typing import Dict, List, Tuple
 import json
 from ..prompts import CollatePrompt, SectionPrompt
 
-def _predict_message(ag, system_content: str, human_content: str) -> dict:
+def _predict_message(ag: BaseChatModel, system_content: str, human_content: str) -> dict:
     """
     Predict and parse a message given system and human content.
 
@@ -31,7 +33,7 @@ def _predict_message(ag, system_content: str, human_content: str) -> dict:
             continue
     return result
 
-def section(ag, sections, personality):
+def section(ag: BaseChatModel, sections: Dict[int, List[str]], personality: str) -> Tuple[List[dict], List[List[str]]]:
     """
     Create section based on the sections dictionary and personality.
 
@@ -49,7 +51,7 @@ def section(ag, sections, personality):
         clusters.append(v)
     return _sections, clusters
 
-def collate(ag, sections, personality):
+def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
     """
     Collate sections based on the sections dictionary and personality.
 
