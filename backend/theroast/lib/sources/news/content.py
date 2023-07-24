@@ -18,7 +18,7 @@ class NewsContent():
         news_pool.set(self.sources, threads)
         news_pool.join()
 
-    def _process(self):
+    def _process(self) -> List[dict]:
         if not self.sources: raise ValueError("Sources not initialized")
         articles = []
         for source in self.sources:
@@ -35,7 +35,6 @@ class NewsContent():
             })
         return articles
 
-    def get_content(self, urls: List[str]):
+    def get_content(self, urls: List[str]) -> List[dict]:
         self._build_sources(urls)
-        articles = self._process()
-        return articles
+        return self._process()

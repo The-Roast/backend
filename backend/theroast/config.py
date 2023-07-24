@@ -97,10 +97,10 @@ class APISettings(BaseSettings):
 
     '''Settings class for defining all API settings (e.g. keys)'''
 
-    NEWS_API_KEY: str
-    OPENAI_API_KEY: str
-    COHERE_API_KEY: str
-    ANTHROPIC_API_KEY: str
+    NEWS_API_KEY: str = "0c28d76ea1d44bd9a016683b50895718"
+    OPENAI_API_KEY: str = "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"
+    COHERE_API_KEY: str = "tcy8zG96y7hA4Tk0W4VK4GK9OQkkBLdg7qNpS5MY"
+    ANTHROPIC_API_KEY: str = "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"
 
     class Config:
 
@@ -109,5 +109,5 @@ class APISettings(BaseSettings):
         case_sensitive = True
         env_file = ".env"
 
-server_config = ServerSettings()
+# server_config = ServerSettings()
 api_config = APISettings()

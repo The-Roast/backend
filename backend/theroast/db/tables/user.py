@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from uuid import uuid4
+from uuid import uuid4, UUID
 from datetime import datetime
 import sqlalchemy.orm as so
 import sqlalchemy.types as st
@@ -13,7 +13,7 @@ class User(Base):
 
     __tablename__ = "user"
 
-    uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
+    uuid: so.Mapped[UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
     digests: so.Mapped[List["Digest"]] = so.relationship(back_populates="user", cascade = "all, delete, delete-orphan")
 

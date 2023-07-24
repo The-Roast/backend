@@ -4,7 +4,7 @@ from langchain.schema import (
     SystemMessage
 )
 from langchain.chat_models.base import BaseChatModel
-from typing import Dict, List, Tuple
+from typing import Dict, List
 import json
 from ..prompts import CollatePrompt, SectionPrompt
 

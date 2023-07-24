@@ -1,4 +1,4 @@
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 import math
 from collections import defaultdict
 import numpy as np

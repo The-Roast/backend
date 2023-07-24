@@ -1,5 +1,5 @@
 from typing import Optional, List
-from uuid import uuid4
+from uuid import uuid4, UUID
 from datetime import datetime
 import random
 
@@ -30,16 +30,16 @@ class Digest(Base):
 
     __tablename__ = "digest"
 
-    uuid: so.Mapped[st.UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
+    uuid: so.Mapped[UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
     user: so.Mapped["User"] = so.relationship(back_populates="digests")
     user_uuid: so.Mapped[st.UUID] = ss.Column("user_uuid", ss.ForeignKey("user.uuid"))
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
     name: so.Mapped[Optional[str]] = so.mapped_column("name")
-    interests: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("interests")
-    sources: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("sources")
-    personality: so.Mapped[Optional[str]] = so.mapped_column("personality")
+    interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", default=list)
+    sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", default=list)
+    personality: so.Mapped[str] = so.mapped_column("personality", default=str)
     color: so.Mapped[st.String(7)] = so.mapped_column("color", default=create_color)
 
     is_enabled: so.Mapped[bool] = so.mapped_column("is_enabled", index=True, default=True)
