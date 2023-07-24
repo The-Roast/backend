@@ -9,7 +9,6 @@ import sqlalchemy.types as st
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
-from theroast.db.tables import BLANK
 
 def create_color(color=None):
 
@@ -36,7 +35,7 @@ class Digest(Base):
     user_uuid: so.Mapped[UUID] = ss.Column("user_uuid", ss.ForeignKey("user.uuid"))
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
-    name: so.Mapped[Optional[str]] = so.mapped_column("name")
+    name: so.Mapped[str] = so.mapped_column("name", default=str)
     interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", default=list)
     sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", default=list)
     personality: so.Mapped[str] = so.mapped_column("personality", default=str)

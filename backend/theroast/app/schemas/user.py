@@ -15,7 +15,6 @@ class UserCreate(UserBase):
     password: str
 
 class UserUpdate(UserBase):
-    uuid: UUID4
     password: Optional[str] = None
 
 class UserInDBBase(UserBase):

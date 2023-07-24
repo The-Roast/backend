@@ -109,5 +109,5 @@ class APISettings(BaseSettings):
         case_sensitive = True
         env_file = ".env"
 
-# server_config = ServerSettings()
+server_config = ServerSettings()
 api_config = APISettings()

@@ -3,7 +3,6 @@ from uuid import uuid4, UUID
 from datetime import datetime
 
 import sqlalchemy.orm as so
-import sqlalchemy.types as st
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
@@ -18,11 +17,11 @@ class Article(Base):
 
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary="newsletter_article", back_populates="articles")
 
-    source: so.Mapped[Optional[str]] = so.mapped_column("source", index=True)
-    authors: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("authors", index=True)
-    title: so.Mapped[Optional[str]] = so.mapped_column("title")
-    content: so.Mapped[str] = so.mapped_column("content")
-    keywords: so.Mapped[Optional[ARRAY(str)]] = so.mapped_column("keywords", index=True)
+    source: so.Mapped[str] = so.mapped_column("source", index=True, default=str)
+    authors: so.Mapped[ARRAY(str)] = so.mapped_column("authors", index=True, default=list)
+    title: so.Mapped[str] = so.mapped_column("title", default=str)
+    content: so.Mapped[str] = so.mapped_column("content", default=str)
+    keywords: so.Mapped[ARRAY(str)] = so.mapped_column("keywords", index=True, default=list)
     url: so.Mapped[str] = so.mapped_column("url", index=True)
 
     published_at: so.Mapped[datetime] = so.mapped_column("published_at")
