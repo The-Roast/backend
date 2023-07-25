@@ -5,6 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from pydantic import EmailStr
 from uuid import UUID
+from http import HTTPStatus
 
 from theroast.config import server_config
 from theroast.app import schemas, deps
@@ -17,14 +18,14 @@ def read_user(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
-    current_user: base.User = Depends(deps.get_current_active_user)
+    current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
     user = crud.user.get(db, uuid=uuid)
     if user == current_user:
         return user
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges."
         )
     return user
@@ -36,10 +37,10 @@ def create_user(
     user_in: schemas.UserCreate,
     current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
-    user = crud.user.get(db, user_in.email)
+    user = crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
-            status_code=400,
+            status_code=HTTPStatus.BAD_REQUEST,
             detail="Email already in use."
         )
     user = crud.user.create(db, user_in)
@@ -56,11 +57,35 @@ def update_user(
     user = crud.user.get(db, uuid=uuid)
     if not user:
         raise HTTPException(
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             detail="User not found."
         )
     user = crud.user.update(db, db_obj=user, obj_in=user_in)
     return user
+
+@router.delete("/{uuid}", response_model=schemas.User)
+def delete_user(
+    *,
+    db: Session = Depends(deps.get_db),
+    uuid: UUID,
+    current_user: base.User = Depends(deps.get_current_active_superuser)
+) -> Any:
+    user = crud.user.remove(db, uuid=uuid)
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found."
+        )
+    user = crud.user.remove(db, uuid=uuid)
+    return user
+
+@router.get("/current", response_model=schemas.User)
+def read_current_user(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    return current_user
 
 @router.put("/current", response_model=schemas.User)
 def update_current_user(
@@ -80,11 +105,3 @@ def update_current_user(
     if email is not None: user_in.email = email
     user = crud.user.update(db, db_obj=current_user, obj_in=user_in)
     return user
-
-@router.get("/current", response_model=schemas.User)
-def read_current_user(
-    *,
-    db: Session = Depends(deps.get_db),
-    current_user: base.User = Depends(deps.get_current_active_user)
-) -> Any:
-    return current_user
