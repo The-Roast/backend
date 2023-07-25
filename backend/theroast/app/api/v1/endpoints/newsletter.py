@@ -95,10 +95,9 @@ def update_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
-    newsletter_in: schemas.NewsletterUpdate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = crud.newsletter.get(db, uuid=newsletter_in.uuid)
+    newsletter = crud.newsletter.get(db, uuid=uuid)
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -110,6 +109,7 @@ def update_newsletter(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
+    newsletter_in = schemas.NewsletterCreate(digest_uuid=digest.uuid)
     sections, structure = pipeline.generate_newsletter(digest)
     newsletter_data = pipeline.restructure(sections, structure)
     newsletter = crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
@@ -123,12 +123,13 @@ def delete_newsletter(
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
     newsletter = crud.newsletter.get(db, uuid=uuid)
+    digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Newsletter not found."
         )
-    if not crud.user.is_superuser(current_user) and newsletter.user_uuid != current_user.uuid:
+    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."

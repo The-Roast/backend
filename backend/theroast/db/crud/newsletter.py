@@ -6,9 +6,9 @@ from enum import Enum
 
 from theroast.db.crud.base import CRUDBase
 from theroast.db.tables.newsletter import Newsletter
-from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
+from theroast.app.schemas.newsletter import NewsletterCreate
 
-class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
+class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate]):
 
     def get_multi_by_digest__date(self, db: Session, *, digest_uuid: UUID4, skip: Optional[int], limit: Optional[int]) -> List[Newsletter]:
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
