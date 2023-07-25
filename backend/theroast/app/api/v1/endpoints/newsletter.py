@@ -13,86 +13,86 @@ from theroast.db import base, crud
 
 router = APIRouter()
 
-@router.get("/", response_model=List[schemas.Digest])
-def read_digests(
+@router.get("/", response_model=List[schemas.Newsletter])
+def read_newsletters(
     *,
     db: Session = Depends(deps.get_db),
     skip: int = Body(None),
     limit: int = Body(None),
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digests = crud.digest.get_multi_by_owner(db, user_uuid=current_user.uuid, skip=skip, limit=limit)
-    return digests
+    newsletters = crud.newsletter.get_multi_by_digest__clicks(db, user_uuid=current_user.uuid, skip=skip, limit=limit)
+    return newsletters
 
-@router.get("/{uuid}", response_model=schemas.Digest)
-def read_digest(
+@router.get("/{uuid}", response_model=schemas.Newsletter)
+def read_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = crud.digest.get(db, uuid=uuid)
-    if not digest:
+    newsletter = crud.newsletter.get(db, uuid=uuid)
+    if not newsletter:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail="Digest not found."
+            detail="Newsletter not found."
         )
-    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+    if not crud.user.is_superuser(current_user) and newsletter.user_uuid != current_user.uuid:
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
-            detail="User does not have enough priviledges and does not own digest."
+            detail="User does not have enough priviledges and does not own newsletter."
         )
-    return digest
+    return newsletter
 
-@router.post("/", response_model=schemas.Digest)
-def create_digest(
+@router.post("/", response_model=schemas.Newsletter)
+def create_newsletter(
     *,
     db: Session = Depends(deps.get_db),
-    digest_in: schemas.DigestCreate,
+    newsletter_in: schemas.NewsletterCreate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = crud.digest.create_with_owner(db, obj_in=digest_in, user_uuid=current_user.uuid)
-    return digest
+    newsletter = crud.newsletter.create_with_owner(db, obj_in=newsletter_in, user_uuid=current_user.uuid)
+    return newsletter
 
-@router.put("/{uuid}", response_model=schemas.Digest)
-def update_digest(
-    *,
-    db: Session = Depends(deps.get_db),
-    uuid: UUID,
-    digest_in: schemas.DigestUpdate,
-    current_user: base.User = Depends(deps.get_current_active_user)
-) -> Any:
-    digest = crud.digest.get(db, uuid=uuid)
-    if not digest:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="Digest not found."
-        )
-    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="User does not have enough priviledges and does not own digest."
-        )
-    digest = crud.digest.update(db, db_obj=digest, obj_in=digest_in)
-    return digest
-
-@router.delete("/{uuid}", response_model=schemas.Digest)
-def delete_digest(
+@router.put("/{uuid}", response_model=schemas.Newsletter)
+def update_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
+    newsletter_in: schemas.NewsletterUpdate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = crud.digest.get(db, uuid=uuid)
-    if not digest:
+    newsletter = crud.newsletter.get(db, uuid=uuid)
+    if not newsletter:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            detail="Digest not found."
+            detail="Newsletter not found."
         )
-    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+    if not crud.user.is_superuser(current_user) and newsletter.user_uuid != current_user.uuid:
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
-            detail="User does not have enough priviledges and does not own digest."
+            detail="User does not have enough priviledges and does not own newsletter."
         )
-    digest = crud.digest.remove(db, uuid=uuid)
-    return digest
+    newsletter = crud.newsletter.update(db, db_obj=newsletter, obj_in=newsletter_in)
+    return newsletter
+
+@router.delete("/{uuid}", response_model=schemas.Newsletter)
+def delete_newsletter(
+    *,
+    db: Session = Depends(deps.get_db),
+    uuid: UUID,
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    newsletter = crud.newsletter.get(db, uuid=uuid)
+    if not newsletter:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Newsletter not found."
+        )
+    if not crud.user.is_superuser(current_user) and newsletter.user_uuid != current_user.uuid:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="User does not have enough priviledges and does not own newsletter."
+        )
+    newsletter = crud.newsletter.remove(db, uuid=uuid)
+    return newsletter
