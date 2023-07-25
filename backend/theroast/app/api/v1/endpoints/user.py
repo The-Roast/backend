@@ -21,12 +21,10 @@ def read_user(
     current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
     user = crud.user.get(db, uuid=uuid)
-    if user == current_user:
-        return user
-    if not crud.user.is_superuser(current_user):
+    if not user:
         raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="User does not have enough priviledges."
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="User not found."
         )
     return user
 
@@ -70,10 +68,10 @@ def delete_user(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
-    user = crud.user.remove(db, uuid=uuid)
+    user = crud.user.get(db, uuid=uuid)
     if not user:
         raise HTTPException(
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             detail="User not found."
         )
     user = crud.user.remove(db, uuid=uuid)
