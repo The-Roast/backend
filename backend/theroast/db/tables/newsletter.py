@@ -25,7 +25,7 @@ class Newsletter(Base):
     clicks: so.Mapped[int] = so.mapped_column("clicks", default=int)
     title: so.Mapped[str] = so.mapped_column("title", default=str)
     introduction: so.Mapped[str] = so.mapped_column("introduction", default=str)
-    body: so.Mapped[ARRAY(NestedMutableJson)] = so.mapped_column("body", default=list)
+    body: so.Mapped[ARRAY(NestedMutableJson)] = so.mapped_column("body", ARRAY(NestedMutableJson), default=list)
     conclusion: so.Mapped[str] = so.mapped_column("conclusion", default=str)
     html: so.Mapped[Optional[str]] = so.mapped_column("html")
 

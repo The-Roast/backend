@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Annotated
 from uuid import uuid4, UUID
 from datetime import datetime
 import random
@@ -36,10 +36,10 @@ class Digest(Base):
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
     name: so.Mapped[str] = so.mapped_column("name", default=str)
-    interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", default=list)
-    sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", default=list)
+    interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", ARRAY(str), default=list)
+    sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", ARRAY(str), default=list)
     personality: so.Mapped[str] = so.mapped_column("personality", default=str)
-    color: so.Mapped[st.String(7)] = so.mapped_column("color", default=create_color)
+    color: so.Mapped[Annotated[str, 7]] = so.mapped_column("color", default=create_color)
 
     is_enabled: so.Mapped[bool] = so.mapped_column("is_enabled", index=True, default=True)
 
