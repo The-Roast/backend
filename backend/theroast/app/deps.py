@@ -6,7 +6,7 @@ from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from theroast.db import crud, tables
+from theroast.db import crud, base
 from theroast.app import schemas
 from theroast.core import security
 from theroast.config import server_config
@@ -26,7 +26,7 @@ def get_db() -> Generator:
 
 def get_current_user(
     db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
-) -> tables.User:
+) -> base.User:
     try:
         payload = jwt.decode(
             token, server_config.SECRET_KEY, algorithms=[security.ALGORITHM]
@@ -43,15 +43,15 @@ def get_current_user(
     return user
 
 def get_current_active_user(
-    current_user: tables.User = Depends(get_current_user),
-) -> tables.User:
+    current_user: base.User = Depends(get_current_user),
+) -> base.User:
     if not crud.user.is_active(current_user):
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
 def get_current_active_superuser(
-    current_user: tables.User = Depends(get_current_user),
-) -> tables.User:
+    current_user: base.User = Depends(get_current_user),
+) -> base.User:
     if not crud.user.is_superuser(current_user):
         raise HTTPException(
             status_code=400, detail="The user doesn't have enough privileges"
