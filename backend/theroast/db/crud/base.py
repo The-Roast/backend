@@ -1,4 +1,5 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union, UUID4
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from uuid import UUID
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -23,7 +24,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    def get(self, db: Session, uuid: UUID4) -> Optional[ModelType]:
+    def get(self, db: Session, uuid: UUID) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
         return db.execute(stmt).first()
 
@@ -62,7 +63,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
     
-    def remove(self, db: Session, *, uuid: UUID4) -> ModelType:
+    def remove(self, db: Session, *, uuid: UUID) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid)
         db_obj = db.execute(stmt).first()
         db.commit()

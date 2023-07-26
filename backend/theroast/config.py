@@ -2,9 +2,11 @@
 
 import secrets
 from typing import Any, Dict, List, Optional, Union
+import os
 
 from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
+print("here")
 
 class ServerSettings(BaseSettings):
 
@@ -91,7 +93,7 @@ class ServerSettings(BaseSettings):
         '''Meta class for ServerSettings'''
 
         case_sensitive = True
-        env_file = ".env"
+        env_file = os.path.expanduser("../.env")
 
 class APISettings(BaseSettings):
 
@@ -107,7 +109,7 @@ class APISettings(BaseSettings):
         '''Meta class for APISettings'''
 
         case_sensitive = True
-        env_file = ".env"
+        env_file = os.path.expanduser("../.env")
 
 server_config = ServerSettings()
 api_config = APISettings()
