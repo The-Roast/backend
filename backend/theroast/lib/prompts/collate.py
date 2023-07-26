@@ -1,5 +1,7 @@
-from . import Prompt, SYSTEM_PROMPT
+from . import Prompt
 from textwrap import dedent
+
+SYSTEM_PROMPT = '''You are an unbiased formal newletter writer writing a piece meant to engage the reader and summarize the days content.'''
 
 COLLATE_PROMPT = dedent('''\
     Given the tab-separated list of sections separated by <>, create a title, introduction and conclusion for a newsletter based on the list of sections provided.

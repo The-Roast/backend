@@ -1,10 +1,6 @@
 '''Module defining abstract class Prompt'''
 
 from abc import ABC, abstractmethod
-from .collate import CollatePrompt
-from .section import SectionPrompt
-
-SYSTEM_PROMPT = '''You are an unbiased formal newletter writer writing a piece meant to engage the reader and summarize the days content.'''
 
 class Prompt(ABC):
 

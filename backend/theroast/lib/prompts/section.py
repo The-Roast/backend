@@ -1,6 +1,8 @@
 
 from textwrap import dedent
-from . import Prompt, SYSTEM_PROMPT
+from . import Prompt
+
+SYSTEM_PROMPT = '''You are an unbiased formal newletter writer writing a piece meant to engage the reader and summarize the days content.'''
 
 SECTION_PROMPT = dedent('''\
     Given the list of articles separated by <>, I want you to create a section of a newsletter solely based on the information within the list of articles provided.
