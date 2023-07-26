@@ -6,8 +6,6 @@ import os
 
 from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
 
-print("here")
-
 class ServerSettings(BaseSettings):
 
     '''Settings class compiling properties to use from environment variables'''

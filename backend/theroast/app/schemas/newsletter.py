@@ -12,6 +12,9 @@ class NewsletterBase(BaseModel):
 class NewsletterCreate(NewsletterBase):
     digest_uuid: UUID4
 
+class NewsletterUpdate(NewsletterBase):
+    pass
+
 class NewsletterInDBBase(NewsletterBase):
     model_config = ConfigDict(from_attributes=True)
     uuid: UUID4
