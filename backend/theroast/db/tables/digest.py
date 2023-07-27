@@ -43,6 +43,6 @@ class Digest(Base):
 
     is_enabled: so.Mapped[bool] = so.mapped_column("is_enabled", index=True, default=True)
 
-    created_at: so.Mapped[datetime] = ss.Column("created_at", default=datetime.utcnow)
-    updated_at: so.Mapped[datetime] = ss.Column("updated_at", default=datetime.utcnow, onupdate=datetime.utcnow)
-    deleted_at: so.Mapped[Optional[datetime]] = ss.Column("deleted_at")
+    created_at: so.Mapped[datetime] = so.mapped_column("created_at", default=datetime.utcnow)
+    updated_at: so.Mapped[datetime] = so.mapped_column("updated_at", default=datetime.utcnow, onupdate=datetime.utcnow)
+    deleted_at: so.Mapped[Optional[datetime]] = so.mapped_column("deleted_at")
