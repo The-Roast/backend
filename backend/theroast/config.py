@@ -3,8 +3,11 @@
 import secrets
 from typing import Any, Dict, List, Optional, Union
 import os
+from dotenv import load_dotenv, find_dotenv
 
 from pydantic import AnyHttpUrl, BaseSettings, PostgresDsn, validator
+
+load_dotenv(find_dotenv(".env"))
 
 class ServerSettings(BaseSettings):
 
