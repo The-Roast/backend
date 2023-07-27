@@ -187,12 +187,6 @@ def delete_user():
         "ok": True
     }, 200
 
-# Get Newsletters by Digest -> "GET /digest/<uuid>/newsletters" -> Stipulation argument within digest
-# Create Newsletter By Digest -> "GET /digest/<uuid>/create"
-# Update Newsletter By Digest ->  "PUT /digest/<digest_uuid>/newsletter/<newsletter_uuid>"
-# Get Newsletter By UUID -> "GET /newsletter/<uuid>"
-# Delete Newsletter By UUID -> "DELETE /newsletter/<uuid>"
-
 @core.route("/digest/<uuid>/newsletters", methods = ['GET'])
 @jwt_required()
 def get_digest_history(uuid):
@@ -267,7 +261,24 @@ def regenerate_newsletter(uuid):
     sources = digest.settings["sources"]
     personality = digest.settings["personality"]
 
+    articles = get_news(interests, sources)
+    sections, structure = generate_newsletter(articles, interests, personality)
+    
+    data = structure
+    data["sections"] = sections
 
+    #add newsletters tie to articles
+    newsletter = Newsletters(
+        data = data,
+        digest = digest
+    )
+    db.session.add(newsletter)
+    db.session.commit()
+
+    return {
+        "response": {"uuid": newsletter.uuid},
+        "ok": True
+    }, 200
 
 
 
