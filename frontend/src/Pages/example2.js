@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useWhisper } from "@chengsokdara/use-whisper";
-import "./styles/Newsletter.css";
+import "./styles/Conversation.css";
+import XI_API_KEY from "../Config";
 import { useLocation } from "react-router-dom";
 import moebius1 from "./images/moebius1.png";
 import moebius2 from "./images/moebius2.jpeg";
@@ -11,7 +12,7 @@ import moebius6 from "./images/moebius6.jpeg";
 import moebius7 from "./images/moebius7.jpeg";
 import moebius8 from "./images/moebius8.jpeg";
 
-function Example2() {
+function Example2({ setIsSignedIn }) {
 	const [isRecording, setIsRecording] = useState(false);
 	const [showResponse, setShowResponse] = useState(false);
 	const [response, setResponse] = useState("");
@@ -40,6 +41,7 @@ function Example2() {
 	};
 
 	useEffect(() => {
+		setIsSignedIn(true);
 		console.log(newsletter);
 	}, []);
 
@@ -164,7 +166,7 @@ function Example2() {
 	};
 
 	return (
-		<div className="Newsletter-wrapper">
+		<div className="conversation-wrapper">
 			<div className="left-view">
 				<div className="tts-wrapper">
 					<button

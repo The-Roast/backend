@@ -3,7 +3,7 @@
 	"name": "Create React App Sample",
 	"icons": [
 		{
-			"src": "the-roast-logo.png"
+			"src": "logo.svg"
 		}
 	],
 	"start_url": ".",

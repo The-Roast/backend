@@ -1,133 +1,56 @@
 .home {
-	background-color: #dee3c6;
-	color: black;
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
-	height: 100vh;
-	overflow-y: scroll;
+	background-color: #fefbf0;
+	color: #43372e;
+	font-family: "Grenette Pro", sans-serif;
 }
 
-.page-wrapper {
-	display: flex;
+.hero-section {
+	padding: 50px 50px 0px 50px;
+	text-align: center;
 }
 
-.home-page {
-	margin: 50px auto;
-	width: 1400px;
-	height: 1800px;
-	background-color: #fcf9e1;
-	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+.hero-section h1 {
+	font-weight: bold;
+	font-size: 115px;
+	color: #fefbf0;
+	text-align: center;
+	margin: 0;
+	padding: 50px;
+	font-family: "Grenette Pro", serif;
+}
+
+.subscribe-text-home {
+	padding-top: 50px;
+	font-size: 30px;
+	text-align: center;
+	margin: 0;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	padding: 20px 100px;
-	overflow-y: scroll;
-	overflow-x: hidden;
 }
 
-.text-align-center {
-	text-align: center !important;
-}
-
-.news-navbar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	width: 100%;
-	padding: 0px 100px;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-}
-
-.news-navbar a {
+.subscribe-text-home a {
+	color: #fefbf0;
 	text-decoration: none;
-	color: black;
-	font-family: "GT Alpina Condensed";
-	font-size: 20px;
-	padding: 10px 0px;
 }
 
-.news-header {
-	text-align: center;
+.subscribe-button-home {
+	color: #fefbf0;
 }
 
-.news-header p {
-	font-size: 20px;
-}
+/* Media Queries */
+@media (max-width: 768px) {
+	/* Styles for mobile devices */
+	.hero-section {
+		padding: 100px 20px 0px 20px;
+	}
 
-.company-logo {
-	padding: 25px 0px 0px 0px;
-	width: auto;
-	height: 125px;
-}
+	.hero-section h1 {
+		font-size: 60px;
+		padding: 20px;
+	}
 
-.news-sources {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	width: 100%;
-	padding: 10px 100px;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-}
-
-.news-sources p {
-	margin: 0px;
-	color: black;
-	font-family: "GT Alpina Condensed";
-	font-weight: lighter;
-	font-size: 20px;
-}
-
-.news-sources img {
-	height: 35px;
-}
-
-.news-body {
-	padding: 100px 0px;
-	display: flex;
-	justify-content: space-between;
-	width: 100%;
-}
-
-.news-body .side-column {
-	width: 300px;
-}
-
-.main-column {
-	width: 400px;
-	text-align: center;
-}
-
-.main-column h1 {
-	font-weight: 900;
-	margin: 0px;
-}
-
-.news-blurb {
-	text-align: left;
-}
-
-.news-blurb label {
-	font-family: "GT Alpina Condensed";
-}
-
-.news-blurb h1 {
-	margin: 5px 0px;
-	font-family: "Futura Condensed";
-	font-size: 40px;
-	text-transform: uppercase;
-}
-
-.news-blurb p {
-	text-align: justify;
-}
-
-hr {
-	background-color: black;
-	height: 1px;
-	border: none;
-	margin: 40px 0px;
+	.subscribe-text {
+		padding-top: 100px;
+		font-size: 24px;
+	}
 }

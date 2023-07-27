@@ -1,19 +1,19 @@
 .news-template {
+	background-color: #fefbf0;
 	display: flex;
 	flex-direction: column;
+	padding: 50px 150px;
 	text-align: left;
-	color: black;
-	height: calc(100vh - 200px);
-	padding: 100px 300px;
-	overflow-y: scroll;
+	height: 76vh;
+	color: #43372e;
+}
+
+.news-template h1 {
+	font-size: 50px;
 }
 
 .news-template h2 {
 	font-size: 30px;
-}
-
-.button-wrapper {
-	margin: 25px 0px;
 }
 
 .button-wrapper button {
@@ -28,31 +28,12 @@
 }
 
 .button-wrapper button:hover {
-	color: black;
-	border-color: black;
+	color: #43372e;
+	border-color: #43372e;
 }
 
 .button-wrapper button:active {
 	transform: scale(0.95);
-}
-
-.button-row-wrapper {
-	display: flex;
-	justify-content: center;
-	gap: 40px;
-}
-
-.preference-wrapper {
-	background-color: #fcf9e1;
-	padding: 10px;
-	margin-top: 50px;
-	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-}
-
-.preference-table {
-	padding: 15px;
-	border: 3px solid black;
-	display: grid;
 }
 
 .preference-wrapper label {
@@ -70,13 +51,13 @@
 	border-bottom: 1px solid #ddd;
 	transition: border-color 0.3s;
 	font-family: "GT Alpina";
-	color: black;
+	color: #43372e;
 }
 
 .preference-input:focus {
 	outline: none;
 	border-color: #aaa;
-	color: black;
+	color: #43372e;
 }
 
 .editable-input {
@@ -85,20 +66,20 @@
 	outline: none;
 	margin-left: 10px;
 	margin-bottom: 5px;
-	color: black;
-	font-size: 25px;
+	color: #43372e;
+	font-size: 30px;
 	font-family: "GT Alpina";
-	width: 100%;
+	width: 900px;
 }
 
 .editable-input.title {
 	margin-left: 0px;
+	font-size: 40px;
 	font-family: "GT Alpina";
 	font-weight: bold;
 }
 
 .editable-line {
-	width: 100%;
 	border: none;
 	border-top: 1px solid #ccc;
 	margin: 5px 0;

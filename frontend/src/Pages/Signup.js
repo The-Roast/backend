@@ -1,11 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
 import "./styles/Signup.css";
 import { NavLink, useNavigate } from "react-router-dom";
-import SERVER_API_URL from "../Config";
 
 function Signup() {
-	const [first_name, setFirstName] = useState("");
-	const [last_name, setLastName] = useState("");
+	const [first_name, setfirst_name] = useState("");
+	const [last_name, setlast_name] = useState("");
 	const [email, setEmail] = useState("");
 	const [interests, setInterests] = useState("");
 	const [sources, setsources] = useState("");
@@ -19,12 +18,12 @@ function Signup() {
 	const [isMismatchedPassword, setIsMismatchedPassword] = useState(false);
 	const navigate = useNavigate();
 
-	const handleFirstNameChange = (e) => {
-		setFirstName(e.target.value);
+	const handlefirst_nameChange = (e) => {
+		setfirst_name(e.target.value);
 	};
 
-	const handleLastNameChange = (e) => {
-		setLastName(e.target.value);
+	const handlelast_nameChange = (e) => {
+		setlast_name(e.target.value);
 	};
 
 	const handleEmailChange = (e) => {
@@ -32,12 +31,10 @@ function Signup() {
 	};
 
 	const handlePasswordChange = (e) => {
-		setIsMismatchedPassword(false);
 		setPassword(e.target.value);
 	};
 
 	const handleConfirmPasswordChange = (e) => {
-		setIsMismatchedPassword(false);
 		setConfirmPassword(e.target.value);
 	};
 
@@ -75,7 +72,7 @@ function Signup() {
 		};
 
 		// Send the form data to the server for further processing
-		fetch(`${SERVER_API_URL}/signup`, {
+		fetch("http://127.0.0.1:5000/signup", {
 			method: "POST",
 			headers: {
 				Accept: "application/json",
@@ -89,7 +86,7 @@ function Signup() {
 					setWarningMessage("Use a different email.");
 					setIsWarningMessage(true);
 				} else {
-					fetch(`${SERVER_API_URL}/login`, {
+					fetch("http://127.0.0.1:5000/login", {
 						method: "POST",
 						headers: {
 							Accept: "application/json",
@@ -112,7 +109,7 @@ function Signup() {
 									"refresh_token",
 									response.response.refresh_token
 								);
-								navigate("/main", { state: { isSignedIn: true } });
+								navigate("/user-view", { state: { isSignedIn: true } });
 							}
 						});
 				}
@@ -127,123 +124,113 @@ function Signup() {
 
 	return (
 		<div className="signup">
-			<form className="signup-form" onSubmit={handleSubmit}>
-				<div className="back-button-wrapper">
-					<button
-						onClick={() => {
-							navigate(-1);
-						}}
-					>
-						Back
-					</button>
-				</div>
-				<div className="input-container">
-					<p>First name:</p>
+			<div className="form-container">
+				<p className="already-signed-in">
+					Already have an account? <NavLink to="/sign-in">Sign in</NavLink>
+				</p>
+				<form className="signup-form" onSubmit={handleSubmit}>
+					<h1>User</h1>
+					<div className="name-wrapper">
+						<input
+							type="text"
+							placeholder="First Name"
+							name="first_name"
+							value={first_name}
+							onChange={handlefirst_nameChange}
+							// ref={nameInput}
+							required
+						/>
+						<input
+							type="text"
+							placeholder="Last Name"
+							name="last_name"
+							value={last_name}
+							onChange={handlelast_nameChange}
+							required
+						/>
+					</div>
 					<input
 						type="text"
-						name="first_name"
-						value={first_name}
-						onChange={handleFirstNameChange}
-						required
-					/>
-				</div>
-				<div className="input-container">
-					<p>Last name:</p>
-					<input
-						type="text"
-						name="last_name"
-						value={last_name}
-						onChange={handleLastNameChange}
-						required
-					/>
-				</div>
-				<div className="input-container">
-					<p>Email:</p>
-					<input
-						type="text"
+						placeholder="Email"
 						name="email"
 						value={email}
 						onChange={handleEmailChange}
 						required
 					/>
-				</div>
-
-				<div className="input-container">
-					<p>Password:</p>
+					{isMismatchedPassword ? (
+						<div className="warning-message">
+							<p>{passwordWarningMessage}</p>
+						</div>
+					) : (
+						<div></div>
+					)}
 					<input
 						type="text"
+						placeholder="Password"
 						name="password"
 						value={password}
 						onChange={handlePasswordChange}
 						required
 					/>
-				</div>
-				<div className="input-container">
-					<p>Confirm password:</p>
 					<input
 						type="text"
+						placeholder="Confirm Password"
 						name="confirm_password"
 						value={confirm_password}
 						onChange={handleConfirmPasswordChange}
 						required
 					/>
-				</div>
+					<h1>Personalization</h1>
+					<label>Interests</label>
+					<textarea
+						placeholder="Tech updates, finance news, formula one..."
+						name="interests"
+						value={interests}
+						onChange={handleInterestsChange}
+						style={{ height: "200px" }}
+						required
+					></textarea>
 
-				{isMismatchedPassword ? (
-					<div className="warning-message">
-						<p>{passwordWarningMessage}</p>
+					<label>Content Sources</label>
+					<textarea
+						placeholder="NY Times, Politico..."
+						name="sources"
+						value={sources}
+						onChange={handlesourcesChange}
+						style={{ height: "200px" }}
+					></textarea>
+
+					<label>Daily Digest Personality</label>
+					<input
+						type="text"
+						placeholder="funny and humorous"
+						name="personality"
+						value={personality}
+						onChange={handlePersonalityChange}
+						required
+					/>
+
+					<label>Digest Name</label>
+					<input
+						type="text"
+						placeholder="Alex's Digest"
+						name="digest_name"
+						value={digest_name}
+						onChange={handleDigestNameChange}
+						required
+					/>
+					{isWarningMessage ? (
+						<div className="warning-message">
+							<p>{warningMessage}</p>
+						</div>
+					) : (
+						<div></div>
+					)}
+					<div className="button-wrapper">
+						<input type="submit" value="Sign Up" />
 					</div>
-				) : null}
-				{/* <div className="field-container">
-				<p>What are your interests?</p>
-				<input
-					placeholder="Tech updates, finance news, formula one..."
-					name="interests"
-					value={interests}
-					onChange={handleInterestsChange}
-					required
-				></input>
+				</form>
 			</div>
-			<div className="field-container">
-				<p>Where do you get your daily content?</p>
-				<input
-					placeholder="NY Times, Politico..."
-					name="sources"
-					value={sources}
-					onChange={handlesourcesChange}
-				></input>
-			</div>
-
-			<p>What personality do you like?</p>
-			<input
-				type="text"
-				placeholder="funny and humorous"
-				name="personality"
-				value={personality}
-				onChange={handlePersonalityChange}
-				required
-			/>
-
-			<p>Name your digest</p>
-			<input
-				type="text"
-				placeholder="Alex's Digest"
-				name="digest_name"
-				value={digest_name}
-				onChange={handleDigestNameChange}
-				required
-			/> */}
-				{isWarningMessage ? (
-					<div className="warning-message">
-						<p>{warningMessage}</p>
-					</div>
-				) : (
-					<div></div>
-				)}
-				<div className="button-wrapper">
-					<input type="submit" value="Sign Up" />
-				</div>
-			</form>
 		</div>
 	);
 }

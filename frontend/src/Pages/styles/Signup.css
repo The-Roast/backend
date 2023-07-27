@@ -2,12 +2,16 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100vh;
+	height: calc(100vh - 150px);
+	overflow-y: scroll;
+}
+
+.signup::-webkit-scrollbar {
+	display: none;
 }
 
 .signup-container {
+	padding-top: 150px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -15,81 +19,56 @@
 }
 
 .signup-form {
-	font-family: "GT Alpina";
+	background-color: transparent;
+	max-width: 600px;
+	width: 100%;
+	gap: 20px;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	color: black;
-	background-color: #fcf9e1;
-	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-	padding: 100px 200px;
-	max-width: 600px;
-	gap: 20px;
+	justify-content: space-between;
+	align-items: stretch;
 }
 
-.signup-form input {
-	font-size: 20px;
-}
-
-.input-container {
-	display: flex;
-	align-items: center;
-	width: 100%;
-}
-
-.input-container p {
-	margin: 0px 5px 0px 0px;
-	flex: 0 0 auto;
-}
-
-.field-container p {
-	margin: 0px 5px 5px 0px;
-}
-
-.signup-form input[type="text"] {
-	flex: 1 1 auto;
-	border: none;
-	border-bottom: 1px solid black;
-	margin-bottom: 1px;
+.signup-form input[type="text"],
+.signup-form textarea {
 	background-color: transparent;
+	margin-bottom: 10px;
 	font-family: "GT Alpina", serif;
+	font-size: 30px;
+	border: none;
 }
 
-.signup-form input {
+.signup-form textarea {
+	resize: vertical;
+}
+
+.signup-form input[type="text"]::placeholder,
+.signup-form textarea::placeholder {
 	border: none;
-	background-color: transparent;
+	color: #818181;
 	font-family: "GT Alpina", serif;
-	width: 100%;
+	font-size: 30px;
+	border: none;
 }
 
 .signup-form input[type="submit"] {
-	border: 2px solid;
-	border-radius: 5px;
-	padding: 10px 15px;
-	background-color: transparent;
-	font-family: "GT Alpina";
-	font-size: 20px;
-	text-align: center;
-	cursor: pointer;
-	transition: background-color 0.3s, transform 0.3s;
-	display: flex;
-	justify-content: center;
-	flex-direction: column;
-	align-items: center;
-}
-
-.signup-form input[type="submit"]:hover {
+	border: none;
 	color: #43372e;
-	border-color: #43372e;
-}
-
-.signup-form input[type="submit"]:active {
-	transform: scale(0.95);
+	padding: 10px 20px;
+	cursor: pointer;
+	font-family: "GT Alpina", serif;
+	font-size: 30px;
 }
 
 textarea:focus,
 input:focus {
 	outline: none;
+}
+
+label {
+	font-size: 30px;
+	display: flex;
+	width: 100%;
 }
 
 #list-container {
@@ -103,14 +82,19 @@ input:focus {
 	display: flex;
 	align-items: center;
 	gap: 30px;
+	margin-bottom: 10px;
 }
 
 .list-item select {
-	background-color: white;
-	color: black;
+	background-color: #fefbf0;
+	color: #43372e;
 	width: 100%;
+	padding: 10px;
 	border-radius: 20px;
+	margin-bottom: 10px;
 	font-family: "GT Alpina", serif;
+	font-size: 30px;
+	height: 50px;
 	border: none;
 }
 
@@ -118,8 +102,8 @@ select {
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
-	background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png")
-		white no-repeat 96% !important;
+	background: url("http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/#43372es/16x16/br_down.png")
+		#fefbf0 no-repeat 96% !important;
 }
 
 .select-items {
@@ -136,15 +120,30 @@ select {
 }
 
 .subscribe-text a {
-	color: black;
+	color: #43372e;
 	text-decoration: none;
+}
+
+.delete-button {
+	cursor: pointer;
+}
+
+#add-button {
+	cursor: pointer;
+	background: none;
+	border: none;
+	font-size: 50px;
+	color: #43372e;
 }
 
 .form-container {
 	font-family: "GT Alpina";
+	height: calc(100vh - 150px);
+	overflow-y: scroll;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	color: #43372e;
 }
 
 .form-container::-webkit-scrollbar {
@@ -154,6 +153,7 @@ select {
 .name-wrapper {
 	display: flex;
 	flex-wrap: wrap; /* Allow flex items to wrap */
+	gap: 10px;
 }
 
 .name-wrapper input {
@@ -167,14 +167,22 @@ select {
 }
 
 .button-wrapper input {
-	background-color: white;
+	background-color: #fefbf0;
+}
+
+.already-signed-in {
+	font-size: 30px;
+	padding-top: 10px;
+	padding-bottom: 30px;
+	color: #43372e;
 }
 
 .already-signed-in a {
-	color: black;
+	color: #43372e;
 }
 
 .prefix {
+	font-size: 25px;
 	padding-right: 15px;
 }
 
@@ -220,6 +228,18 @@ select {
 
 	.signup-form {
 		max-width: 300px;
+	}
+
+	.list-item select {
+		font-size: 16px;
+	}
+
+	.already-signed-in {
+		font-size: 16px;
+	}
+
+	.prefix {
+		font-size: 30px;
 	}
 
 	.name-wrapper input {

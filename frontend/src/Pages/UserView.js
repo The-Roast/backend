@@ -1,40 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/UserView.css";
-import SERVER_API_URL from "../Config";
 
 const UserView = () => {
 	const [firstName, setFirstName] = useState("");
+	const [hoveredSquare, setHoveredSquare] = useState(null);
 	let navigate = useNavigate();
+	const { state } = useLocation();
+	const isSignedIn = state; // Read values passed on state
 	const [preferences, setPreferences] = useState([]);
-
-	const access_token = localStorage.getItem("access_token");
-	const refresh_token = localStorage.getItem("refresh_token");
 
 	useEffect(() => {
 		getPreferences();
 	}, []);
 
-	const Capitalize = (str) => {
-		if (str == null) {
-			return "";
-		}
-		return str.charAt(0).toUpperCase() + str.slice(1);
-	};
-
 	function getPreferences() {
-		fetch(`${SERVER_API_URL}/v1/user`, {
+		const access_token = localStorage.getItem("access_token");
+		const refresh_token = localStorage.getItem("refresh_token");
+		fetch("http://127.0.0.1:5000/v1/user", {
 			method: "get",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
-				Authorization: `Bearer ${access_token}`,
+				Authorization: "Bearer " + access_token,
 			},
 		})
 			.then((response) => response.json())
 			.then((response) => {
 				console.log(response);
-				fetch(`${SERVER_API_URL}/v1/user/${response.response.id}`, {
+				fetch(`http://127.0.0.1:5000/v1/user/${response.response.id}`, {
 					method: "get",
 					headers: {
 						Accept: "application/json",
@@ -44,23 +38,29 @@ const UserView = () => {
 				})
 					.then((response) => response.json())
 					.then((response) => {
-						console.log(response);
 						const newPreferences = [...preferences];
 						response.response.digests.map(function (digest) {
 							newPreferences.push(digest);
 						});
-						setFirstName(response.response.firstName);
 						setPreferences(newPreferences);
 					});
 			});
 	}
 
-	const handleCardClick = (preference) => {
+	const handleSquareClick = (preference) => {
 		let path = preference.name.toLowerCase();
-		console.log(preference);
-		preference.interests = preference.interests.join(", ");
-		preference.sources = preference.sources.join(", ");
+		if (path === "pumpkin spice") {
+			path = "pumpkin-spice";
+		}
 		navigate(path, { state: { preference: preference } });
+	};
+
+	const handleSquareHover = (uuid) => {
+		setHoveredSquare(uuid);
+	};
+
+	const handleSquareLeave = () => {
+		setHoveredSquare(null);
 	};
 
 	const handleCreate = () => {
@@ -70,93 +70,44 @@ const UserView = () => {
 	return (
 		<div className="main-container">
 			<div className="main">
-				<div className="title-card">
-					<h1>Digests</h1>
-				</div>
+				{/* Left-aligned greeting */}
+				<h1 className="greeting">Hello, {firstName}!</h1>
+				<h1 className="welcome">Welcome to your Profile</h1>
+
+				{/* 2x3 grid of squares */}
 				<div className="grid">
-					{preferences.map((preference, index) => (
+					{preferences.map((preference) => (
 						<div
 							key={preference.uuid}
-							className={`card`}
-							onClick={() => handleCardClick(preference)}
+							className={`square ${
+								hoveredSquare === preference.uuid ? "hovered" : ""
+							}`}
 							style={{
-								backgroundColor: index % 4 === 0 ? "#FCF9E1" : "#F9F9F6",
+								backgroundColor:
+									hoveredSquare === preference.uuid
+										? "transparent"
+										: preference.color.hex,
+								color:
+									hoveredSquare === preference.uuid
+										? preference.color.hex
+										: "#fefbf0",
+								border:
+									hoveredSquare === preference.uuid
+										? "5px solid " + preference.color.hex
+										: "5px solid transparent",
+								// outlineOffset: hoveredSquare === flavor.id ? "-10px" : "0",
 							}}
+							onClick={() => handleSquareClick(preference)}
+							onMouseEnter={() => handleSquareHover(preference.uuid)}
+							onMouseLeave={handleSquareLeave}
 						>
-							<div
-								className="content"
-								style={{ border: `2px solid ${preference.color.hex}` }}
-							>
-								<span className="content-header">
-									<h1>{preference.name}</h1>
-									<svg
-										style={{ marginBottom: "5px" }}
-										xmlns="http://www.w3.org/2000/svg"
-										width="30"
-										height="30"
-										viewBox="0 0 30 30"
-										fill="none"
-									>
-										<circle
-											cx="15"
-											cy="15"
-											r="15"
-											fill={preference.color.hex}
-										/>
-									</svg>
-								</span>
-								<hr />
-								{/* <h1>{preference.schedule}</h1> */}
-								<span>
-									<p>Frequency: </p>
-									<h6>Weekly</h6>
-								</span>
-								<hr />
-								<span>
-									<p>Personality: </p>
-									<h6>{Capitalize(preference.personality)}</h6>
-								</span>
-								<hr />
-								<span>
-									<p>Interests: </p>
-									<h6>{Capitalize(preference.interests.join(", "))}</h6>
-								</span>
-								<hr />
-								<span>
-									<p>Sources: </p>
-									<h6 style={{ textTransform: "capitalize" }}>
-										{preference.sources.join(", ")}
-									</h6>
-								</span>
-								<hr />
+							<div className="content">
+								<div className="flavor">{preference.name}</div>
 							</div>
 						</div>
 					))}
-					<div className="createDigest">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="99"
-							height="99"
-							viewBox="0 0 99 99"
-							fill="none"
-							onClick={() => handleCreate()}
-						>
-							<line
-								x1="49.5"
-								y1="1.09279e-07"
-								x2="49.5"
-								y2="99"
-								stroke="black"
-								stroke-width="5"
-							/>
-							<line
-								y1="49.5"
-								x2="99"
-								y2="49.5"
-								stroke="black"
-								stroke-width="5"
-							/>
-						</svg>
+					<div className="create-digest" onClick={() => handleCreate()}>
+						<div className="flavor">Create Digest</div>
 					</div>
 				</div>
 			</div>
