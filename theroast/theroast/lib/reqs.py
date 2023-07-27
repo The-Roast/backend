@@ -51,11 +51,3 @@ def collate_request(ag, sections, personality):
             continue
 
     return coll
-
-# def chat_request(articles, query):
-
-#     ant.predict_messages([
-#         SystemMessage(content = json.loads(articles)),
-#         SystemMessage(content = "),
-        
-#     ])

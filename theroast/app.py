@@ -13,6 +13,8 @@ def create_app(testing = False):
 
     configure_blueprints(app)
     configure_extensions(app)
+    init_celery(app)
+
     return app
 
 
@@ -22,6 +24,7 @@ def configure_extensions(app):
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
+    mail.init_app(app)
 
 def configure_blueprints(app):
 
@@ -30,3 +33,17 @@ def configure_blueprints(app):
 
     app.register_blueprint(auth)
     app.register_blueprint(core)
+
+def init_celery(app=None):
+    app = app or create_app()
+    celery.conf.update(app.config.get("CELERY", {}))
+
+    class ContextTask(celery.Task):
+        """Make celery tasks work with Flask app context"""
+
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
+
+    celery.Task = ContextTask
+    return celery

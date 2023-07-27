@@ -1,6 +1,7 @@
 
 from textwrap import dedent
 from . import Prompt, SYSTEM_PROMPT
+import inspect
 
 SECTION_PROMPT = dedent('''\
     Given a list of news articles marked by "<>", create a comprehensive and engaging newsletter section by summarizing their key points, eliminating the need for the reader to refer back to the original pieces. \
@@ -31,6 +32,11 @@ class SectionPrompt(Prompt):
 
         sy = SYSTEM_PROMPT.replace("{PERSONALITY}", personality if personality else "typical").replace("{INTERESTS}", "NBA")
         sp = f"{SECTION_PROMPT}\n<" + "\n".join([f'({a})' for a in articles]) + ">"
+
+
+        print(inspect.cleandoc(str(sy)))
+        for a in articles:
+            print(len(a))
 
         return sy, sp
 
