@@ -9,10 +9,6 @@ services:
       - .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
-    deploy:
-      placement:
-        constraints:
-          - node.labels.theroast.db-data == true
 
   pgadmin:
     image: dpage/pgadmin4
@@ -55,5 +51,5 @@ services:
   #   build:
   #     context: ./frontend
   
-  volumes:
-    db-data:
+volumes:
+  db-data:
