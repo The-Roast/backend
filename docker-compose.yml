@@ -31,7 +31,7 @@ services:
       - .env
     environment:
       - SERVER_NAME=theroast
-      - SERVER_HOST=http://127.0.0.1:8888
+      - SERVER_HOST=http://127.0.0.1:8000
     build:
       context: ./backend
       dockerfile: backend.dockerfile
@@ -50,10 +50,10 @@ services:
   #     context: ./backend
   #     dockerfile: celeryworker.dockerfile
   
-  frontend:
-    image: 'frontend:latest'
-    build:
-      context: ./frontend
+  # frontend:
+  #   image: 'frontend:latest'
+  #   build:
+  #     context: ./frontend
   
   volumes:
     db-data:
