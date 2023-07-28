@@ -1,11 +1,10 @@
-FROM python:3.10
+FROM tiangolo/uvicorn-gunicorn:python3.10
 
-WORKDIR /backend
+WORKDIR /app
 
-COPY ./pip-requirements.txt /backend/requirements.txt
+COPY ./pip-requirements.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r /backend/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
 
-COPY ./theroast /backend/theroast
-
-CMD ["uvicorn", "backend.theroast.app.main:app", "--host", "0.0.0.0", "--port", "80"]
+COPY ./theroast /app
+ENV PYTHONPATH=/app
