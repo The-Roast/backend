@@ -1,0 +1,56 @@
+version: "3.3"
+services:
+
+  db:
+    image: postgres:latest
+    volumes:
+      - app-db-data:/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    deploy:
+      placement:
+        constraints:
+          - node.labels.${STACK_NAME?Variable not set}.app-db-data == true
+
+  pgadmin:
+    image: dpage/pgadmin4
+    networks:
+      - default
+    depends_on:
+      - db
+    env_file:
+      - .env
+  
+  backend:
+    image: 'backend:latest'
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - SERVER_NAME=theroast
+      - SERVER_HOST=http://127.0.0.1:8888
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+  
+  # celeryworker:
+  #   image: '${DOCKER_IMAGE_CELERYWORKER?Variable not set}:${TAG-latest}'
+  #   depends_on:
+  #     - db
+  #     - queue
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - SERVER_NAME=theroast
+  #     - SERVER_HOST=http://127.0.0.1:8888
+  #   build:
+  #     context: ./backend
+  #     dockerfile: celeryworker.dockerfile
+  
+  frontend:
+    image: 'frontend:latest'
+    build:
+      context: ./frontend
