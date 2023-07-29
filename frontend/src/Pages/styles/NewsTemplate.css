@@ -5,7 +5,7 @@
 	padding: 50px 150px;
 	text-align: left;
 	height: 76vh;
-	color: #43372e;
+	color: black;
 }
 
 .news-template h1 {
@@ -28,8 +28,8 @@
 }
 
 .button-wrapper button:hover {
-	color: #43372e;
-	border-color: #43372e;
+	color: black;
+	border-color: black;
 }
 
 .button-wrapper button:active {
@@ -51,13 +51,13 @@
 	border-bottom: 1px solid #ddd;
 	transition: border-color 0.3s;
 	font-family: "GT Alpina";
-	color: #43372e;
+	color: black;
 }
 
 .preference-input:focus {
 	outline: none;
 	border-color: #aaa;
-	color: #43372e;
+	color: black;
 }
 
 .editable-input {
@@ -66,7 +66,7 @@
 	outline: none;
 	margin-left: 10px;
 	margin-bottom: 5px;
-	color: #43372e;
+	color: black;
 	font-size: 30px;
 	font-family: "GT Alpina";
 	width: 900px;

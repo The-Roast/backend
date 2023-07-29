@@ -84,7 +84,10 @@ function NewsTemplate() {
 		})
 			.then((response) => response.json())
 			.then((response) => {
-				navigate("/conversation", { state: { newsletter: response.response } });
+				setIsLoading(false);
+				navigate("/newsletter/" + response.response["title"], {
+					state: { newsletter: response.response },
+				});
 			});
 	};
 

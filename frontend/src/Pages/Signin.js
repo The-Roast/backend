@@ -54,24 +54,40 @@ function Signin() {
 		<div className="sign-in">
 			<div className="form-container">
 				<form className="signin-form" onSubmit={handleSubmit}>
-					{/* <label></label> */}
-					<input
-						type="text"
-						placeholder="Email"
-						name="email"
-						value={email}
-						onChange={handleEmailChange}
-						ref={emailInput}
-						required
-					/>
-					<input
-						type="text"
-						placeholder="Password"
-						name="password"
-						value={password}
-						onChange={handlePasswordChange}
-						required
-					/>
+					<div
+						style={{ paddingBottom: "50px" }}
+						className="back-button-wrapper"
+					>
+						<button
+							onClick={() => {
+								navigate(-1);
+							}}
+						>
+							Back
+						</button>
+					</div>
+					<div className="input-container">
+						<p>Email:</p>
+						<input
+							type="text"
+							name="email"
+							value={email}
+							onChange={handleEmailChange}
+							ref={emailInput}
+							required
+						/>
+					</div>
+					<div className="input-container">
+						<p>Password:</p>
+						<input
+							type="password"
+							name="password"
+							value={password}
+							onChange={handlePasswordChange}
+							required
+						/>
+					</div>
+
 					{isWarningMessage ? (
 						<div className="warning-message">
 							<p>{warningMessage}</p>

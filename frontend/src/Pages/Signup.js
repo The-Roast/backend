@@ -165,16 +165,14 @@ function Signup() {
 						<div></div>
 					)}
 					<input
-						type="text"
-						placeholder="Password"
+						type="password"
 						name="password"
 						value={password}
 						onChange={handlePasswordChange}
 						required
 					/>
 					<input
-						type="text"
-						placeholder="Confirm Password"
+						type="password"
 						name="confirm_password"
 						value={confirm_password}
 						onChange={handleConfirmPasswordChange}

@@ -1,7 +1,10 @@
 .home {
-	background-color: #fefbf0;
-	color: #43372e;
-	font-family: "Grenette Pro", sans-serif;
+	height: 100vh;
+	overflow-y: scroll;
+}
+
+.home::-webkit-scrollbar {
+	display: none;
 }
 
 .hero-section {
@@ -9,21 +12,13 @@
 	text-align: center;
 }
 
-.hero-section h1 {
-	font-weight: bold;
-	font-size: 115px;
-	color: #fefbf0;
-	text-align: center;
-	margin: 0;
-	padding: 50px;
-	font-family: "Grenette Pro", serif;
-}
-
-.subscribe-text-home {
-	padding-top: 50px;
-	font-size: 30px;
-	text-align: center;
-	margin: 0;
+.home-page {
+	margin: 50px auto;
+	width: 1400px;
+	padding: 20px 100px;
+	height: fit-content;
+	background-color: #fcf9e1;
+	box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 	display: flex;
 	flex-direction: column;
 }
@@ -48,9 +43,176 @@
 		font-size: 60px;
 		padding: 20px;
 	}
+}
 
-	.subscribe-text {
-		padding-top: 100px;
-		font-size: 24px;
+.news-navbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 10px 100px;
+	margin-left: -100px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.news-navbar a {
+	font-family: "GT Alpina Condensed";
+	font-size: 20px;
+	color: black;
+	text-decoration: none;
+}
+
+.news-header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.news-header img {
+	width: 350px;
+}
+
+.news-header p {
+	font-size: 20px;
+}
+
+.news-sources {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 10px 100px;
+	margin-left: -100px;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+.news-sources p {
+	margin: 0px;
+	color: black;
+	font-family: "GT Alpina Condensed";
+	font-weight: lighter;
+	font-size: 20px;
+}
+
+.news-sources img {
+	height: 35px;
+}
+
+.news-body {
+	padding: 100px 0px 50px 0px;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.news-body .side-column {
+	width: 300px;
+}
+
+.main-column {
+	width: 700px;
+	height: 1200px;
+	overflow-y: scroll;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 30px;
+}
+
+.main-column h1 {
+	font-weight: 900;
+	margin: 0px;
+}
+
+.main-column img {
+	width: 500px;
+}
+
+.main-column .news-blurb {
+	text-align: left;
+}
+
+.news-blurb label {
+	font-family: "GT Alpina Condensed";
+	font-size: 20px;
+}
+
+.news-blurb h1 {
+	margin: 5px 0px;
+	font-family: "Futura Condensed";
+	font-size: 40px;
+	text-transform: uppercase;
+}
+
+.news-blurb p {
+	font-size: 20px;
+	text-align: justify;
+}
+
+.news-footer {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	width: 100%;
+	padding: 10px 100px;
+	margin-left: -100px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "GT Alpina Condensed";
+	font-size: 20px;
+}
+
+hr {
+	background-color: black;
+	height: 1px;
+	border: none;
+	margin: 40px 0px;
+}
+
+/* Mobile View */
+@media (max-width: 767px) {
+	.home-page {
+		margin: 20px;
+		width: auto;
+		padding: 10px;
+	}
+
+	.news-navbar,
+	.news-sources,
+	.news-footer {
+		padding: 0px 20px;
+	}
+
+	.main-column {
+		width: auto;
+	}
+
+	.main-column img {
+		width: 100%;
+	}
+}
+
+/* iPad View */
+@media (min-width: 768px) and (max-width: 1023px) {
+	.home-page {
+		width: 700px;
+		padding: 20px;
+	}
+
+	.news-navbar,
+	.news-sources,
+	.news-footer {
+		padding: 0px 50px;
+	}
+
+	.main-column {
+		width: auto;
+	}
+
+	.main-column img {
+		width: 80%;
 	}
 }
