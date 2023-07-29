@@ -1,28 +1,26 @@
 #! /usr/bin/env sh
 set -e
 
+echo "SET -E"
+
 if [ -f /theroast/app/main.py ]; then
     DEFAULT_MODULE_NAME=app.main
+    echo "DEFAULT MOD1"
 elif [ -f /theroast/main.py ]; then
     DEFAULT_MODULE_NAME=main
+    echo "DEFAULT MOD2"
 fi
 MODULE_NAME=${MODULE_NAME:-$DEFAULT_MODULE_NAME}
 VARIABLE_NAME=${VARIABLE_NAME:-app}
 export APP_MODULE=${APP_MODULE:-"$MODULE_NAME:$VARIABLE_NAME"}
 
-HOST=${SERVER_HOST:-127.0.0.1}
+echo "SET APP_MODULE"
+
+HOST=${HOST:-127.0.0.1}
 PORT=${PORT:-8888}
 LOG_LEVEL=${LOG_LEVEL:-info}
 
-# If there's a prestart.sh script in the /app directory or other path specified, run it before starting
-PRE_START_PATH=${PRE_START_PATH:-/theroast/prestart.sh}
-echo "Checking for script in $PRE_START_PATH"
-if [ -f $PRE_START_PATH ] ; then
-    echo "Running script $PRE_START_PATH"
-    . "$PRE_START_PATH"
-else 
-    echo "There is no script $PRE_START_PATH"
-fi
+echo "SET HOST"
 
 # Start Uvicorn with live reload
 exec uvicorn --reload --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE"

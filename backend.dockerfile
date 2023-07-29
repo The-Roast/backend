@@ -19,3 +19,5 @@ RUN chmod +x /theroast/prestart.sh
 COPY ./theroast /theroast/
 
 ENV PYTHONPATH=/theroast
+
+CMD ["uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", "8888", "--reload"]

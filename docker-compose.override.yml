@@ -13,14 +13,14 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ./backend/theroast:/theroast
+      - ./theroast:/theroast
     environment:
       - SERVER_HOST=http://127.0.0.1:8888
       - SERVER_NAME=theroast
     build:
-      context: ./backend
+      context: ./
       dockerfile: backend.dockerfile
-    command: /start-reload.sh
+    # command: /start-reload.sh
 
   # celeryworker:
   #   volumes:
