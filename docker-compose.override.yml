@@ -1,18 +1,22 @@
 version: "3.8"
 services:
 
+  db:
+    ports:
+      - "5432:5432"
+
   pgadmin:
     ports:
-      - "8080:8080"
+      - "5050:5050"
 
   backend:
     ports:
       - "8888:8888"
-      - "80:80"
     volumes:
       - ./backend/theroast:/theroast
     environment:
       - SERVER_HOST=http://127.0.0.1:8888
+      - SERVER_NAME=theroast
     build:
       context: ./backend
       dockerfile: backend.dockerfile
