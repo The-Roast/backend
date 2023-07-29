@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Any, Union
+from typing import Any, Union, Optional
 
 from jose import jwt
 from passlib.context import CryptContext
@@ -28,3 +28,20 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
+
+def generate_password_reset_token(email: str) -> str:
+    delta = timedelta(hours=server_config.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
+    now = datetime.utcnow()
+    expires = now + delta
+    exp = expires.timestamp()
+    encoded_jwt = jwt.encode(
+        {"exp": exp, "nbf": now, "sub": email}, server_config.SECRET_KEY, algorithm="HS256",
+    )
+    return encoded_jwt
+
+def verify_password_reset_token(token: str) -> Optional[str]:
+    try:
+        decoded_token = jwt.decode(token, server_config.SECRET_KEY, algorithms=["HS256"])
+        return decoded_token["email"]
+    except jwt.JWTError:
+        return None
