@@ -27,7 +27,7 @@ services:
       - .env
     environment:
       - SERVER_NAME=theroast
-      - SERVER_HOST=http://127.0.0.1:8000
+      - SERVER_HOST=http://127.0.0.1:8888
     build:
       context: ./backend
       dockerfile: backend.dockerfile

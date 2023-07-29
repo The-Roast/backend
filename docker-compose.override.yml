@@ -3,21 +3,19 @@ services:
 
   pgadmin:
     ports:
-      - "5050:5050"
+      - "8080:8080"
 
   backend:
     ports:
       - "8888:8888"
+      - "80:80"
     volumes:
-      - ./backend/app:/app
+      - ./backend/theroast:/theroast
     environment:
-      - SERVER_HOST=http://127.0.0.1:8000
+      - SERVER_HOST=http://127.0.0.1:8888
     build:
       context: ./backend
       dockerfile: backend.dockerfile
-      args:
-        INSTALL_DEV: false
-        INSTALL_JUPYTER: false
     command: /start-reload.sh
 
   # celeryworker:

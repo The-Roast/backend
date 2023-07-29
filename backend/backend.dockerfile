@@ -1,10 +1,21 @@
-FROM tiangolo/uvicorn-gunicorn:python3.10
+FROM python:3.10
 
-WORKDIR /app
+COPY ./scripts/start-reload.sh /start-reload.sh
+RUN chmod +x /start-reload.sh
 
-COPY ./pip-requirements.txt /app/requirements.txt
+COPY ./setup.py /setup.py
+RUN pip install -e .
 
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+COPY ./gunicorn_conf.py /gunicorn_conf.py
 
-COPY ./theroast /app
-ENV PYTHONPATH=/app
+WORKDIR /theroast/
+
+COPY ./pip-requirements.txt /theroast/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /theroast/requirements.txt
+
+COPY ./theroast/prestart.sh /theroast/prestart.sh
+RUN chmod +x /theroast/prestart.sh
+
+COPY ./theroast /theroast/
+
+ENV PYTHONPATH=/theroast
