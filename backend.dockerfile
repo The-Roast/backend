@@ -10,8 +10,18 @@ COPY ./gunicorn_conf.py /gunicorn_conf.py
 
 WORKDIR /theroast/
 
-COPY ./pip-requirements.txt /theroast/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /theroast/requirements.txt
+RUN curl -sSL https://install.python-poetry.org| POETRY_HOME=/opt/poetry python && \
+    cd /usr/local/bin && \
+    ln -s /opt/poetry/bin/poetry && \
+    poetry config virtualenvs.create false
+
+COPY ./pyproject.toml ./poetry.lock* /theroast/
+
+ARG INSTALL_DEV=false
+RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
+
+ARG INSTALL_JUPYTER=false
+RUN bash -c "if [ $INSTALL_JUPYTER == 'true' ] ; then pip install jupyterlab ; fi"
 
 COPY ./theroast/prestart.sh /theroast/prestart.sh
 RUN chmod +x /theroast/prestart.sh

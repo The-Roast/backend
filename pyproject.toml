@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "theroast"
+version = "0.1.0"
+description = "Server side functionality for TheRoast"
+authors = ["DumbassNamedTuna <50528857+Bluefin-Tuna@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = {version = "*", extras = ["email"]}
+fastapi = "^0.100.1"
+SQLAlchemy = "^2.0.19"
+alembic = "^1.11.1"
+uvicorn = "^0.23.1"
+python-dotenv = "^1.0.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+psycopg2-binary = "*"
+langchain = "^0.0.247"
+sentence-transformers = "^2.2.2"
+openai = "^0.27.8"
+cohere = "^4.18.0"
+umap-learn = "^0.5.3"
+hdbscan = "*"
+emails = "^0.6"
+python-multipart = "^0.0.6"
+Jinja2 = "^3.1.2"
+sqlalchemy-json = "^0.6.0"
+markdown = "^3.4.4"
+torch = ">=2.0.0, !=2.0.1"
+newsapi-python = "^0.2.7"
+
+[tool.poetry.group.dev.dependencies]
+python-multipart = "^0.0.6"
+newspaper3k = "^0.2.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

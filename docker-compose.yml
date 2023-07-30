@@ -20,7 +20,7 @@ services:
       - .env
   
   backend:
-    image: 'backend:latest'
+    image: 'theroast/backend'
     depends_on:
       - db
     env_file:
