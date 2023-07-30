@@ -1,0 +1,46 @@
+version: "3.8"
+services:
+
+  db:
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    ports:
+      - "5050:5050"
+
+  backend:
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./theroast:/theroast
+    environment:
+      - SERVER_HOST=http://127.0.0.1:8888
+      - SERVER_NAME=theroast
+    build:
+      context: ./
+      dockerfile: backend.dockerfile
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-true}
+        INSTALL_JUPYTER: ${INSTALL_JUPYTER-true}
+    # command: /start-reload.sh
+
+  # celeryworker:
+  #   volumes:
+  #     - ./backend/app:/app
+  #   environment:
+  #     - RUN=celery worker -A app.worker -l info -Q main-queue -c 1
+  #     - JUPYTER=jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.custom_display_url=http://127.0.0.1:8888
+  #     - SERVER_HOST=http://${DOMAIN?Variable not set}
+  #   build:
+  #     context: ./backend
+  #     dockerfile: celeryworker.dockerfile
+  #     args:
+  #       INSTALL_DEV: ${INSTALL_DEV-true}
+  #       INSTALL_JUPYTER: ${INSTALL_JUPYTER-true}
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     args:
+  #       FRONTEND_ENV: dev
