@@ -75,7 +75,9 @@ class ServerSettings(BaseSettings):
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
     EMAIL_TEMPLATES_DIR: str = "/theroast/templates/build"
-    EMAILS_ENABLED: bool = False
+    EMAILS_ENABLED: bool = True
+    EMAILS_FROM_EMAIL: Optional[str]
+    EMAILS_FROM_NAME: Optional[str]
 
     @classmethod
     @validator("EMAILS_ENABLED", pre=True)
@@ -94,7 +96,7 @@ class ServerSettings(BaseSettings):
         '''Meta class for ServerSettings'''
 
         case_sensitive = True
-        env_file = os.path.expanduser("../.env")
+        env_file = ".env"
 
 class APISettings(BaseSettings):
 
@@ -110,7 +112,7 @@ class APISettings(BaseSettings):
         '''Meta class for APISettings'''
 
         case_sensitive = True
-        env_file = os.path.expanduser("../.env")
+        env_file = ".env"
 
 server_config = ServerSettings()
 api_config = APISettings()

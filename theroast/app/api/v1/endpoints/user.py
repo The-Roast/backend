@@ -45,7 +45,8 @@ def create_user(
     if user_in.email:
         send_new_account_email(
             email_to=user_in.email,
-            first_name = user_in.first_name,
+            first_name=user_in.first_name,
+            username=user_in.email,
             password=user_in.password
         )
     user = crud.user.create(db, user_in)
