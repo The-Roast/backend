@@ -20,9 +20,9 @@ services:
     build:
       context: ./
       dockerfile: backend.dockerfile
-    args:
-      INSTALL_DEV: ${INSTALL_DEV-true}
-      INSTALL_JUPYTER: ${INSTALL_JUPYTER-true}
+      args:
+        INSTALL_DEV: ${INSTALL_DEV-true}
+        INSTALL_JUPYTER: ${INSTALL_JUPYTER-true}
     # command: /start-reload.sh
 
   # celeryworker:
