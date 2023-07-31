@@ -35,7 +35,9 @@ class ServerSettings(BaseSettings):
 
     PROJECT_NAME: str
 
-    FIRST_SUPERUSER: str
+    FIRST_SUPERUSER_FIRST_NAME: str
+    FIRST_SUPERUSER_LAST_NAME: str
+    FIRST_SUPERUSER_EMAIL: str
     FIRST_SUPERUSER_PASSWORD: str
 
     POSTGRES_SERVER: str
