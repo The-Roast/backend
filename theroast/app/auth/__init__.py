@@ -22,6 +22,7 @@ router = APIRouter()
 def login_access_token(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
+    
     user = crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
     )

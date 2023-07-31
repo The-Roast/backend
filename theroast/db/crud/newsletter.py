@@ -12,23 +12,15 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
 
     def get_multi_by_digest__date(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]) -> List[Newsletter]:
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
-        if skip and limit:
-            stmt = stmt.offset(skip).limit(limit)
-        elif skip:
-            stmt = stmt.offset(skip)
-        elif limit:
-            stmt = stmt.limit(limit)
-        return db.execute(stmt).fetchall()
+        if skip: stmt = stmt.offset(skip)
+        if limit: stmt = stmt.limit(limit)
+        return db.scalars(stmt).all()
     
     def get_multi_by_digest__clicks(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]) -> List[Newsletter]:
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
-        if skip and limit:
-            stmt = stmt.offset(skip).limit(limit)
-        elif skip:
-            stmt = stmt.offset(skip)
-        elif limit:
-            stmt = stmt.limit(limit)
-        return db.execute(stmt).fetchall()
+        if skip: stmt = stmt.offset(skip)
+        if limit: stmt = stmt.limit(limit)
+        return db.scalars(stmt).all()
 
     def create_with_data(self, db: Session, *, obj_in: NewsletterCreate, data: Dict) -> Newsletter:
         stmt = insert(Newsletter).values(
@@ -38,8 +30,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             body=data["body"],
             conlusion=data["conclusion"],
             html=data.get("html", None)
-        )
-        db_obj = db.execute(stmt).first()
+        ).returning(Newsletter)
+        db_obj = db.scalars(stmt).first()
         db.commit()
         db.refresh(db_obj)
         return db_obj

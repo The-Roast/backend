@@ -12,13 +12,9 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
 
     def get_multi_by_owner(self, db: Session, *, user_uuid: UUID, skip: Optional[int], limit: Optional[int]) -> List[Digest]:
         stmt = select(Digest).where(Digest.user_uuid == user_uuid)
-        if skip and limit:
-            stmt = stmt.offset(skip).limit(limit)
-        elif skip:
-            stmt = stmt.offset(skip)
-        elif limit:
-            stmt = stmt.limit(limit)
-        return db.execute(stmt).fetchall()
+        if skip: stmt = stmt.offset(skip)
+        if limit: stmt = stmt.limit(limit)
+        return db.scalars(stmt).all()
 
     def create_with_owner(self, db: Session, *, obj_in: DigestCreate, user_uuid: UUID) -> Digest:
         stmt = insert(Digest).values(
@@ -29,8 +25,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
             personality=obj_in.personality,
             color=create_color(obj_in.color),
             is_enabled=obj_in.is_enabled
-        )
-        db_obj = db.execute(stmt).first()
+        ).returning(Digest)
+        db_obj = db.scalars(stmt).first()
         db.commit()
         db.refresh(db_obj)
         return db_obj

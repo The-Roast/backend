@@ -14,6 +14,7 @@ def init_db(db: Session) -> None:
     '''Method for initializing DB'''
 
     user = crud.user.get_by_email(db, email=server_config.FIRST_SUPERUSER_EMAIL)
+    print(user.__dir__())
     if not user:
         user_in = schemas.UserCreate(
             first_name=server_config.FIRST_SUPERUSER_FIRST_NAME,

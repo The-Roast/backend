@@ -13,7 +13,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
         stmt = select(User).where(User.email == email)
-        return db.execute(stmt).first()
+        return db.scalars(stmt).first()
 
     def create(self, db: Session, *, obj_in: UserCreate) -> User:
         stmt = insert(User).values(
@@ -23,10 +23,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             password=get_password_hash(obj_in.password),
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
-        ).return_defaults()
-        db_obj = db.execute(stmt)
+        ).returning(User)
+        db_obj = db.scalars(stmt).first()
         db.commit()
-        return User(db_obj)
+        db.refresh(db_obj)
+        return db_obj
 
     def update(
         self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]

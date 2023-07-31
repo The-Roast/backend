@@ -26,21 +26,21 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     def get(self, db: Session, uuid: UUID) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
-        return db.execute(stmt)
+        return db.scalars(stmt).first()
 
     def get_multi(
         self, db: Session, *, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
         stmt = select(self.model).offset(skip).limit(limit)
-        return db.execute(stmt).fetchall()
+        return db.scalars(stmt).all()
 
     def create(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_data)
-        stmt = insert(self.model).values(db_obj).return_defaults()
-        db_obj = db.execute(stmt)
+        stmt = insert(self.model).values(obj_in_data).returning(self.model)
+        db_obj = db.scalars(stmt).first()
         db.commit()
-        return self.model(db_obj)
+        db.refresh(db_obj)
+        return db_obj
 
     def update(
         self,
@@ -63,7 +63,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_obj
     
     def remove(self, db: Session, *, uuid: UUID) -> ModelType:
-        stmt = delete(self.model).where(self.model.uuid == uuid).return_defaults()
-        db_obj = db.execute(stmt)
+        stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
+        db_obj = db.scalars(stmt).first()
         db.commit()
-        return self.model(db_obj)
+        return db_obj
