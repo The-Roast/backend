@@ -74,7 +74,7 @@ class ServerSettings(BaseSettings):
         return v
 
     EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-    EMAIL_TEMPLATES_DIR: str = "/theroast/templates/build"
+    # EMAIL_TEMPLATES_DIR: str = "/theroast/templates/build"
     EMAILS_ENABLED: bool = True
     EMAILS_FROM_EMAIL: Optional[str]
     EMAILS_FROM_NAME: Optional[str]
