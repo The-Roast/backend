@@ -4,6 +4,8 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from http import HTTPStatus
+
 
 from theroast.app import schemas, deps
 from theroast.db import crud
@@ -18,11 +20,25 @@ from theroast.core.email import send_reset_password_email
 
 router = APIRouter()
 
+@router.post("/register", response_model=schemas.User)
+def register_user(
+    *,
+    db: Session = Depends(deps.get_db),
+    user_in: schemas.UserCreate,
+) -> Any:
+    user = crud.user.get_by_email(db, email=user_in.email)
+    if user:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Email already in use."
+        )
+    user = crud.user.create(db, obj_in=user_in)
+    return user
+
 @router.post("/login/access-token", response_model=schemas.Token)
 def login_access_token(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    
     user = crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
     )
