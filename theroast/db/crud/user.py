@@ -23,11 +23,10 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             password=get_password_hash(obj_in.password),
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
-        )
-        db_obj = db.execute(stmt).first()
+        ).return_defaults()
+        db_obj = db.execute(stmt)
         db.commit()
-        db.refresh(db_obj)
-        return db_obj
+        return User(db_obj)
 
     def update(
         self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
