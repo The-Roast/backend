@@ -10,7 +10,7 @@ from http import HTTPStatus
 from theroast.config import server_config
 from theroast.app import schemas, deps
 from theroast.db import base, crud
-# from theroast.core.email import send_new_account_email
+from theroast.core.email import send_new_account_email
 
 router = APIRouter()
 
@@ -42,13 +42,13 @@ def create_user(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Email already in use."
         )
-    # if user_in.email:
-    #     send_new_account_email(
-    #         email_to=user_in.email,
-    #         first_name=user_in.first_name,
-    #         username=user_in.email,
-    #         password=user_in.password
-    #     )
+    if server_config.EMAILS_ENABLED and user_in.email:
+        send_new_account_email(
+            email_to=user_in.email,
+            first_name=user_in.first_name,
+            username=user_in.email,
+            password=user_in.password
+        )
     user = crud.user.create(db, user_in)
     return user
 
