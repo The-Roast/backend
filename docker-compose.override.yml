@@ -15,7 +15,7 @@ services:
     volumes:
       - ./theroast:/theroast
     environment:
-      - SERVER_HOST=http://127.0.0.1:8888
+      - SERVER_HOST=http://0.0.0.0:8888
       - SERVER_NAME=theroast
     build:
       context: ./
