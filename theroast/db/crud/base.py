@@ -26,21 +26,21 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def get(self, db: AsyncSession, uuid: UUID) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
-        scals = await db.scalars(stmt)
-        return scals.first()
+        db_objs = await db.scalars(stmt)
+        return db_objs.first()
 
     async def get_multi(
         self, db: AsyncSession, *, skip: int = 0, limit: int = 100
     ) -> List[ModelType]:
         stmt = select(self.model).offset(skip).limit(limit)
-        scals = await db.scalars(stmt)
-        return scals.all()
+        db_objs = await db.scalars(stmt)
+        return db_objs.all()
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         stmt = insert(self.model).values(obj_in_data).returning(self.model)
-        scals = await db.scalars(stmt)
-        db_obj = scals.first()
+        db_objs = await db.scalars(stmt)
+        db_obj = db_objs.first()
         await db.commit()
         await db.refresh(db_obj)
         return db_obj
@@ -67,6 +67,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     
     async def remove(self, db: AsyncSession, *, uuid: UUID) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
-        scals = await db.scalars(stmt)
+        db_objs = await db.scalars(stmt)
         await db.commit()
-        return scals.first()
+        return db_objs.first()
