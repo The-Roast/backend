@@ -14,7 +14,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
         stmt = select(Digest).where(Digest.user_uuid == user_uuid)
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
-        return await db.scalars(stmt).all()
+        db_objs = await db.scalars(stmt)
+        return db_objs.all()
 
     async def create_with_owner(self, db: AsyncSession, *, obj_in: DigestCreate, user_uuid: UUID) -> Digest:
         stmt = insert(Digest).values(
@@ -26,7 +27,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
             color=create_color(obj_in.color),
             is_enabled=obj_in.is_enabled
         ).returning(Digest)
-        db_obj = await db.scalars(stmt).first()
+        db_objs = await db.scalars(stmt)
+        db_obj = db_objs.first()
         await db.commit()
         await db.refresh(db_obj)
         return db_obj

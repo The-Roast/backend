@@ -16,12 +16,12 @@ reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{server_config.AUTH_STR}/login/access-token"
 )
 
-def get_db() -> Generator:
+async def get_db() -> Generator:
     db = SessionLocal()
     try:
         yield db
     finally:
-        db.close()
+        await db.close()
 
 
 async def get_current_user(

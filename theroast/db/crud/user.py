@@ -12,7 +12,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     async def get_by_email(self, db: AsyncSession, *, email: str) -> Optional[User]:
         stmt = select(User).where(User.email == email)
-        return await db.scalars(stmt).first()
+        scals = await db.scalars(stmt)
+        return scals.first()
 
     async def create(self, db: AsyncSession, *, obj_in: UserCreate) -> User:
         stmt = insert(User).values(
@@ -23,7 +24,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
-        db_obj = await db.scalars(stmt).first()
+        scals = await db.scalars(stmt)
+        db_obj = scals.first()
         await db.commit()
         await db.refresh(db_obj)
         return db_obj

@@ -14,13 +14,15 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
-        return await db.scalars(stmt).all()
+        db_objs = await db.scalars(stmt)
+        return db_objs.all()
     
     async def get_multi_by_digest__clicks(self, db: AsyncSession, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]) -> List[Newsletter]:
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
-        return await db.scalars(stmt).all()
+        db_objs = await db.scalars(stmt)
+        return db_objs.all()
 
     async def create_with_data(self, db: AsyncSession, *, obj_in: NewsletterCreate, data: Dict) -> Newsletter:
         stmt = insert(Newsletter).values(
@@ -31,7 +33,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             conlusion=data["conclusion"],
             html=data.get("html", None)
         ).returning(Newsletter)
-        db_obj = await db.scalars(stmt).first()
+        db_objs = await db.scalars(stmt)
+        db_obj = db_objs.first()
         await db.commit()
         await db.refresh(db_obj)
         return db_obj
