@@ -2,7 +2,7 @@ from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import EmailStr
 from uuid import UUID
 from http import HTTPStatus
@@ -16,7 +16,7 @@ router = APIRouter()
 @router.get("/all", response_model=List[schemas.Digest])
 async def read_digests(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     skip: int = Body(None),
     limit: int = Body(None),
     current_user: base.User = Depends(deps.get_current_active_user)
@@ -27,7 +27,7 @@ async def read_digests(
 @router.get("/{uuid}", response_model=schemas.Digest)
 async def read_digest(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -47,7 +47,7 @@ async def read_digest(
 @router.post("/", response_model=schemas.Digest)
 async def create_digest(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     digest_in: schemas.DigestCreate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -57,7 +57,7 @@ async def create_digest(
 @router.put("/{uuid}", response_model=schemas.Digest)
 async def update_digest(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     digest_in: schemas.DigestUpdate,
     current_user: base.User = Depends(deps.get_current_active_user)
@@ -79,7 +79,7 @@ async def update_digest(
 @router.delete("/{uuid}", response_model=schemas.Digest)
 async def delete_digest(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:

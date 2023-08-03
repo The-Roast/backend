@@ -2,7 +2,7 @@ from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import EmailStr
 from uuid import UUID
 from http import HTTPStatus
@@ -17,7 +17,7 @@ router = APIRouter()
 @router.get("/{uuid}", response_model=schemas.User)
 async def read_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
@@ -32,7 +32,7 @@ async def read_user(
 @router.post("/", response_model=schemas.User)
 async def create_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     user_in: schemas.UserCreate,
     current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
@@ -55,7 +55,7 @@ async def create_user(
 @router.put("/{uuid}", response_model=schemas.User)
 async def update_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     user_in: schemas.UserUpdate,
     current_user: base.User = Depends(deps.get_current_active_superuser)
@@ -72,7 +72,7 @@ async def update_user(
 @router.delete("/{uuid}", response_model=schemas.User)
 async def delete_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_superuser)
 ) -> Any:
@@ -88,7 +88,7 @@ async def delete_user(
 @router.get("/current", response_model=schemas.User)
 async def read_current_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
     return current_user
@@ -96,7 +96,7 @@ async def read_current_user(
 @router.put("/current", response_model=schemas.User)
 async def update_current_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     first_name: str = Body(None),
     last_name: str = Body(None),
     email: EmailStr = Body(None),

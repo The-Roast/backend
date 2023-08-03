@@ -2,7 +2,7 @@ from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import EmailStr
 from uuid import UUID
 from http import HTTPStatus
@@ -22,7 +22,7 @@ class ORDER_BY(str, Enum):
 @router.get("/all", response_model=List[schemas.Newsletter])
 async def read_newsletters(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     digest_uuid: UUID,
     order_by: ORDER_BY,
     skip: int = Body(None),
@@ -49,7 +49,7 @@ async def read_newsletters(
 @router.get("/{uuid}", response_model=schemas.Newsletter)
 async def read_newsletter(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -70,7 +70,7 @@ async def read_newsletter(
 @router.post("/", response_model=schemas.Newsletter)
 async def create_newsletter(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     newsletter_in: schemas.NewsletterCreate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -93,7 +93,7 @@ async def create_newsletter(
 @router.put("/{uuid}", response_model=schemas.Newsletter)
 async def update_newsletter(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
@@ -118,7 +118,7 @@ async def update_newsletter(
 @router.delete("/{uuid}", response_model=schemas.Newsletter)
 async def delete_newsletter(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:

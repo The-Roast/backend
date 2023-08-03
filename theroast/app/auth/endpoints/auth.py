@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from http import HTTPStatus
 
 
@@ -23,7 +23,7 @@ router = APIRouter()
 @router.post("/register", response_model=schemas.User)
 async def register_user(
     *,
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
     user_in: schemas.UserCreate,
 ) -> Any:
     user = await crud.user.get_by_email(db, email=user_in.email)
@@ -37,7 +37,7 @@ async def register_user(
 
 @router.post("/login/access-token", response_model=schemas.Token)
 async def login_access_token(
-    db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
+    db: AsyncSession = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     user = await crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
@@ -55,7 +55,7 @@ async def login_access_token(
     }
 
 @router.post("/password-recovery/{email}", response_model=schemas.Message)
-async def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
+async def recover_password(email: str, db: AsyncSession = Depends(deps.get_db)) -> Any:
     """
     Password Recovery
     """
@@ -75,7 +75,7 @@ async def recover_password(email: str, db: Session = Depends(deps.get_db)) -> An
 async def reset_password(
     token: str = Body(...),
     new_password: str = Body(...),
-    db: Session = Depends(deps.get_db),
+    db: AsyncSession = Depends(deps.get_db),
 ) -> Any:
     """
     Reset password
@@ -93,6 +93,6 @@ async def reset_password(
         raise HTTPException(status_code=400, detail="Inactive user")
     hashed_password = get_password_hash(new_password)
     user.password = hashed_password
-    db.add(user)
-    db.commit()
+    await db.add(user)
+    await db.commit()
     return {"message": "Password updated successfully"}
