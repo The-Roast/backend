@@ -13,7 +13,7 @@ from theroast.config import server_config
 from theroast.db.session import SessionLocal
 
 reusable_oauth2 = OAuth2PasswordBearer(
-    tokenUrl=f"{server_config.API_V1_STR}/login/access-token"
+    tokenUrl=f"{server_config.AUTH_STR}/login/access-token"
 )
 
 def get_db() -> Generator:
@@ -31,6 +31,7 @@ def get_current_user(
         payload = jwt.decode(
             token, server_config.SECRET_KEY, algorithms=[security.ALGORITHM]
         )
+        print(payload)
         token_data = schemas.TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(

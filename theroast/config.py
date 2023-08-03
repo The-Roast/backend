@@ -14,6 +14,7 @@ class ServerSettings(BaseSettings):
     '''Settings class compiling properties to use from environment variables'''
 
     API_V1_STR: str = "/api/v1"
+    AUTH_STR: str = "/auth"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     # REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
