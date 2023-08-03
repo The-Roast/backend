@@ -20,7 +20,7 @@ class ORDER_BY(str, Enum):
     USAGE = "usage"
 
 @router.get("/all", response_model=List[schemas.Newsletter])
-def read_newsletters(
+async def read_newsletters(
     *,
     db: Session = Depends(deps.get_db),
     digest_uuid: UUID,
@@ -29,7 +29,7 @@ def read_newsletters(
     limit: int = Body(None),
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = crud.digest.get(db, uuid=digest_uuid)
+    digest = await crud.digest.get(db, uuid=digest_uuid)
     if not digest:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -43,17 +43,17 @@ def read_newsletters(
     _get_multi = crud.newsletter.get_multi_by_digest__clicks
     if order_by is ORDER_BY.DATE:
         _get_multi = crud.newsletter.get_multi_by_digest__date
-    newsletters = _get_multi(db, digest_uuid=digest_uuid, skip=skip, limit=limit)
+    newsletters = await _get_multi(db, digest_uuid=digest_uuid, skip=skip, limit=limit)
     return newsletters
 
 @router.get("/{uuid}", response_model=schemas.Newsletter)
-def read_newsletter(
+async def read_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = crud.newsletter.get(db, uuid=uuid)
+    newsletter = await crud.newsletter.get(db, uuid=uuid)
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -68,13 +68,13 @@ def read_newsletter(
     return newsletter
 
 @router.post("/", response_model=schemas.Newsletter)
-def create_newsletter(
+async def create_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     newsletter_in: schemas.NewsletterCreate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = crud.digest.get(db, uuid=newsletter_in.digest_uuid)
+    digest = await crud.digest.get(db, uuid=newsletter_in.digest_uuid)
     if not digest:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -87,17 +87,17 @@ def create_newsletter(
         )
     sections, structure = pipeline.generate_newsletter(digest)
     newsletter_data = pipeline.restructure(sections, structure)
-    newsletter = crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
+    newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
     return newsletter
 
 @router.put("/{uuid}", response_model=schemas.Newsletter)
-def update_newsletter(
+async def update_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = crud.newsletter.get(db, uuid=uuid)
+    newsletter = await crud.newsletter.get(db, uuid=uuid)
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -112,17 +112,17 @@ def update_newsletter(
     newsletter_in = schemas.NewsletterCreate(digest_uuid=digest.uuid)
     sections, structure = pipeline.generate_newsletter(digest)
     newsletter_data = pipeline.restructure(sections, structure)
-    newsletter = crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
+    newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
     return newsletter
 
 @router.delete("/{uuid}", response_model=schemas.Newsletter)
-def delete_newsletter(
+async def delete_newsletter(
     *,
     db: Session = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = crud.newsletter.get(db, uuid=uuid)
+    newsletter = await crud.newsletter.get(db, uuid=uuid)
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -134,5 +134,5 @@ def delete_newsletter(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
-    newsletter = crud.newsletter.remove(db, uuid=uuid)
+    newsletter = await crud.newsletter.remove(db, uuid=uuid)
     return newsletter
