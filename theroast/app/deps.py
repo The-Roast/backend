@@ -4,7 +4,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from pydantic import ValidationError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from theroast.db import crud, base
 from theroast.app import schemas
@@ -17,15 +17,15 @@ reusable_oauth2 = OAuth2PasswordBearer(
 )
 
 def get_db() -> Generator:
+    db = SessionLocal()
     try:
-        db = SessionLocal()
         yield db
     finally:
         db.close()
 
 
 async def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(reusable_oauth2)
+    db: AsyncSession = Depends(get_db), token: str = Depends(reusable_oauth2)
 ) -> base.User:
     try:
         payload = jwt.decode(
