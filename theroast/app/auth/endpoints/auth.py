@@ -21,25 +21,25 @@ from theroast.core.email import send_reset_password_email
 router = APIRouter()
 
 @router.post("/register", response_model=schemas.User)
-def register_user(
+async def register_user(
     *,
     db: Session = Depends(deps.get_db),
     user_in: schemas.UserCreate,
 ) -> Any:
-    user = crud.user.get_by_email(db, email=user_in.email)
+    user = await crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Email already in use."
         )
-    user = crud.user.create(db, obj_in=user_in)
+    user = await crud.user.create(db, obj_in=user_in)
     return user
 
 @router.post("/login/access-token", response_model=schemas.Token)
-def login_access_token(
+async def login_access_token(
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    user = crud.user.authenticate(
+    user = await crud.user.authenticate(
         db, email=form_data.username, password=form_data.password
     )
     if not user:
@@ -55,11 +55,11 @@ def login_access_token(
     }
 
 @router.post("/password-recovery/{email}", response_model=schemas.Message)
-def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
+async def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
     """
     Password Recovery
     """
-    user = crud.user.get_by_email(db, email=email)
+    user = await crud.user.get_by_email(db, email=email)
     if not user:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -72,7 +72,7 @@ def recover_password(email: str, db: Session = Depends(deps.get_db)) -> Any:
     return {"message": "Password recovery email sent"}
 
 @router.post("/reset-password/", response_model=schemas.Message)
-def reset_password(
+async def reset_password(
     token: str = Body(...),
     new_password: str = Body(...),
     db: Session = Depends(deps.get_db),
@@ -83,7 +83,7 @@ def reset_password(
     email = verify_password_reset_token(token)
     if not email:
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Invalid token")
-    user = crud.user.get_by_email(db, email=email)
+    user = await crud.user.get_by_email(db, email=email)
     if not user:
         raise HTTPException(
             status_code=404,
