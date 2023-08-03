@@ -18,9 +18,11 @@ class DigestUpdate(DigestBase):
     uuid: UUID4
 
 class DigestInDBBase(DigestBase):
-    model_config = ConfigDict(from_attributes=True)
     uuid: UUID4
     user_uuid: UUID4
+
+    class Config:
+        orm_mode = True
 
 class Digest(DigestInDBBase):
     pass

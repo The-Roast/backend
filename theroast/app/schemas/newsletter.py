@@ -16,7 +16,6 @@ class NewsletterUpdate(NewsletterBase):
     pass
 
 class NewsletterInDBBase(NewsletterBase):
-    model_config = ConfigDict(from_attributes=True)
     uuid: UUID4
     digest_uuid: UUID4
     clicks: Optional[int]
@@ -25,6 +24,9 @@ class NewsletterInDBBase(NewsletterBase):
     body: Optional[List[SectionModel]]
     conclusion: Optional[str]
     html: Optional[str]
+    
+    class Config:
+        orm_mode = True
 
 class Newsletter(NewsletterInDBBase):
     pass

@@ -18,11 +18,13 @@ class UserUpdate(UserBase):
     password: Optional[str] = None
 
 class UserInDBBase(UserBase):
-    model_config = ConfigDict(from_attributes=True)
     uuid: UUID4
     first_name: str
     last_name: str
     email: EmailStr
+
+    class Config:
+        orm_mode = True
 
 class User(UserInDBBase):
     pass
