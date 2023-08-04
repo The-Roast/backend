@@ -93,6 +93,6 @@ async def reset_password(
         raise HTTPException(status_code=400, detail="Inactive user")
     hashed_password = get_password_hash(new_password)
     user.password = hashed_password
-    await db.add(user)
+    db.add(user)
     await db.commit()
     return {"message": "Password updated successfully"}
