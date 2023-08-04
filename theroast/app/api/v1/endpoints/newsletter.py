@@ -19,7 +19,7 @@ class ORDER_BY(str, Enum):
     DATE = "date"
     USAGE = "usage"
 
-@router.get("/aggregate/all", response_model=List[schemas.Newsletter])
+@router.get("/all", response_model=List[schemas.Newsletter])
 async def read_newsletters(
     *,
     db: AsyncSession = Depends(deps.get_db),
