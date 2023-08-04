@@ -24,7 +24,8 @@ class NewsContent():
         for source in self.sources:
             if not source.articles:
                 articles.append(None)
-            article: Article = source.articles[0].parse()
+            article: Article = source.articles[0]
+            article.parse()
             articles.append({
                 "title": article.title,
                 "content": article.text,

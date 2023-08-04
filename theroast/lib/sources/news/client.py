@@ -22,7 +22,8 @@ class NewsSource():
         if not self.cli: raise ValueError("NewsApiClient not initialized")
         if not digest.interests: raise ValueError("Interests not specified")
         interests = " OR ".join(digest.interests)
-        sources = ",".join(digest.sources)
+        # sources = ",".join(digest.sources)
+        sources = None
         for _ in range(MAX_TRIES):
             try:
                 return method(q=interests, sources=sources, **kwargs)
