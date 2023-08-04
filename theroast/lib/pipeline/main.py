@@ -47,7 +47,7 @@ def run_model(
 
 def generate_newsletter(
         digest: Digest,
-        articles: Optional[List[Dict[str, Any]]],
+        articles: Optional[List[Dict[str, Any]]] = None,
         agent: str = "GPT"
     ) -> Tuple[List[dict], dict]:
     if not articles:
