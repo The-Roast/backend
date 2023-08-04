@@ -85,7 +85,7 @@ async def delete_user(
     user = await crud.user.remove(db, uuid=uuid)
     return user
 
-@router.get("/current", response_model=schemas.User)
+@router.get("/public/current", response_model=schemas.User)
 async def read_current_user(
     *,
     db: AsyncSession = Depends(deps.get_db),
@@ -93,7 +93,7 @@ async def read_current_user(
 ) -> Any:
     return current_user
 
-@router.put("/current", response_model=schemas.User)
+@router.put("/public/current", response_model=schemas.User)
 async def update_current_user(
     *,
     db: AsyncSession = Depends(deps.get_db),
