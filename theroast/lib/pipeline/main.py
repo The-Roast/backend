@@ -14,8 +14,7 @@ MODELS = {
 
 def scrape_articles(digest: Digest) -> List[Dict[str, Any]]:
     if not digest: raise ValueError("Digest not specified")
-    query = " OR ".join(digest.interests)
-    articles = NEWS.get_all(q=query, sources=digest.sources)
+    articles = NEWS.get_all(digest)
     return articles
 
 def parse_markdown(
