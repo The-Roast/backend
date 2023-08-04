@@ -13,7 +13,7 @@ from theroast.db import base, crud
 
 router = APIRouter()
 
-@router.get("/all", response_model=List[schemas.Digest])
+@router.get("/aggregate/all", response_model=List[schemas.Digest])
 async def read_digests(
     *,
     db: AsyncSession = Depends(deps.get_db),
