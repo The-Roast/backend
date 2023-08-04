@@ -6,7 +6,10 @@ from langchain.schema import (
 from langchain.chat_models.base import BaseChatModel
 from typing import Dict, List
 import json
-from ..prompts import collate, section
+from ..prompts import (
+    collate as collate_prompt,
+    section as section_prompt
+)
 
 def _predict_message(ag: BaseChatModel, system_content: str, human_content: str) -> dict:
     """
@@ -43,7 +46,7 @@ def section(ag: BaseChatModel, clusters: Dict[int, List[str]], personality: str)
     """
     sections = []
     for k, v in clusters.items():
-        sm, sp = section.SectionPrompt().create_prompt(v, personality)
+        sm, sp = section_prompt.SectionPrompt().create_prompt(v, personality)
         dict_sect = _predict_message(ag, sm, sp)
         sections.append(dict_sect)
     return sections
@@ -57,5 +60,5 @@ def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
     :param personality: The personality for the prompt creation
     :return: A dictionary of collated sections
     """
-    sm, cp = collate.CollatePrompt().create_prompt(sections, personality)
+    sm, cp = collate_prompt.CollatePrompt().create_prompt(sections, personality)
     return _predict_message(ag, sm, cp)

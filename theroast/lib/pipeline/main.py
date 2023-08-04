@@ -58,7 +58,7 @@ def generate_newsletter(
             continue
         content.append(article["content"])
         article_url[article["content"]] = [article["url"], article["source"]["name"]]
-    clusters = batch(content, ",".join(digest.sources), target=30)
-    sections, structure = run_model(MODELS[agent], clusters, digest.personality)
+    clusters = batch(content, ",".join(digest.interests), target=30)
+    sections, structure = run_model(MODELS[agent], clusters, digest)
     sections = parse_markdown(sections, list(clusters.values()), article_url)
     return sections, structure

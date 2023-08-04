@@ -30,7 +30,7 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             title=data["title"],
             introduction=data["introduction"],
             body=data["body"],
-            conlusion=data["conclusion"],
+            conclusion=data["conclusion"],
             html=data.get("html", None)
         ).returning(Newsletter)
         db_objs = await db.scalars(stmt)

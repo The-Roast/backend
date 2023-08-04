@@ -15,7 +15,7 @@ class DigestCreate(DigestBase):
     pass
 
 class DigestUpdate(DigestBase):
-    uuid: UUID4
+    pass
 
 class DigestInDBBase(DigestBase):
     uuid: UUID4

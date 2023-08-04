@@ -3,6 +3,7 @@ from datetime import date
 from newsapi import NewsApiClient, newsapi_exception
 from ....db.base import Digest
 from .content import NewsContent
+from .utils import merge_meta_and_text
 from theroast.config import api_config
 
 MAX_TRIES = 3
@@ -46,7 +47,8 @@ class NewsSource():
         )
         urls = [article["url"] for article in _data["articles"]]
         articles = self.content.get_content(urls)
-        return articles
+        data = merge_meta_and_text(_data["articles"], articles)
+        return data
 
     def get_top(self, digest: Digest):
         if not digest: raise ValueError("Digest not specified")

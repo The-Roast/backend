@@ -36,7 +36,8 @@ def _parse_rankings(rankings: Reranking) -> Dict[str, float]:
     """
     output = {}
     for ranking in rankings:
-        if 'text' in ranking.document and 'relevance_score' in ranking:
+        print(ranking)
+        if 'text' in ranking.document and ranking.relevance_score:
             output[ranking.document['text']] = ranking.relevance_score
             continue
         raise KeyError("Key not found in ranking or document")
@@ -72,6 +73,7 @@ def _rank(articles: List[str], query: str) -> Reranking:
     :param rankings: Dictionary of rankings
     :return: List of tuples containing articles and their average score
     """
+    print(query)
     return COHERE.rerank(query=query, model="rerank-english-v2.0", documents=articles)
 
 
