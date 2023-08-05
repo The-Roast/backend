@@ -49,7 +49,7 @@ async def create_user(
             username=user_in.email,
             password=user_in.password
         )
-    user = await crud.user.create(db, user_in)
+    user = await crud.user.create(db, obj_in=user_in)
     return user
 
 @router.put("/{uuid}", response_model=schemas.User)

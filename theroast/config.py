@@ -69,6 +69,12 @@ class ServerSettings(BaseSettings):
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
 
+    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
+    EMAIL_TEMPLATES_DIR: str = "/theroast/templates/build"
+    EMAILS_ENABLED: bool = True
+    EMAILS_FROM_EMAIL: Optional[str]
+    EMAILS_FROM_NAME: Optional[str]
+
     @classmethod
     @validator("EMAILS_FROM_NAME")
     def get_project_name(cls, v: Optional[str], values: Dict[str, Any]) -> str:
@@ -78,12 +84,6 @@ class ServerSettings(BaseSettings):
         if not v:
             return values["PROJECT_NAME"]
         return v
-
-    EMAIL_RESET_TOKEN_EXPIRE_HOURS: int = 48
-    EMAIL_TEMPLATES_DIR: str = "/theroast/templates/build"
-    EMAILS_ENABLED: bool = True
-    EMAILS_FROM_EMAIL: Optional[str]
-    EMAILS_FROM_NAME: Optional[str]
 
     @classmethod
     @validator("EMAILS_ENABLED", pre=True)
@@ -96,6 +96,9 @@ class ServerSettings(BaseSettings):
             and values.get("SMTP_PORT")
             and values.get("EMAILS_FROM_EMAIL")
         )
+
+    CELERY_BROKER_URL: str
+    CELERY_BACKEND_URL: str
 
     class Config:
 
