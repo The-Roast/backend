@@ -11,7 +11,7 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
         template_str = f.read()
     server_host = server_config.SERVER_HOST
     link = f"{server_host}/reset-password?token={token}"
-    send_email(
+    send_email.delay(
         email_to=email_to,
         subject_template=subject,
         html_template=template_str,
@@ -31,7 +31,7 @@ def send_new_account_email(email_to: str, first_name: str, username: str, passwo
         template_str = f.read()
     link = server_config.SERVER_HOST
     print("here")
-    send_email(
+    send_email.delay(
         email_to=email_to,
         subject_template=subject,
         html_template=template_str,
