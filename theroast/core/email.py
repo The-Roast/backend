@@ -11,7 +11,7 @@ def send_reset_password_email(email_to: str, email: str, token: str) -> None:
         template_str = f.read()
     server_host = server_config.SERVER_HOST
     link = f"{server_host}/reset-password?token={token}"
-    send_email.delay(
+    send_email(
         email_to=email_to,
         subject_template=subject,
         html_template=template_str,
@@ -30,7 +30,8 @@ def send_new_account_email(email_to: str, first_name: str, username: str, passwo
     with open(Path(server_config.EMAIL_TEMPLATES_DIR) / "create_account.html") as f:
         template_str = f.read()
     link = server_config.SERVER_HOST
-    send_email.delay(
+    print("here")
+    send_email(
         email_to=email_to,
         subject_template=subject,
         html_template=template_str,
@@ -42,3 +43,4 @@ def send_new_account_email(email_to: str, first_name: str, username: str, passwo
             "link": link,
         },
     )
+    print("sent")
