@@ -1,8 +1,6 @@
 from typing import Any, Dict
 import emails
 from emails.template import JinjaTemplate
-from celery.result import AsyncResult
-import json
 
 from theroast.config import server_config
 from theroast.celery.worker import celery_app
