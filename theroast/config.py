@@ -97,6 +97,9 @@ class ServerSettings(BaseSettings):
             and values.get("EMAILS_FROM_EMAIL")
         )
 
+    CELERY_BROKER_URL: str
+    CELERY_BACKEND_URL: str
+
     class Config:
 
         '''Meta class for ServerSettings'''
