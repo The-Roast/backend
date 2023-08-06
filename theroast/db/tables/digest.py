@@ -35,6 +35,7 @@ class Digest(Base):
     user_uuid: so.Mapped[UUID] = ss.Column("user_uuid", ss.ForeignKey("user.uuid"))
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
+    clicks: so.Mapped[int] = so.mapped_column("clicks", default=int)
     name: so.Mapped[str] = so.mapped_column("name", default=str)
     interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", ARRAY(st.String), default=list)
     sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", ARRAY(st.String), default=list)

@@ -1,6 +1,5 @@
 import sqlalchemy as sa
 import sqlalchemy.schema as ss
-import sqlalchemy.types as st
 
 from theroast.db.base_class import Base
 

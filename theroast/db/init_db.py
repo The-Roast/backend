@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from theroast.db import crud, base
+from theroast.db import crud
 from theroast.config import server_config
 from theroast.app import schemas
 
