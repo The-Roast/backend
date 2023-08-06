@@ -10,6 +10,8 @@ from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
 
+DEFAULT_FREQUENCY = "RRULE:FREQ=DAILY;BYHOUR=9;BYMINUTE=0"
+
 def create_color(color=None):
 
     '''Default function for randomly creating hex color'''
@@ -36,6 +38,7 @@ class Digest(Base):
     newsletters: so.Mapped[List["Newsletter"]] = so.relationship(back_populates="digest")
 
     clicks: so.Mapped[int] = so.mapped_column("clicks", default=int)
+    schedule: so.Mapped[str] = so.mapped_column("schedule", index=True, default=DEFAULT_FREQUENCY)
     name: so.Mapped[str] = so.mapped_column("name", default=str)
     interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", ARRAY(st.String), default=list)
     sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", ARRAY(st.String), default=list)
