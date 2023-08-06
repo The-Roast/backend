@@ -30,7 +30,6 @@ def send_new_account_email(email_to: str, first_name: str, username: str, passwo
     with open(Path(server_config.EMAIL_TEMPLATES_DIR) / "create_account.html") as f:
         template_str = f.read()
     link = server_config.SERVER_HOST
-    print("here")
     send_email.delay(
         email_to=email_to,
         subject_template=subject,
@@ -43,4 +42,3 @@ def send_new_account_email(email_to: str, first_name: str, username: str, passwo
             "link": link,
         },
     )
-    print("sent")
