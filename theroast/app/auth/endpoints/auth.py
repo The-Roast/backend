@@ -43,6 +43,7 @@ async def login_access_token(
         db, email=form_data.username, password=form_data.password
     )
     if not user:
+        print("entered")
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Incorrect email or password")
     elif not crud.user.is_active(user):
         raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail="Inactive user")

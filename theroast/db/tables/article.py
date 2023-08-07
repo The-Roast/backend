@@ -7,6 +7,7 @@ import sqlalchemy.types as st
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
+from . import newsletter_article
 
 class Article(Base):
 

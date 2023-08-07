@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from theroast.config import server_config
-from theroast.celery.tasks.email import send_email
+from theroast.celery_app.tasks.email import send_email
 
 
 def send_reset_password_email(email_to: str, email: str, token: str) -> None:

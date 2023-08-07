@@ -3,7 +3,7 @@ import emails
 from emails.template import JinjaTemplate
 
 from theroast.config import server_config
-from theroast.celery.worker import celery_app
+from theroast.celery_app.worker import celery_app
 
 @celery_app.task
 def send_email(
