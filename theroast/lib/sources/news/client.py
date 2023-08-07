@@ -19,11 +19,9 @@ class NewsSource():
         self.cli: NewsApiClient = NewsApiClient(api_config.NEWS_API_KEY)
         self.content: NewsContent = NewsContent()
 
-    def _get_newsapi(self, digest: Digest, method: Callable, **kwargs):
-        if not self.cli: raise ValueError("NewsApiClient not initialized")
-        if not digest.interests: raise ValueError("Interests not specified")
-        interests = " OR ".join(digest.interests)
-        # sources = ",".join(digest.sources)
+    def _get_newsapi(self, digest: dict, method: Callable, **kwargs):
+        interests = " OR ".join(digest["interests"])
+        # sources = ",".join(digest["sources"])
         sources = None
         for _ in range(MAX_TRIES):
             try:
@@ -36,8 +34,7 @@ class NewsSource():
         if not self.cli: raise ValueError("NewsApiClient not initialized")
         return self.cli.get_sources(language=language, **kwargs)
 
-    def get_all(self, digest: Digest):
-        if not digest: raise ValueError("Digest not specified")
+    def get_all(self, digest: dict):
         today = date.today()
         _data = self._get_newsapi(
             digest,
@@ -50,8 +47,7 @@ class NewsSource():
         data = merge_meta_and_text(_data["articles"], articles)
         return data
 
-    def get_top(self, digest: Digest):
-        if not digest: raise ValueError("Digest not specified")
+    def get_top(self, digest: dict):
         _data = self._get_newsapi(
             digest,
             self.cli.get_top_headlines,

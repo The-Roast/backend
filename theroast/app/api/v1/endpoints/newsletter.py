@@ -1,6 +1,7 @@
 from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from http import HTTPStatus
@@ -48,20 +49,13 @@ async def read_newsletter(
     *,
     db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
-    # current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
     newsletter = await crud.newsletter.get(db, uuid=uuid)
-    # digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Newsletter not found."
         )
-    # if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
-    #     raise HTTPException(
-    #         status_code=HTTPStatus.FORBIDDEN,
-    #         detail="User does not have enough priviledges and does not own newsletter."
-    #     )
     return newsletter
 
 @router.post("/", response_model=schemas.Newsletter)
@@ -82,7 +76,8 @@ async def create_newsletter(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own digest."
         )
-    sections, structure = pipeline.generate_newsletter(digest)
+    digest_data = jsonable_encoder(digest)
+    sections, structure = pipeline.generate_newsletter(digest_data)
     newsletter_data = pipeline.restructure(sections, structure)
     newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
     return newsletter
