@@ -39,7 +39,6 @@ def _parse_rankings(rankings: Reranking) -> Dict[str, float]:
         if 'text' in ranking.document and ranking.relevance_score:
             output[ranking.document['text']] = ranking.relevance_score
             continue
-        raise KeyError("Key not found in ranking or document")
     return output
 
 
