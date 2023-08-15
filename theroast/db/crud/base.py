@@ -4,6 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete
+from sqlalchemy.orm import Session
 
 from theroast.db.base_class import Base
 
@@ -69,4 +70,51 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
         db_objs = await db.scalars(stmt)
         await db.commit()
+        return db_objs.first()
+    
+    def sget(self, db: Session, uuid: UUID) -> Optional[ModelType]:
+        stmt = select(self.model).where(self.model.uuid == uuid)
+        db_objs = db.scalars(stmt)
+        return db_objs.first()
+    
+    def sget_multi(
+        self, db: Session, *, skip: int = 0, limit: int = 100
+    ) -> List[ModelType]:
+        stmt = select(self.model).offset(skip).limit(limit)
+        db_objs = db.scalars(stmt)
+        return db_objs.all()
+    
+    def screate(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+        obj_in_data = jsonable_encoder(obj_in)
+        stmt = insert(self.model).values(obj_in_data).returning(self.model)
+        db_objs = db.scalars(stmt)
+        db_obj = db_objs.first()
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+
+    def supdate(
+        self,
+        db: Session,
+        *,
+        db_obj: ModelType,
+        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+    ) -> ModelType:
+        obj_data = jsonable_encoder(db_obj)
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+        for field in obj_data:
+            if field in update_data:
+                setattr(db_obj, field, update_data[field])
+        db.add(db_obj)
+        db.commit()
+        db.refresh(db_obj)
+        return db_obj
+    
+    def sremove(self, db: Session, *, uuid: UUID) -> ModelType:
+        stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
+        db_objs = db.scalars(stmt)
+        db.commit()
         return db_objs.first()
