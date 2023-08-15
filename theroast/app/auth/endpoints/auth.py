@@ -7,9 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from http import HTTPStatus
 from uuid import UUID
 
-
 from theroast.app import schemas, deps
-from theroast.db import crud
+from theroast.db import crud, base
 from theroast.core import security
 from theroast.config import server_config
 from theroast.core.security import (
@@ -61,25 +60,14 @@ async def login_access_token(
         "token_type": "bearer",
     }
 
-@router.post("/logout/{uuid}", response_model=schemas.Message)
+@router.post("/logout", response_model=schemas.Message)
 async def logout(
     *,
     db: AsyncSession = Depends(deps.get_db),
-    uuid: UUID
+    current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    user = await crud.user.get(db, uuid=uuid)
-    if not user:
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail="Incorrect email or password"
-        )
-    elif not crud.user.is_active(user):
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail="Inactive user"
-        )
-    user.is_active = False
-    db.add(user)
+    current_user.is_active = False
+    db.add(current_user)
     await db.commit()
     return {"message": "Successfully logged out."}
 
