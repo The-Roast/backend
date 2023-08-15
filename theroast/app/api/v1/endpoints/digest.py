@@ -17,8 +17,8 @@ router = APIRouter()
 async def read_digests(
     *,
     db: AsyncSession = Depends(deps.get_db),
-    skip: int = Body(None),
-    limit: int = Body(None),
+    skip: int = 0,
+    limit: int = 0,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
     digests = await crud.digest.get_multi_by_owner(db, user_uuid=current_user.uuid, skip=skip, limit=limit)

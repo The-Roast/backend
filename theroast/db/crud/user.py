@@ -48,6 +48,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             return None
         if not verify_password(password, user.password):
             return None
+        user.is_active = True
+        db.add(user)
+        await db.commit()
         return user
 
     def is_active(self, user: User) -> bool:
