@@ -16,5 +16,4 @@ DEFAULT_TEMPLATE = dedent('''\
             Conclusion of the newsletter section
         </conclusion>
     </newsletter>
-</response>
-''')
+</response>''')
