@@ -8,7 +8,6 @@ from sqlalchemy_json import NestedMutableJson
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
-from . import newsletter_article
 
 class Newsletter(Base):
 
