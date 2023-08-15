@@ -22,6 +22,7 @@ class Newsletter(Base):
     articles: so.Mapped[List["Article"]] = so.relationship(secondary="newsletter_article", back_populates="newsletters")
 
     clicks: so.Mapped[int] = so.mapped_column("clicks", default=int)
+    chat: so.Mapped[ARRAY[NestedMutableJson]] = so.mapped_column("chat", ARRAY(NestedMutableJson), default=list)
     title: so.Mapped[str] = so.mapped_column("title", default=str)
     introduction: so.Mapped[str] = so.mapped_column("introduction", default=str)
     body: so.Mapped[ARRAY(NestedMutableJson)] = so.mapped_column("body", ARRAY(NestedMutableJson), default=list)
