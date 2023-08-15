@@ -9,6 +9,7 @@ import sqlalchemy.types as st
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
+from theroast.lib.prompts.presets import DEFAULT_TEMPLATE
 
 DEFAULT_FREQUENCY = "RRULE:FREQ=DAILY;BYHOUR=9;BYMINUTE=0"
 
@@ -39,6 +40,8 @@ class Digest(Base):
 
     clicks: so.Mapped[int] = so.mapped_column("clicks", default=int)
     schedule: so.Mapped[str] = so.mapped_column("schedule", index=True, default=DEFAULT_FREQUENCY)
+    template: so.Mapped[str] = so.mapped_column("template", default=DEFAULT_TEMPLATE)
+    
     name: so.Mapped[str] = so.mapped_column("name", default=str)
     interests: so.Mapped[ARRAY(str)] = so.mapped_column("interests", ARRAY(st.String), default=list)
     sources: so.Mapped[ARRAY(str)] = so.mapped_column("sources", ARRAY(st.String), default=list)
