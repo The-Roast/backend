@@ -5,7 +5,6 @@ from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 from http import HTTPStatus
-from uuid import UUID
 
 from theroast.app import schemas, deps
 from theroast.db import crud, base
