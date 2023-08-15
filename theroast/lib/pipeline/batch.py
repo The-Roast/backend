@@ -122,7 +122,7 @@ def _extract(
 
 def batch(
         articles: List[str],
-        query: str,
+        query: List[str],
         target: int = 20,
         threshold: float = 0.0
     ) -> Dict[int, List[str]]:
@@ -135,17 +135,20 @@ def batch(
     :param threshold: Threshold for relevance score
     :return: Dictionary of final selected articles
     """
+    criteria = ",".join(query)
+
     embeddings = ST_ENCODER.encode(articles)
     article_embedding = {article: embeddings[i] for i, article in enumerate(articles)}
     
     clusters = _cluster(embeddings).labels_
     cluster_articles = _parse_clusters(clusters, articles)
     
-    rankings = _rank(articles, query)
+    rankings = _rank(articles, criteria)
     article_ranking = _parse_rankings(rankings)
     
     clusters_by_rank = _rank_clusters(cluster_articles, article_ranking)
     clusters_by_rank = [cluster for cluster in clusters_by_rank if cluster[1] > threshold]
     
     extraction_proportion = target / sum(len(cluster[0]) for cluster in clusters_by_rank)
+    
     return _extract(cluster_articles, article_embedding, proportion=extraction_proportion)

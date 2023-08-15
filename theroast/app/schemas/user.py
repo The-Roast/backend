@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, UUID4, EmailStr, ConfigDict
+from pydantic import BaseModel, UUID4, EmailStr
 
 class UserBase(BaseModel):
     first_name: Optional[str]

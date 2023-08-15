@@ -1,6 +1,5 @@
 from typing import Optional, List
 from newspaper import Article, Source, news_pool
-from ....db.base import Digest
 
 class URLSource(Source):
     def __init__(self, url):

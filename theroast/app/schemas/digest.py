@@ -1,5 +1,5 @@
 from typing import Optional, List
-from pydantic import BaseModel, UUID4, ConfigDict
+from pydantic import BaseModel, UUID4
 from datetime import datetime
 
 class DigestBase(BaseModel):

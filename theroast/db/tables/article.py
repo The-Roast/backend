@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import List
 from uuid import uuid4, UUID
 from datetime import datetime
 
@@ -7,6 +7,7 @@ import sqlalchemy.types as st
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from theroast.db.base_class import Base
+from . import newsletter_article
 
 class Article(Base):
 

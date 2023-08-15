@@ -4,12 +4,11 @@ from datetime import datetime
 
 import sqlalchemy.orm as so
 import sqlalchemy.schema as ss
-import sqlalchemy.types as st
 from sqlalchemy_json import NestedMutableJson
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.ext.mutable import MutableList
 
 from theroast.db.base_class import Base
+from . import newsletter_article
 
 class Newsletter(Base):
 

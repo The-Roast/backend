@@ -1,6 +1,5 @@
 from typing import Optional
 from pydantic import BaseModel, UUID4
-from uuid import UUID
 
 class Token(BaseModel):
     access_token: str

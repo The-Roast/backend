@@ -12,10 +12,8 @@ MODELS = {
     "GPT": GPT
 }
 
-def scrape_articles(digest: Digest) -> List[Dict[str, Any]]:
-    if not digest: raise ValueError("Digest not specified")
-    articles = NEWS.get_all(digest)
-    return articles
+def scrape_articles(digest: dict) -> List[Dict[str, Any]]:
+    return NEWS.get_all(digest)
 
 def parse_markdown(
         sections: List[dict],
@@ -38,19 +36,22 @@ def parse_markdown(
 def run_model(
         agent: BaseChatModel,
         clusters: List[List[str]],
-        digest: Digest
+        digest: dict
     ) -> Tuple[List[dict], dict]:
-    sections = section(agent, clusters, digest.personality)
-    structure = collate(agent, sections, digest.personality)
+    sections = section(agent, clusters, digest["personality"])
+    structure = collate(agent, sections, digest["personality"])
     return sections, structure
 
 def generate_newsletter(
-        digest: Digest,
+        digest: dict,
         articles: Optional[List[Dict[str, Any]]] = None,
         agent: str = "GPT"
     ) -> Tuple[List[dict], dict]:
-    if not articles:
-        articles = scrape_articles(digest)
+    if not digest: raise ValueError("Digest not specified")
+    if not ("interests" in digest and digest["interests"]) and \
+       not ("sources" in digest and digest["sources"]):
+        raise ValueError("Digest not valid for use.")
+    if not articles: articles = scrape_articles(digest)
     content = []
     article_url = {}
     for i, article in enumerate(articles):
@@ -58,7 +59,7 @@ def generate_newsletter(
             continue
         content.append(article["content"])
         article_url[article["content"]] = [article["url"], article["source"]["name"]]
-    clusters = batch(content, ",".join(digest.interests), target=30)
+    clusters = batch(content, digest["interests"], target=30)
     sections, structure = run_model(MODELS[agent], clusters, digest)
     sections = parse_markdown(sections, list(clusters.values()), article_url)
     return sections, structure

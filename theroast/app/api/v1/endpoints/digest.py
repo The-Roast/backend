@@ -1,13 +1,10 @@
 from typing import Any, List
 
 from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import EmailStr
 from uuid import UUID
 from http import HTTPStatus
 
-from theroast.config import server_config
 from theroast.app import schemas, deps
 from theroast.db import base, crud
 
