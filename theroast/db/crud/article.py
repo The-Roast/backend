@@ -4,9 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
 from sqlalchemy.orm import Session
 
-from theroast.core.security import get_password_hash, verify_password
 from theroast.db.crud.base import CRUDBase
-from theroast.db.base import Article, Newsletter, newsletter_article
+from theroast.db.base import Article, Newsletter
 from theroast.app.schemas.article import ArticleCreate, ArticleUpdate
 
 class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
@@ -79,12 +78,11 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         await db.refresh(db_obj)
         return db_obj
     
-    async def update_with_newsletter(self, db: AsyncSession, *, uuid: UUID, newsletter: Newsletter) -> Article:
-        db_obj = await self.get(db, uuid=uuid)
-        db_obj.newsletters.extend(newsletter)
+    async def update_with_newsletter(self, db: AsyncSession, *, obj_in: Article, db_obj: Newsletter) -> Article:
+        obj_in.newsletters.extend(db_obj)
         await db.commit()
-        await db.refresh(db_obj)
-        return db_obj
+        await db.refresh(obj_in)
+        return obj_in
 
 
 Article = CRUDArticle(Article)

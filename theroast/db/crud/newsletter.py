@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from enum import Enum
 
 from theroast.db.crud.base import CRUDBase
-from theroast.db.tables.newsletter import Newsletter
+from theroast.db.base import Newsletter, Article
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
 
 class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
@@ -25,7 +25,7 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         db_objs = await db.scalars(stmt)
         return db_objs.all()
 
-    async def create_with_data(self, db: AsyncSession, *, obj_in: NewsletterCreate, data: Dict) -> Newsletter:
+    async def create_with_data(self, db: AsyncSession, *, obj_in: NewsletterCreate, data: dict) -> Newsletter:
         stmt = insert(Newsletter).values(
             digest_uuid=obj_in.digest_uuid,
             title=data["title"],
@@ -39,6 +39,12 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         await db.commit()
         await db.refresh(db_obj)
         return db_obj
+
+    async def update_with_article(self, db: AsyncSession, *, obj_in: Newsletter, db_obj: Article) -> Newsletter:
+        obj_in.articles.extend(db_obj)
+        await db.commit()
+        await db.refresh(obj_in)
+        return obj_in
 
     def sget_multi_by_digest__date(self, db: Session, *, digest_uuid: UUID, skip: Optional[int], limit: Optional[int]) -> List[Newsletter]:
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
