@@ -111,3 +111,12 @@ async def update_current_user(
     if email is not None: user_in.email = email
     user = await crud.user.update(db, db_obj=current_user, obj_in=user_in)
     return user
+
+@router.delete("/public/current", response_model=schemas.User)
+async def delete_current_user(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    user = await crud.user.remove(db, uuid=current_user.uuid)
+    return user

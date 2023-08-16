@@ -128,3 +128,45 @@ async def delete_newsletter(
         )
     newsletter = await crud.newsletter.remove(db, uuid=uuid)
     return newsletter
+
+@router.get("/{uuid}/chat", response_model=schemas.Message)
+async def read_chat(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    uuid: UUID,
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    newsletter = await crud.newsletter.get(db, uuid=uuid)
+    digest: base.Digest = newsletter.digest
+    if not newsletter:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Newsletter not found."
+        )
+    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="User does not have enough priviledges and does not own newsletter."
+        )
+    return {"message": "This is a test response."}
+
+@router.post("/{uuid}/history", response_model=schemas.Message)
+async def read_chats(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    uuid: UUID,
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    newsletter = await crud.newsletter.get(db, uuid=uuid)
+    digest: base.Digest = newsletter.digest
+    if not newsletter:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Newsletter not found."
+        )
+    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="User does not have enough priviledges and does not own newsletter."
+        )
+    return {"message": "This is a test response."}
