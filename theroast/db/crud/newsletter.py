@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from enum import Enum
 
 from theroast.db.crud.base import CRUDBase
-from theroast.db.base import Newsletter, Article
+from theroast.db.tables.article import Article
+from theroast.db.tables.newsletter import Newsletter
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
 
 class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):

@@ -5,7 +5,8 @@ from sqlalchemy import select, insert
 from sqlalchemy.orm import Session
 
 from theroast.db.crud.base import CRUDBase
-from theroast.db.base import Article, Newsletter
+from theroast.db.tables.newsletter import Newsletter
+from theroast.db.tables.article import Article
 from theroast.app.schemas.article import ArticleCreate, ArticleUpdate
 
 class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
@@ -85,4 +86,4 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         return obj_in
 
 
-Article = CRUDArticle(Article)
+article = CRUDArticle(Article)
