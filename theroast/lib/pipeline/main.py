@@ -6,6 +6,7 @@ from langchain.chat_models.base import BaseChatModel
 from .generate import section, collate
 from theroast.db.base import Digest
 from .batch import batch
+from itertools import chain
 
 MODELS = {
     "CLAUDE": CLAUDE,
@@ -28,7 +29,7 @@ def parse_markdown(
         for j, article in enumerate(cluster):
             sect_cntnt["body"] = markdown.markdown(sect_cntnt["body"].replace(
                 f"[{j}]",
-                f'<a href={urls[article][0]}>({urls[article][1]})</a>'
+                f'<a href={urls[article]["url"]}>({urls[article]["source"]})</a>'
             ))
         html_sects.append(sect_cntnt)
     return html_sects
@@ -52,14 +53,14 @@ def generate_newsletter(
        not ("sources" in digest and digest["sources"]):
         raise ValueError("Digest not valid for use.")
     if not articles: articles = scrape_articles(digest)
-    content = []
-    article_url = {}
+    content_article = {}
     for i, article in enumerate(articles):
         if not article:
             continue
-        content.append(article["content"])
-        article_url[article["content"]] = [article["url"], article["source"]["name"]]
-    clusters = batch(content, digest["interests"], target=30)
+        content_article[article["content"]] = article
+    clusters = batch(list(content_article.keys()), digest["interests"], target=30)
     sections, structure = run_model(MODELS[agent], clusters, digest)
-    sections = parse_markdown(sections, list(clusters.values()), article_url)
-    return sections, structure
+    sections = parse_markdown(sections, list(clusters.values()), content_article)
+    flat_clusters = chain.from_iterable(clusters.values())
+    used_articles = [content_article[content] for content in flat_clusters]
+    return sections, structure, used_articles

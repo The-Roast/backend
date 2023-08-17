@@ -19,7 +19,7 @@ class Newsletter(Base):
 
     digest: so.Mapped["Digest"] = so.relationship(back_populates = "newsletters")
     digest_uuid: so.Mapped[Optional[UUID]] = so.mapped_column("digest_uuid", ss.ForeignKey("digest.uuid", ondelete = "SET NULL"))
-    articles: so.Mapped[List["Article"]] = so.relationship(secondary="newsletter_article", back_populates="newsletters")
+    articles: so.Mapped[List["Article"]] = so.relationship(secondary="newsletter_article", back_populates="newsletters", lazy="joined")
 
     clicks: so.Mapped[int] = so.mapped_column("clicks", default=int)
     chat: so.Mapped[ARRAY[NestedMutableJson]] = so.mapped_column("chat", ARRAY(NestedMutableJson), default=list)

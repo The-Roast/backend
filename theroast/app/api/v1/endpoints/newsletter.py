@@ -77,9 +77,12 @@ async def create_newsletter(
             detail="User does not have enough priviledges and does not own digest."
         )
     digest_data = jsonable_encoder(digest)
-    sections, structure = pipeline.generate_newsletter(digest_data)
+    sections, structure, articles = pipeline.generate_newsletter(digest_data)
     newsletter_data = pipeline.restructure(sections, structure)
     newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
+    article_objs = [schemas.ArticleCreate(**article) for article in articles]
+    articles = await crud.article.create_multi_with_newsletter(db, objs_in=article_objs, newsletter=newsletter)
+    db.refresh(newsletter)
     return newsletter
 
 @router.put("/{uuid}", response_model=schemas.Newsletter)

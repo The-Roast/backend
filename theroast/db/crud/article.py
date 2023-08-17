@@ -18,8 +18,8 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         scals = await db.scalars(stmt)
-        db_obj = scals.first()
-        return db_obj.articles
+        db_obj = scals.unique()
+        return db_obj.first().articles
 
     async def create_multi_with_newsletter(
             self, db: AsyncSession, *, objs_in: List[ArticleCreate], newsletter: Newsletter
@@ -28,21 +28,23 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
             obj_in.dict() for obj_in in objs_in
         ]).returning(Article)
         scals = await db.scalars(stmt)
-        db_objs = scals.all()
+        db_objs = scals.unique().all()
         newsletter.articles.extend(db_objs)
         await db.commit()
-        await db.refresh(db_objs)
-        return db_objs.all()
+        for db_obj in db_objs:
+            await db.refresh(db_obj)
+        return db_objs
 
     async def create_multi(self, db: AsyncSession, *, objs_in: List[ArticleCreate]) -> List[Article]:
         stmt = insert(Article).values([
             obj_in.dict() for obj_in in objs_in
         ]).returning(Article)
         scals = await db.scalars(stmt)
-        db_objs = scals.all()
+        db_objs = scals.unique().all()
         await db.commit()
-        await db.refresh(db_objs)
-        return db_objs.all()
+        for db_obj in db_objs:
+            await db.refresh(db_obj)
+        return db_objs
 
     async def create_with_newsletter(
             self, db: AsyncSession, *, obj_in: ArticleCreate, newsletter: Newsletter
@@ -57,7 +59,7 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
             published_at=obj_in.published_at
         ).returning(Article)
         scals = await db.scalars(stmt)
-        db_obj = scals.first()
+        db_obj = scals.unique().first()
         newsletter.articles.extend(db_obj)
         await db.commit()
         await db.refresh(db_obj)
@@ -74,7 +76,7 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
             published_at=obj_in.published_at
         ).returning(Article)
         scals = await db.scalars(stmt)
-        db_obj = scals.first()
+        db_obj = scals.unique().first()
         await db.commit()
         await db.refresh(db_obj)
         return db_obj
