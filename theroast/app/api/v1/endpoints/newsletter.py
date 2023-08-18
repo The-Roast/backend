@@ -79,10 +79,9 @@ async def create_newsletter(
     digest_data = jsonable_encoder(digest)
     sections, structure, articles = pipeline.generate_newsletter(digest_data)
     newsletter_data = pipeline.restructure(sections, structure)
-    newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
+    newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data, with_eager=True)
     article_objs = [schemas.ArticleCreate(**article) for article in articles]
-    articles = await crud.article.create_multi_with_newsletter(db, objs_in=article_objs, newsletter=newsletter)
-    db.refresh(newsletter)
+    articles = await crud.article.create_multi_with_newsletter(db, objs_in=article_objs, newsletter=newsletter, with_eager=True)
     return newsletter
 
 @router.put("/{uuid}", response_model=schemas.Newsletter)
@@ -92,7 +91,7 @@ async def update_newsletter(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(db, uuid=uuid)
+    newsletter = await crud.newsletter.get(db, uuid=uuid, with_eager=True)
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -104,10 +103,21 @@ async def update_newsletter(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
-    newsletter_in = schemas.NewsletterCreate(digest_uuid=digest.uuid)
-    sections, structure = pipeline.generate_newsletter(digest)
+    digest_data = jsonable_encoder(digest)
+    articles = await crud.article.get_multi_by_newsletter(db, uuid=uuid)
+    articles_di = [{
+        "source": article.source,
+        "authors": article.authors,
+        "title": article.title,
+        "content": article.content,
+        "keywords": article.keywords,
+        "url": article.url,
+        "published_at": article.published_at
+    } for article in articles]
+    sections, structure, _ = pipeline.generate_newsletter(digest_data, articles_di)
     newsletter_data = pipeline.restructure(sections, structure)
-    newsletter = await crud.newsletter.create_with_data(db, obj_in=newsletter_in, data=newsletter_data)
+    newsletter_in = schemas.NewsletterUpdate(uuid=newsletter.uuid, **newsletter_data)
+    newsletter = await crud.newsletter.update(db, db_obj=newsletter, obj_in=newsletter_in)
     return newsletter
 
 @router.delete("/{uuid}", response_model=schemas.Newsletter)
@@ -117,7 +127,7 @@ async def delete_newsletter(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(db, uuid=uuid)
+    newsletter = await crud.newsletter.get(db, uuid=uuid, with_eager=True)
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(

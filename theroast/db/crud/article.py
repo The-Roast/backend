@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Union
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from theroast.db.crud.base import CRUDBase
 from theroast.db.tables.newsletter import Newsletter
@@ -12,42 +12,51 @@ from theroast.app.schemas.article import ArticleCreate, ArticleUpdate
 class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
 
     async def get_multi_by_newsletter(
-            self, db: AsyncSession, *, uuid: UUID, skip: Optional[int], limit: Optional[int]
+            self, db: AsyncSession, *, uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
         ) -> List[Article]:
         stmt = select(Newsletter).where(Newsletter.uuid == uuid)
+        if with_eager: stmt = stmt.options(
+            selectinload(Newsletter.digest),
+            selectinload(Newsletter.articles)
+        )
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
+        print(stmt)
         scals = await db.scalars(stmt)
-        db_obj = scals.unique()
-        return db_obj.first().articles
+        db_objs = scals.first()
+        print(db_objs)
+        return db_objs.articles
 
     async def create_multi_with_newsletter(
-            self, db: AsyncSession, *, objs_in: List[ArticleCreate], newsletter: Newsletter
+            self, db: AsyncSession, *, objs_in: List[ArticleCreate], newsletter: Newsletter, with_eager: bool = False
         )-> List[Article]:
         stmt = insert(Article).values([
             obj_in.dict() for obj_in in objs_in
         ]).returning(Article)
+        if with_eager: stmt = stmt.options(selectinload(Article.newsletters))
         scals = await db.scalars(stmt)
-        db_objs = scals.unique().all()
+        db_objs = scals.all()
         newsletter.articles.extend(db_objs)
         await db.commit()
         for db_obj in db_objs:
             await db.refresh(db_obj)
+        await db.refresh(newsletter)
         return db_objs
 
-    async def create_multi(self, db: AsyncSession, *, objs_in: List[ArticleCreate]) -> List[Article]:
+    async def create_multi(self, db: AsyncSession, *, objs_in: List[ArticleCreate], with_eager: bool = False) -> List[Article]:
         stmt = insert(Article).values([
             obj_in.dict() for obj_in in objs_in
         ]).returning(Article)
+        if with_eager: stmt = stmt.options(selectinload(Article.newsletters))
         scals = await db.scalars(stmt)
-        db_objs = scals.unique().all()
+        db_objs = scals.all()
         await db.commit()
         for db_obj in db_objs:
             await db.refresh(db_obj)
         return db_objs
 
     async def create_with_newsletter(
-            self, db: AsyncSession, *, obj_in: ArticleCreate, newsletter: Newsletter
+            self, db: AsyncSession, *, obj_in: ArticleCreate, newsletter: Newsletter, with_eager: bool = False
         ) -> Article:
         stmt = insert(Article).values(
             source=obj_in.source,
@@ -58,14 +67,15 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
             url=obj_in.url,
             published_at=obj_in.published_at
         ).returning(Article)
+        if with_eager: stmt = stmt.options(selectinload(Article.newsletters))
         scals = await db.scalars(stmt)
-        db_obj = scals.unique().first()
+        db_obj = scals.first()
         newsletter.articles.extend(db_obj)
         await db.commit()
         await db.refresh(db_obj)
         return db_obj
 
-    async def create(self, db: AsyncSession, *, obj_in: ArticleCreate) -> Article:
+    async def create(self, db: AsyncSession, *, obj_in: ArticleCreate, with_eager: bool = False) -> Article:
         stmt = insert(Article).values(
             source=obj_in.source,
             authors=obj_in.authors,
@@ -75,8 +85,9 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
             url=obj_in.url,
             published_at=obj_in.published_at
         ).returning(Article)
+        if with_eager: stmt = stmt.options(selectinload(Article.newsletters))
         scals = await db.scalars(stmt)
-        db_obj = scals.unique().first()
+        db_obj = scals.first()
         await db.commit()
         await db.refresh(db_obj)
         return db_obj

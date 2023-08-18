@@ -4,7 +4,7 @@ from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, delete
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from theroast.db.base_class import Base
 
@@ -25,21 +25,26 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         self.model = model
 
-    async def get(self, db: AsyncSession, uuid: UUID) -> Optional[ModelType]:
+    async def get(self, db: AsyncSession, uuid: UUID, with_eager: bool = False) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
+        if with_eager: stmt = stmt.options(selectinload("*"))
         db_objs = await db.scalars(stmt)
         return db_objs.first()
 
     async def get_multi(
-        self, db: AsyncSession, *, skip: int = 0, limit: int = 100
+        self, db: AsyncSession, *, skip: int = 0, limit: int = 100, with_eager: bool = False
     ) -> List[ModelType]:
-        stmt = select(self.model).offset(skip).limit(limit)
+        stmt = select(self.model)
+        if with_eager: stmt = stmt.options(selectinload("*"))
+        if skip: stmt = stmt.offset(skip)
+        if limit: stmt = stmt.limit(limit)
         db_objs = await db.scalars(stmt)
         return db_objs.all()
 
-    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
+    async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType, with_eager: bool = False) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         stmt = insert(self.model).values(obj_in_data).returning(self.model)
+        if with_eager: stmt = stmt.options(selectinload("*"))
         db_objs = await db.scalars(stmt)
         db_obj = db_objs.first()
         await db.commit()
@@ -66,27 +71,33 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         await db.refresh(db_obj)
         return db_obj
     
-    async def remove(self, db: AsyncSession, *, uuid: UUID) -> ModelType:
+    async def remove(self, db: AsyncSession, *, uuid: UUID, with_eager: bool = False) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
+        if with_eager: stmt = stmt.options(selectinload("*"))
         db_objs = await db.scalars(stmt)
         await db.commit()
         return db_objs.first()
     
-    def sget(self, db: Session, uuid: UUID) -> Optional[ModelType]:
+    def sget(self, db: Session, uuid: UUID, with_eager: bool = False) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
+        if with_eager: stmt = stmt.options(selectinload("*"))
         db_objs = db.scalars(stmt)
         return db_objs.first()
     
     def sget_multi(
-        self, db: Session, *, skip: int = 0, limit: int = 100
+        self, db: Session, *, skip: int = 0, limit: int = 0, with_eager: bool = False
     ) -> List[ModelType]:
         stmt = select(self.model).offset(skip).limit(limit)
+        if with_eager: stmt = stmt.options(selectinload("*"))
+        if skip: stmt = stmt.offset(skip)
+        if limit: stmt = stmt.limit(limit)
         db_objs = db.scalars(stmt)
         return db_objs.all()
     
-    def screate(self, db: Session, *, obj_in: CreateSchemaType) -> ModelType:
+    def screate(self, db: Session, *, obj_in: CreateSchemaType, with_eager: bool = False) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         stmt = insert(self.model).values(obj_in_data).returning(self.model)
+        if with_eager: stmt = stmt.options(selectinload("*"))
         db_objs = db.scalars(stmt)
         db_obj = db_objs.first()
         db.commit()
@@ -113,8 +124,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.refresh(db_obj)
         return db_obj
     
-    def sremove(self, db: Session, *, uuid: UUID) -> ModelType:
+    def sremove(self, db: Session, *, uuid: UUID, with_eager: bool = False) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
+        if with_eager: stmt = stmt.options(selectinload("*"))
         db_objs = db.scalars(stmt)
         db.commit()
         return db_objs.first()

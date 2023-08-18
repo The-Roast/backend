@@ -59,7 +59,7 @@ async def update_digest(
     digest_in: schemas.DigestUpdate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = await crud.digest.get(db, uuid=uuid)
+    digest = await crud.digest.get(db, uuid=uuid, with_eager=True)
     if not digest:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
@@ -71,6 +71,7 @@ async def update_digest(
             detail="User does not have enough priviledges and does not own digest."
         )
     digest = await crud.digest.update(db, db_obj=digest, obj_in=digest_in)
+    print(dir(digest))
     return digest
 
 @router.delete("/{uuid}", response_model=schemas.Digest)

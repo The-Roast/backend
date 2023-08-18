@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional, Union
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from theroast.core.security import get_password_hash, verify_password
 from theroast.db.crud.base import CRUDBase
@@ -11,12 +11,13 @@ from theroast.app.schemas.user import UserCreate, UserUpdate
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
-    async def get_by_email(self, db: AsyncSession, *, email: str) -> Optional[User]:
+    async def get_by_email(self, db: AsyncSession, *, email: str, with_eager: bool = False) -> Optional[User]:
         stmt = select(User).where(User.email == email)
+        if with_eager: stmt = stmt.options(selectinload(User.digests))
         scals = await db.scalars(stmt)
         return scals.first()
 
-    async def create(self, db: AsyncSession, *, obj_in: UserCreate) -> User:
+    async def create(self, db: AsyncSession, *, obj_in: UserCreate, with_eager: bool = False) -> User:
         stmt = insert(User).values(
             first_name=obj_in.first_name,
             last_name=obj_in.last_name,
@@ -25,6 +26,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
+        if with_eager: stmt = stmt.options(selectinload(User.digests))
         scals = await db.scalars(stmt)
         db_obj = scals.first()
         await db.commit()
@@ -54,12 +56,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         await db.commit()
         return user
     
-    def sget_by_email(self, db: Session, *, email: str) -> Optional[User]:
+    def sget_by_email(self, db: Session, *, email: str, with_eager: bool = False) -> Optional[User]:
         stmt = select(User).where(User.email == email)
+        if with_eager: stmt = stmt.options(selectinload(User.digests))
         scals = db.scalars(stmt)
         return scals.first()
 
-    def screate(self, db: Session, *, obj_in: UserCreate) -> User:
+    def screate(self, db: Session, *, obj_in: UserCreate, with_eager: bool = False) -> User:
         stmt = insert(User).values(
             first_name=obj_in.first_name,
             last_name=obj_in.last_name,
@@ -68,6 +71,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
+        if with_eager: stmt = stmt.options(selectinload(User.digests))
         scals = db.scalars(stmt)
         db_obj = scals.first()
         db.commit()

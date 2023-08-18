@@ -17,7 +17,14 @@ class NewsletterCreate(NewsletterBase):
     digest_uuid: UUID4
 
 class NewsletterUpdate(NewsletterBase):
-    pass
+    uuid: UUID4
+    clicks: Optional[int]
+    chat: Optional[List[Chat]]
+    title: Optional[str]
+    introduction: Optional[str]
+    body: Optional[List[SectionModel]]
+    conclusion: Optional[str]
+    html: Optional[str]
 
 class NewsletterInDBBase(NewsletterBase):
     uuid: UUID4

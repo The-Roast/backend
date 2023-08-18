@@ -16,7 +16,7 @@ class Article(Base):
 
     uuid: so.Mapped[UUID] = so.mapped_column("uuid", primary_key=True, index=True, default=uuid4)
 
-    newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary="newsletter_article", back_populates="articles", lazy="joined")
+    newsletters: so.Mapped[List["Newsletter"]] = so.relationship(secondary="newsletter_article", back_populates="articles")
 
     source: so.Mapped[str] = so.mapped_column("source", index=True, default=str)
     authors: so.Mapped[ARRAY(str)] = so.mapped_column("authors", ARRAY(st.String), index=True, default=list)

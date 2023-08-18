@@ -48,6 +48,7 @@ def generate_newsletter(
         articles: Optional[List[Dict[str, Any]]] = None,
         agent: str = "GPT"
     ) -> Tuple[List[dict], dict]:
+    print(type(articles))
     if not digest: raise ValueError("Digest not specified")
     if not ("interests" in digest and digest["interests"]) and \
        not ("sources" in digest and digest["sources"]):
