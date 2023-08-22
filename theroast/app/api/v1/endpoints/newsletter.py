@@ -23,8 +23,8 @@ async def read_newsletters(
     db: AsyncSession = Depends(deps.get_db),
     digest_uuid: UUID,
     order_by: ORDER_BY,
-    skip: int = Body(None),
-    limit: int = Body(None),
+    skip: int = 0,
+    limit: int = 0,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
     digest = await crud.digest.get(db, uuid=digest_uuid)
