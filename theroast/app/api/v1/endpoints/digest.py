@@ -71,7 +71,6 @@ async def update_digest(
             detail="User does not have enough priviledges and does not own digest."
         )
     digest = await crud.digest.update(db, db_obj=digest, obj_in=digest_in)
-    print(dir(digest))
     return digest
 
 @router.delete("/{uuid}", response_model=schemas.Digest)
