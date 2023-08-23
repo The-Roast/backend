@@ -18,25 +18,11 @@ async def read_newsletters(
     *,
     db: AsyncSession = Depends(deps.get_db),
     order_by: utils.ORDER_BY = utils.ORDER_BY.DATE,
-    digest_uuid: Optional[UUID] = None,
     skip: int = 0,
     limit: int = 0,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    digest = await crud.digest.get(db, uuid=digest_uuid)
-    if not digest:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="Digest not found."
-        )
-    if not crud.user.is_superuser and digest.uuid != current_user.uuid:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="User does not have enough priviledges and does not own newsletter."
-        )
-    _get_multi = crud.newsletter.get_multi_by_digest__clicks
-    if order_by is utils.ORDER_BY.DATE:
-        _get_multi = crud.newsletter.get_multi_by_digest__date
+    _get_multi = await crud.newsletter.get_multi(db)
     newsletters = await _get_multi(db, digest_uuid=digest_uuid, skip=skip, limit=limit)
     return newsletters
 

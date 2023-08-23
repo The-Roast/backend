@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session, selectinload
 from theroast.db.crud.base import CRUDBase
 from theroast.db.tables.article import Article
 from theroast.db.tables.newsletter import Newsletter
+from theroast.db.tables.digest import Digest
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
 
 class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
@@ -28,6 +29,19 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             self, db: AsyncSession, *, digest_uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
         ) -> List[Newsletter]:
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
+        if with_eager: stmt = stmt.options(
+            selectinload(Newsletter.digest),
+            selectinload(Newsletter.articles)
+        )
+        if skip: stmt = stmt.offset(skip)
+        if limit: stmt = stmt.limit(limit)
+        db_objs = await db.scalars(stmt)
+        return db_objs.all()
+
+    async def get_multi_by_owner(
+            self, db: AsyncSession, *, user_uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
+        ) -> List[Newsletter]:
+        stmt = select(Newsletter).join(Digest).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
         if with_eager: stmt = stmt.options(
             selectinload(Newsletter.digest),
             selectinload(Newsletter.articles)
