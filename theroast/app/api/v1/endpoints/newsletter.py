@@ -40,8 +40,6 @@ async def read_newsletters(
     newsletters = await _get_multi(db, digest_uuid=digest_uuid, skip=skip, limit=limit)
     return newsletters
 
-@router.get("/all/digest/{digest}")
-
 @router.get("/{uuid}", response_model=schemas.Newsletter)
 async def read_newsletter(
     *,
