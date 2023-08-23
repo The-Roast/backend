@@ -5,12 +5,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from http import HTTPStatus
 
-from theroast.app import schemas, deps
+from theroast.app import schemas, deps, utils
 from theroast.db import base, crud
 
 router = APIRouter()
 
-@router.get("/aggregate/all", response_model=List[schemas.Digest])
+@router.get("/all/", response_model=List[schemas.Digest])
 async def read_digests(
     *,
     db: AsyncSession = Depends(deps.get_db),
@@ -40,6 +40,33 @@ async def read_digest(
             detail="User does not have enough priviledges and does not own digest."
         )
     return digest
+
+@router.get("/{uuid}/newsletters", response_model=List[schemas.Newsletter])
+async def read_newsletters_by_digest(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    uuid: UUID,
+    order_by: utils.ORDER_BY = utils.ORDER_BY.DATE,
+    skip: int = 0,
+    limit: int = 0,
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    digest = await crud.digest.get(db, uuid=uuid)
+    if not digest:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Digest not found."
+        )
+    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="User does not have enough priviledges and does not own digest."
+        )
+    _get_multi = crud.newsletter.get_multi_by_digest__date
+    if order_by is utils.ORDER_BY.USAGE:
+        _get_multi = crud.newsletter.get_multi_by_digest__clicks
+    newsletters = await _get_multi(db, digest_uuid=uuid, skip=skip, limit=limit)
+    return newsletters
 
 @router.post("/", response_model=schemas.Digest)
 async def create_digest(

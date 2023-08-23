@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -7,22 +7,18 @@ from uuid import UUID
 from http import HTTPStatus
 from enum import Enum
 
-from theroast.app import schemas, deps
+from theroast.app import schemas, deps, utils
 from theroast.db import base, crud
 from theroast.lib import pipeline
 
 router = APIRouter()
 
-class ORDER_BY(str, Enum):
-    DATE = "date"
-    USAGE = "usage"
-
-@router.get("/aggregate/all", response_model=List[schemas.Newsletter])
+@router.get("/all/", response_model=List[schemas.Newsletter])
 async def read_newsletters(
     *,
     db: AsyncSession = Depends(deps.get_db),
-    digest_uuid: UUID,
-    order_by: ORDER_BY,
+    order_by: utils.ORDER_BY = utils.ORDER_BY.DATE,
+    digest_uuid: Optional[UUID] = None,
     skip: int = 0,
     limit: int = 0,
     current_user: base.User = Depends(deps.get_current_active_user)
@@ -39,10 +35,12 @@ async def read_newsletters(
             detail="User does not have enough priviledges and does not own newsletter."
         )
     _get_multi = crud.newsletter.get_multi_by_digest__clicks
-    if order_by is ORDER_BY.DATE:
+    if order_by is utils.ORDER_BY.DATE:
         _get_multi = crud.newsletter.get_multi_by_digest__date
     newsletters = await _get_multi(db, digest_uuid=digest_uuid, skip=skip, limit=limit)
     return newsletters
+
+@router.get("/all/digest/{digest}")
 
 @router.get("/{uuid}", response_model=schemas.Newsletter)
 async def read_newsletter(

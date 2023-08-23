@@ -32,7 +32,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return db_objs.first()
 
     async def get_multi(
-        self, db: AsyncSession, *, skip: int = 0, limit: int = 100, with_eager: bool = False
+        self, db: AsyncSession, *, skip: int = 0, limit: int = 0, with_eager: bool = False
     ) -> List[ModelType]:
         stmt = select(self.model)
         if with_eager: stmt = stmt.options(selectinload("*"))
