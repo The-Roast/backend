@@ -2,6 +2,7 @@ from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from http import HTTPStatus
@@ -22,8 +23,7 @@ async def read_newsletters(
     limit: int = 0,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    _get_multi = await crud.newsletter.get_multi(db)
-    newsletters = await _get_multi(db, digest_uuid=digest_uuid, skip=skip, limit=limit)
+    newsletters = await crud.newsletter.get_multi_by_owner(db, user_uuid=current_user.uuid, skip=skip, limit=limit)
     return newsletters
 
 @router.get("/{uuid}", response_model=schemas.Newsletter)

@@ -41,7 +41,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
     async def get_multi_by_owner(
             self, db: AsyncSession, *, user_uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
         ) -> List[Newsletter]:
-        stmt = select(Newsletter).join(Digest).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
+        print(user_uuid)
+        stmt = select(Newsletter).join(Digest.newsletters).where(Digest.user_uuid == user_uuid).order_by(Newsletter.updated_at.desc())
         if with_eager: stmt = stmt.options(
             selectinload(Newsletter.digest),
             selectinload(Newsletter.articles)
