@@ -6,10 +6,6 @@ class SectionModel(BaseModel):
     title: str
     body: str
 
-class Chat(BaseModel):
-    type: Optional[str]
-    content: Optional[str]
-
 class NewsletterBase(BaseModel):
     pass
 
@@ -19,7 +15,6 @@ class NewsletterCreate(NewsletterBase):
 class NewsletterUpdate(NewsletterBase):
     uuid: UUID4
     clicks: Optional[int]
-    chat: Optional[List[Chat]]
     title: Optional[str]
     introduction: Optional[str]
     body: Optional[List[SectionModel]]
@@ -29,8 +24,6 @@ class NewsletterUpdate(NewsletterBase):
 class NewsletterInDBBase(NewsletterBase):
     uuid: UUID4
     digest_uuid: UUID4
-    clicks: Optional[int]
-    chat: Optional[List[Chat]]
     title: Optional[str]
     introduction: Optional[str]
     body: Optional[List[SectionModel]]
@@ -44,5 +37,6 @@ class Newsletter(NewsletterInDBBase):
     pass
 
 class NewsletterInDB(NewsletterInDBBase):
+    clicks: int
     created_at: datetime
     updated_at: datetime
