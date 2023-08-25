@@ -62,10 +62,7 @@ async def read_newsletters_by_digest(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own digest."
         )
-    _get_multi = crud.newsletter.get_multi_by_digest__date
-    if order_by is utils.ORDER_BY.USAGE:
-        _get_multi = crud.newsletter.get_multi_by_digest__clicks
-    newsletters = await _get_multi(db, digest_uuid=uuid, skip=skip, limit=limit)
+    newsletters = await crud.newsletter.get_multi_by_digest(db, digest_uuid=uuid, order_by=order_by, skip=skip, limit=limit)
     return newsletters
 
 @router.post("/", response_model=schemas.Digest)

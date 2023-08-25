@@ -23,7 +23,7 @@ async def read_newsletters(
     limit: int = 0,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletters = await crud.newsletter.get_multi_by_owner(db, user_uuid=current_user.uuid, skip=skip, limit=limit)
+    newsletters = await crud.newsletter.get_multi_by_owner(db, user_uuid=current_user.uuid, order_by=order_by, skip=skip, limit=limit)
     return newsletters
 
 @router.get("/{uuid}", response_model=schemas.Newsletter)

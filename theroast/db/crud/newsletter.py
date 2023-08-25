@@ -9,26 +9,20 @@ from theroast.db.tables.article import Article
 from theroast.db.tables.newsletter import Newsletter
 from theroast.db.tables.digest import Digest
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
+from theroast.app.utils import ORDER_BY
+
+ORDER_BY_MAPPING = {
+    ORDER_BY.DATE: Newsletter.updated_at,
+    ORDER_BY.USAGE: Newsletter.clicks
+}
 
 class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
-
-    async def get_multi_by_digest__date(
-            self, db: AsyncSession, *, digest_uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
-        ) -> List[Newsletter]:
-        stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.updated_at.desc())
-        if with_eager: stmt = stmt.options(
-            selectinload(Newsletter.digest),
-            selectinload(Newsletter.articles)
-        )
-        if skip: stmt = stmt.offset(skip)
-        if limit: stmt = stmt.limit(limit)
-        db_objs = await db.scalars(stmt)
-        return db_objs.all()
     
-    async def get_multi_by_digest__clicks(
-            self, db: AsyncSession, *, digest_uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
+    async def get_multi_by_digest(
+            self, db: AsyncSession, *, digest_uuid: UUID, order_by: ORDER_BY, skip: int = 0, limit: int = 0, with_eager: bool = False
         ) -> List[Newsletter]:
-        stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(Newsletter.clicks.desc())
+        order_col = ORDER_BY_MAPPING[order_by]
+        stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(order_col.desc())
         if with_eager: stmt = stmt.options(
             selectinload(Newsletter.digest),
             selectinload(Newsletter.articles)
@@ -39,10 +33,10 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         return db_objs.all()
 
     async def get_multi_by_owner(
-            self, db: AsyncSession, *, user_uuid: UUID, skip: int = 0, limit: int = 0, with_eager: bool = False
+            self, db: AsyncSession, *, user_uuid: UUID, order_by: ORDER_BY, skip: int = 0, limit: int = 0, with_eager: bool = False
         ) -> List[Newsletter]:
-        print(user_uuid)
-        stmt = select(Newsletter).join(Digest.newsletters).where(Digest.user_uuid == user_uuid).order_by(Newsletter.updated_at.desc())
+        order_col = ORDER_BY_MAPPING[order_by]
+        stmt = select(Newsletter).join(Digest.newsletters).where(Digest.user_uuid == user_uuid).order_by(order_col.desc())
         if with_eager: stmt = stmt.options(
             selectinload(Newsletter.digest),
             selectinload(Newsletter.articles)
