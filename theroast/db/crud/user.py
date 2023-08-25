@@ -11,7 +11,8 @@ from theroast.app.schemas.user import UserCreate, UserUpdate
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
-    async def get_by_email(self, db: AsyncSession, *, email: str, with_eager: bool = False) -> Optional[User]:
+    async def get_by_email(
+        self, db: AsyncSession, *, email: str, with_eager: bool = False) -> Optional[User]:
         stmt = select(User).where(User.email == email)
         if with_eager: stmt = stmt.options(selectinload(User.digests))
         scals = await db.scalars(stmt)
