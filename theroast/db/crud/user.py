@@ -1,8 +1,9 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session, selectinload, defer
+from sqlalchemy.orm.strategy_options import _AttrType
 
 from theroast.core.security import get_password_hash, verify_password
 from theroast.db.crud.base import CRUDBase
@@ -12,13 +13,29 @@ from theroast.app.schemas.user import UserCreate, UserUpdate
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
 
     async def get_by_email(
-        self, db: AsyncSession, *, email: str, with_eager: bool = False) -> Optional[User]:
+        self,
+        db: AsyncSession,
+        *,
+        email: str,
+        with_eager: bool = False, with_defer: bool = False,
+        _eager_attrs: List[_AttrType] = [User.digests],
+        _defer_attrs: List[_AttrType] = [User.password]
+    ) -> Optional[User]:
         stmt = select(User).where(User.email == email)
-        if with_eager: stmt = stmt.options(selectinload(User.digests))
+        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs)),
+        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         return scals.first()
 
-    async def create(self, db: AsyncSession, *, obj_in: UserCreate, with_eager: bool = False) -> User:
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        obj_in: UserCreate,
+        with_eager: bool = False, with_defer: bool = False,
+        _eager_attrs: List[_AttrType] = [User.digests],
+        _defer_attrs: List[_AttrType] = [User.password]
+    ) -> User:
         stmt = insert(User).values(
             first_name=obj_in.first_name,
             last_name=obj_in.last_name,
@@ -27,7 +44,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
-        if with_eager: stmt = stmt.options(selectinload(User.digests))
+        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
+        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         db_obj = scals.first()
         await db.commit()
@@ -35,7 +53,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db_obj
 
     async def update(
-        self, db: AsyncSession, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+        self,
+        db: AsyncSession,
+        *,
+        db_obj: User,
+        obj_in: Union[UserUpdate, Dict[str, Any]]
     ) -> User:
         if isinstance(obj_in, dict):
             update_data = obj_in
@@ -46,7 +68,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             update_data["password"] = hashed_password
         return await super().update(db, db_obj=db_obj, obj_in=update_data)
 
-    async def authenticate(self, db: AsyncSession, *, email: str, password: str) -> Optional[User]:
+    async def authenticate(
+        self,
+        db: AsyncSession,
+        *,
+        email: str,
+        password: str
+    ) -> Optional[User]:
         user = await self.get_by_email(db, email=email)
         if not user:
             return None
@@ -57,13 +85,30 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         await db.commit()
         return user
     
-    def sget_by_email(self, db: Session, *, email: str, with_eager: bool = False) -> Optional[User]:
+    def sget_by_email(
+        self,
+        db: Session,
+        *,
+        email: str,
+        with_eager: bool = False, with_defer: bool = False,
+        _eager_attrs: List[_AttrType] = [User.digests],
+        _defer_attrs: List[_AttrType] = [User.password]
+    ) -> Optional[User]:
         stmt = select(User).where(User.email == email)
-        if with_eager: stmt = stmt.options(selectinload(User.digests))
+        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
+        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = db.scalars(stmt)
         return scals.first()
 
-    def screate(self, db: Session, *, obj_in: UserCreate, with_eager: bool = False) -> User:
+    def screate(
+        self,
+        db: Session,
+        *,
+        obj_in: UserCreate,
+        with_eager: bool = False, with_defer: bool = False,
+        _eager_attrs: List[_AttrType] = [User.digests],
+        _defer_attrs: List[_AttrType] = [User.password]
+    ) -> User:
         stmt = insert(User).values(
             first_name=obj_in.first_name,
             last_name=obj_in.last_name,
@@ -72,7 +117,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
-        if with_eager: stmt = stmt.options(selectinload(User.digests))
+        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
+        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = db.scalars(stmt)
         db_obj = scals.first()
         db.commit()
