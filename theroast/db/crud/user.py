@@ -19,7 +19,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         email: str,
         with_eager: bool = False, with_defer: bool = False,
         _eager_attrs: List[_AttrType] = [User.digests],
-        _defer_attrs: List[_AttrType] = [User.password]
+        _defer_attrs: List[_AttrType] = []
     ) -> Optional[User]:
         stmt = select(User).where(User.email == email)
         if with_eager: stmt = stmt.options(selectinload(*_eager_attrs)),
@@ -34,7 +34,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         obj_in: UserCreate,
         with_eager: bool = False, with_defer: bool = False,
         _eager_attrs: List[_AttrType] = [User.digests],
-        _defer_attrs: List[_AttrType] = [User.password]
+        _defer_attrs: List[_AttrType] = []
     ) -> User:
         stmt = insert(User).values(
             first_name=obj_in.first_name,
@@ -92,7 +92,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         email: str,
         with_eager: bool = False, with_defer: bool = False,
         _eager_attrs: List[_AttrType] = [User.digests],
-        _defer_attrs: List[_AttrType] = [User.password]
+        _defer_attrs: List[_AttrType] = []
     ) -> Optional[User]:
         stmt = select(User).where(User.email == email)
         if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
@@ -107,7 +107,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         obj_in: UserCreate,
         with_eager: bool = False, with_defer: bool = False,
         _eager_attrs: List[_AttrType] = [User.digests],
-        _defer_attrs: List[_AttrType] = [User.password]
+        _defer_attrs: List[_AttrType] = []
     ) -> User:
         stmt = insert(User).values(
             first_name=obj_in.first_name,
@@ -126,7 +126,11 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         return db_obj
 
     def supdate(
-        self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
+        self,
+        db: Session,
+        *,
+        db_obj: User,
+        obj_in: Union[UserUpdate, Dict[str, Any]]
     ) -> User:
         if isinstance(obj_in, dict):
             update_data = obj_in
@@ -137,7 +141,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             update_data["password"] = hashed_password
         return super().supdate(db, db_obj=db_obj, obj_in=update_data)
 
-    def sauthenticate(self, db: Session, *, email: str, password: str) -> Optional[User]:
+    def sauthenticate(
+        self,
+        db: Session,
+        *,
+        email: str,
+        password: str
+    ) -> Optional[User]:
         user = self.get_by_email(db, email=email)
         if not user:
             return None
