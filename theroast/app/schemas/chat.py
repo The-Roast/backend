@@ -7,7 +7,6 @@ class ChatBase(BaseModel):
     content: Optional[str]
 
 class ChatCreate(ChatBase):
-    newsletter_uuid: UUID4
     type: str
     content: str
 

@@ -73,7 +73,10 @@ async def update_newsletter(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(db, uuid=uuid, with_eager=True)
+    newsletter = await crud.newsletter.get(
+        db, uuid=uuid,
+        with_eager=True, _eager_attrs=[base.Newsletter.digest, base.Newsletter.articles]
+    )
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -109,7 +112,10 @@ async def delete_newsletter(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(db, uuid=uuid, with_eager=True)
+    newsletter = await crud.newsletter.get(
+        db, uuid=uuid,
+        with_eager=True, _eager_attrs=[base.Newsletter.digest]
+    )
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -124,14 +130,18 @@ async def delete_newsletter(
     newsletter = await crud.newsletter.remove(db, uuid=uuid)
     return newsletter
 
-@router.get("/{uuid}/message", response_model=schemas.Message)
-async def read_chat(
+@router.post("/{uuid}/message", response_model=schemas.Chat)
+async def create_message(
     *,
     db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
+    chat_in: schemas.ChatCreate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(db, uuid=uuid)
+    newsletter = await crud.newsletter.get(
+        db, uuid=uuid,
+        with_eager=True, _eager_attrs=[base.Newsletter.digest]
+    )
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
@@ -143,6 +153,7 @@ async def read_chat(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
+    
     return {"message": "This is a test response."}
 
 @router.post("/{uuid}/messages", response_model=schemas.Conversation)
@@ -152,13 +163,17 @@ async def read_chats(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    conversation = await crud.newsletter.get(db, uuid=uuid, with_defer=True, _defer_attrs=[
-        base.Newsletter.digest, base.Newsletter.digest_uuid, base.Newsletter.articles, base.Newsletter.clicks,
-        base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html,
-        base.Newsletter.created_at, base.Newsletter.updated_at
-    ])
-    digest: base.Digest = newsletter.digest
-    if not newsletter:
+    conversation = await crud.newsletter.get(db, uuid=uuid,
+        with_eager=True, _eager_attrs=[
+            base.Newsletter.digest, base.Newsletter.articles,
+        ],
+        with_defer=True, _defer_attrs=[
+            base.Newsletter.articles, base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
+            base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html,
+        ]
+    )
+    digest: base.Digest = conversation.digest
+    if not conversation:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Newsletter not found."

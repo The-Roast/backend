@@ -10,6 +10,7 @@ from theroast.db.tables.article import Article
 from theroast.db.tables.newsletter import Newsletter
 from theroast.db.tables.digest import Digest
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
+from theroast.app.schemas.chat import ChatCreate, Chat
 from theroast.app.utils import ORDER_BY
 
 ORDER_BY_MAPPING = {
@@ -25,8 +26,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         *,
         digest_uuid: UUID, order_by: ORDER_BY, skip: int = 0, limit: int = 0,
         with_eager: bool = False, with_defer: bool = False,
-        _defer_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
-        _eager_attrs: List[_AttrType] = [Newsletter.chat]
+        _eager_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
+        _defer_attrs: List[_AttrType] = [Newsletter.chat]
     ) -> List[Newsletter]:
         order_col = ORDER_BY_MAPPING[order_by]
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(order_col.desc())
@@ -43,8 +44,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         *,
         user_uuid: UUID, order_by: ORDER_BY, skip: int = 0, limit: int = 0,
         with_eager: bool = False, with_defer: bool = False,
-        _defer_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
-        _eager_attrs: List[_AttrType] = [Newsletter.chat]
+        _eager_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
+        _defer_attrs: List[_AttrType] = [Newsletter.chat]
     ) -> List[Newsletter]:
         order_col = ORDER_BY_MAPPING[order_by]
         stmt = select(Newsletter).join(Digest.newsletters).where(Digest.user_uuid == user_uuid).order_by(order_col.desc())
@@ -61,8 +62,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         *,
         obj_in: NewsletterCreate, data: dict,
         with_eager: bool = False, with_defer: bool = False,
-        _defer_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
-        _eager_attrs: List[_AttrType] = [Newsletter.chat]
+        _eager_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
+        _defer_attrs: List[_AttrType] = [Newsletter.chat]
     ) -> Newsletter:
         stmt = insert(Newsletter).values(
             digest_uuid=obj_in.digest_uuid,
@@ -80,6 +81,9 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         await db.refresh(db_obj)
         return db_obj
 
+    async def create_message(self, db: AsyncSession, *, obj_in: ChatCreate, db_obj: Newsletter) -> Chat:
+        pass
+
     async def update_with_article(self, db: AsyncSession, *, obj_in: Newsletter, db_obj: List[Article]) -> Newsletter:
         obj_in.articles.extend(db_obj)
         await db.commit()
@@ -92,8 +96,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         *,
         digest_uuid: UUID, order_by: ORDER_BY, skip: int = 0, limit: int = 0,
         with_eager: bool = False, with_defer: bool = False,
-        _defer_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
-        _eager_attrs: List[_AttrType] = [Newsletter.chat]
+        _eager_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
+        _defer_attrs: List[_AttrType] = [Newsletter.chat]
     ) -> List[Newsletter]:
         order_col = ORDER_BY_MAPPING[order_by]
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(order_col.desc())
@@ -110,8 +114,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         *,
         obj_in: NewsletterCreate, data: Dict,
         with_eager: bool = False, with_defer: bool = False,
-        _defer_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
-        _eager_attrs: List[_AttrType] = [Newsletter.chat]
+        _eager_attrs: List[_AttrType] = [Newsletter.digest, Newsletter.articles],
+        _defer_attrs: List[_AttrType] = [Newsletter.chat]
     ) -> Newsletter:
         stmt = insert(Newsletter).values(
             digest_uuid=obj_in.digest_uuid,
