@@ -124,7 +124,7 @@ async def delete_newsletter(
     newsletter = await crud.newsletter.remove(db, uuid=uuid)
     return newsletter
 
-@router.get("/{uuid}/chat", response_model=schemas.Message)
+@router.get("/{uuid}/message", response_model=schemas.Message)
 async def read_chat(
     *,
     db: AsyncSession = Depends(deps.get_db),
@@ -145,14 +145,18 @@ async def read_chat(
         )
     return {"message": "This is a test response."}
 
-@router.post("/{uuid}/history", response_model=schemas.Message)
+@router.post("/{uuid}/messages", response_model=schemas.Conversation)
 async def read_chats(
     *,
     db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(db, uuid=uuid)
+    conversation = await crud.newsletter.get(db, uuid=uuid, with_defer=True, _defer_attrs=[
+        base.Newsletter.digest, base.Newsletter.digest_uuid, base.Newsletter.articles, base.Newsletter.clicks,
+        base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html,
+        base.Newsletter.created_at, base.Newsletter.updated_at
+    ])
     digest: base.Digest = newsletter.digest
     if not newsletter:
         raise HTTPException(
