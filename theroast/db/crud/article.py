@@ -101,7 +101,12 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         await db.refresh(db_obj)
         return db_obj
     
-    async def update_with_newsletter(self, db: AsyncSession, *, obj_in: Article, db_obj: Newsletter) -> Article:
+    async def update_with_newsletter(
+        self,
+        db: AsyncSession,
+        *,
+        obj_in: Article, db_obj: Newsletter
+    ) -> Article:
         obj_in.newsletters.extend(db_obj)
         await db.commit()
         await db.refresh(obj_in)
