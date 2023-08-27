@@ -2,7 +2,6 @@ from typing import Any, List, Optional
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from http import HTTPStatus
@@ -130,8 +129,36 @@ async def delete_newsletter(
     newsletter = await crud.newsletter.remove(db, uuid=uuid)
     return newsletter
 
-@router.post("/{uuid}/message", response_model=schemas.Chat)
-async def create_message(
+@router.get("/{uuid}/chat", response_model=schemas.Conversation)
+async def read_chat(
+    *,
+    db: AsyncSession = Depends(deps.get_db),
+    uuid: UUID,
+    current_user: base.User = Depends(deps.get_current_active_user)
+) -> Any:
+    conversation = await crud.newsletter.get(
+        db, uuid=uuid,
+        with_eager=True, _eager_attrs=[base.Newsletter.digest, base.Newsletter.articles],
+        with_defer=True, _defer_attrs=[
+            base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
+            base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html
+        ]
+    )
+    digest: base.Digest = conversation.digest
+    if not conversation:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Newsletter not found."
+        )
+    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+        raise HTTPException(
+            status_code=HTTPStatus.FORBIDDEN,
+            detail="User does not have enough priviledges and does not own newsletter."            
+        )
+    return schemas.Conversation(newsletter_uuid=conversation.uuid, log=conversation.chat)
+
+@router.post("/{uuid}/chat", response_model=schemas.Conversation)
+async def create_chat(
     *,
     db: AsyncSession = Depends(deps.get_db),
     uuid: UUID,
@@ -153,34 +180,34 @@ async def create_message(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
-    
+    jsonable_encoder(chat_in)
     return {"message": "This is a test response."}
 
-@router.post("/{uuid}/messages", response_model=schemas.Conversation)
-async def read_chats(
-    *,
-    db: AsyncSession = Depends(deps.get_db),
-    uuid: UUID,
-    current_user: base.User = Depends(deps.get_current_active_user)
-) -> Any:
-    conversation = await crud.newsletter.get(db, uuid=uuid,
-        with_eager=True, _eager_attrs=[
-            base.Newsletter.digest, base.Newsletter.articles,
-        ],
-        with_defer=True, _defer_attrs=[
-            base.Newsletter.articles, base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
-            base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html,
-        ]
-    )
-    digest: base.Digest = conversation.digest
-    if not conversation:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="Newsletter not found."
-        )
-    if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
-        raise HTTPException(
-            status_code=HTTPStatus.FORBIDDEN,
-            detail="User does not have enough priviledges and does not own newsletter."
-        )
-    return {"message": "This is a test response."}
+# @router.post("/{uuid}/messages", response_model=schemas.Conversation)
+# async def read_chats(
+#     *,
+#     db: AsyncSession = Depends(deps.get_db),
+#     uuid: UUID,
+#     current_user: base.User = Depends(deps.get_current_active_user)
+# ) -> Any:
+#     conversation = await crud.newsletter.get(db, uuid=uuid,
+#         with_eager=True, _eager_attrs=[
+#             base.Newsletter.digest, base.Newsletter.articles,
+#         ],
+#         with_defer=True, _defer_attrs=[
+#             base.Newsletter.articles, base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
+#             base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html,
+#         ]
+#     )
+#     digest: base.Digest = conversation.digest
+#     if not conversation:
+#         raise HTTPException(
+#             status_code=HTTPStatus.NOT_FOUND,
+#             detail="Newsletter not found."
+#         )
+#     if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
+#         raise HTTPException(
+#             status_code=HTTPStatus.FORBIDDEN,
+#             detail="User does not have enough priviledges and does not own newsletter."
+#         )
+#     return {"message": "This is a test response."}
