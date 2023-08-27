@@ -136,16 +136,16 @@ async def read_chat(
     uuid: UUID,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    conversation = await crud.newsletter.get(
+    chat = await crud.newsletter.get(
         db, uuid=uuid,
-        with_eager=True, _eager_attrs=[base.Newsletter.digest, base.Newsletter.articles],
+        with_eager=True, _eager_attrs=[base.Newsletter.digest],
         with_defer=True, _defer_attrs=[
-            base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
+            base.Newsletter.articles, base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
             base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html
         ]
     )
-    digest: base.Digest = conversation.digest
-    if not conversation:
+    digest: base.Digest = chat.digest
+    if not chat:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Newsletter not found."
@@ -155,7 +155,7 @@ async def read_chat(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."            
         )
-    return schemas.Conversation(newsletter_uuid=conversation.uuid, log=conversation.chat)
+    return schemas.Conversation(newsletter_uuid=chat.uuid, log=chat.chat)
 
 @router.post("/{uuid}/chat", response_model=schemas.Conversation)
 async def create_chat(
@@ -165,12 +165,16 @@ async def create_chat(
     chat_in: schemas.ChatCreate,
     current_user: base.User = Depends(deps.get_current_active_user)
 ) -> Any:
-    newsletter = await crud.newsletter.get(
+    chat = await crud.newsletter.get(
         db, uuid=uuid,
-        with_eager=True, _eager_attrs=[base.Newsletter.digest]
+        with_eager=True, _eager_attrs=[base.Newsletter.digest, base.Newsletter.articles],
+        with_defer=True, _defer_attrs=[
+            base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
+            base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html
+        ]
     )
-    digest: base.Digest = newsletter.digest
-    if not newsletter:
+    digest: base.Digest = chat.digest
+    if not chat:
         raise HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
             detail="Newsletter not found."
@@ -180,7 +184,6 @@ async def create_chat(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
-    jsonable_encoder(chat_in)
     return {"message": "This is a test response."}
 
 # @router.post("/{uuid}/messages", response_model=schemas.Conversation)
