@@ -17,23 +17,16 @@ COLLATE_PROMPT = dedent('''\
         "conclusion": "Conclusion of newsletter"
     }''')
 REFORMAT_COLLATE_PROMPT = dedent('''\
-    Given the broken JSON, reformat it so that it follows the formatting and is a parseable JSON. Format your response as a JSON with the following structure:
-    {
-        "title": "Title of newsletter",
-        "introduction": "Introduction of newsletter",
-        "conclusion": "Conclusion of newsletter"
-    }
+    Given the broken JSON, reformat it so that it is parseable.
     ''')
 
-class CollatePrompt(Prompt):
+class ChatPrompt(Prompt):
 
-    def system(self, personality):
-        system = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
-        return system
+    def system(self, sections, personality):
+        return NotImplementedError
 
-    def human(self, sections):
-        human = f"{COLLATE_PROMPT}\n<" + "\t".join([f"{s['title']}\n{s['body']}" for s in sections]) + ">"
-        return human
+    def human(self):
+        return NotImplementedError
 
     def reformat(self, json):
         return f"{REFORMAT_COLLATE_PROMPT}\n${json}$"

@@ -9,11 +9,15 @@ import json
 import re
 from ..prompts import (
     collate as collate_prompt,
-    section as section_prompt
+    section as section_prompt,
+    chat as chat_prompt
 )
 
 START_CHAR = "{"
 END_CHAR = "}"
+
+def _predict_chat():
+
 
 def _parse_raw_json(content: str) -> Tuple[Dict[str, str], int]:
     """
@@ -115,3 +119,12 @@ def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
     """
     sm, cp = collate_prompt.CollatePrompt().create_prompt(sections, personality)
     return _predict_message(ag, sm, cp)
+
+def chat(ag: BaseChatModel, articles: List[str], history: List[str], message: str, personality: str) -> dict:
+    
+    sp = chat_prompt.ChatPrompt.create_system_prompt(personality)
+    ap = chat_prompt.ChatPrompt.create_article_prompt(articles)
+    
+    _predict_chat(sp, articles, history, message)
+
+    return {}

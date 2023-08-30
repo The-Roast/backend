@@ -29,17 +29,13 @@ REFORMAT_SECTION_PROMPT = dedent('''\
 
 class SectionPrompt(Prompt):
 
-    def create_prompt(self, articles, personality):
+    def system(self, personality):
+        system = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
+        return system
 
-        assert articles and isinstance(articles, list)
+    def human(self, articles):
+        human = f"{SECTION_PROMPT}\n<" + "\n".join([f'({a})' for a in articles]) + ">"
+        return human
 
-        sy = f"{SYSTEM_PROMPT} As a writer you are {personality}." if personality else SYSTEM_PROMPT
-        sp = f"{SECTION_PROMPT}\n<" + "\n".join([f'({a})' for a in articles]) + ">"
-
-        return sy, sp
-
-    def reformat_prompt(self, json):
-
-        assert json
-
+    def reformat(self, json):
         return f"{REFORMAT_SECTION_PROMPT}\n${json}$"

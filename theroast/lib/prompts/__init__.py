@@ -6,14 +6,22 @@ class Prompt(ABC):
 
     '''Abstract class representing the prompt creation behavior'''
 
+
+
     @staticmethod
     @abstractmethod
-    def create_prompt(*args, **kwargs):
+    def system(*args, **kwargs):
 
         '''Abstract function representing prompt creation'''
 
     @staticmethod
     @abstractmethod
-    def reformat_prompt(*args, **kwargs):
+    def human(*args, **kwargs):
+
+        '''Abstract function representing prompt creation'''
+
+    @staticmethod
+    @abstractmethod
+    def reformat(*args, **kwargs):
 
         '''Abstract function representing JSON reformatting'''
