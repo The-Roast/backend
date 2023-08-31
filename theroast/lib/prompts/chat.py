@@ -22,11 +22,14 @@ REFORMAT_COLLATE_PROMPT = dedent('''\
 
 class ChatPrompt(Prompt):
 
-    def system(self, sections, personality):
-        return NotImplementedError
+    def system(self):
+        return ""
 
     def human(self):
-        return NotImplementedError
+        return ""
+    
+    def article(self):
+        return ""
 
     def reformat(self, json):
         return f"{REFORMAT_COLLATE_PROMPT}\n${json}$"

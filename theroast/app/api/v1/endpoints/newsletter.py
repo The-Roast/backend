@@ -184,6 +184,7 @@ async def create_chat(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
+    
     return {"message": "This is a test response."}
 
 # @router.post("/{uuid}/messages", response_model=schemas.Conversation)

@@ -4,7 +4,7 @@ from langchain.schema import (
     SystemMessage
 )
 from langchain.chat_models.base import BaseChatModel
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 import json
 import re
 from ..prompts import (
@@ -16,7 +16,8 @@ from ..prompts import (
 START_CHAR = "{"
 END_CHAR = "}"
 
-def _predict_chat():
+def _predict_chat(system, articles, history, message):
+    return
 
 
 def _parse_raw_json(content: str) -> Tuple[Dict[str, str], int]:
@@ -103,8 +104,9 @@ def section(ag: BaseChatModel, clusters: Dict[int, List[str]], personality: str)
     """
     sections = []
     for k, v in clusters.items():
-        sm, sp = section_prompt.SectionPrompt().create_prompt(v, personality)
-        dict_sect = _predict_message(ag, sm, sp)
+        system = section_prompt.SectionPrompt().system(personality)
+        human = section_prompt.SectionPrompt().human(v)
+        dict_sect = _predict_message(ag, system, human)
         sections.append(dict_sect)
     return sections
 
@@ -117,14 +119,18 @@ def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
     :param personality: The personality for the prompt creation
     :return: A dictionary of collated sections
     """
-    sm, cp = collate_prompt.CollatePrompt().create_prompt(sections, personality)
-    return _predict_message(ag, sm, cp)
+    system = collate_prompt.CollatePrompt().system(personality)
+    human = collate_prompt.CollatePrompt().human(sections)
+    return _predict_message(ag, system, human)
 
-def chat(ag: BaseChatModel, articles: List[str], history: List[str], message: str, personality: str) -> dict:
+def chat(ag: BaseChatModel, articles: List[dict], history: List[Dict[str, Any]], message: Dict[str, Any], personality: str) -> dict:
     
-    sp = chat_prompt.ChatPrompt.create_system_prompt(personality)
-    ap = chat_prompt.ChatPrompt.create_article_prompt(articles)
+
+    system = chat_prompt.ChatPrompt().system(personality)
+    articles = chat_prompt.ChatPrompt().article(articles)
     
-    _predict_chat(sp, articles, history, message)
+    
+    
+    _predict_chat(system, articles, history, message)
 
     return {}
