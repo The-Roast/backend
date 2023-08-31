@@ -1,35 +1,26 @@
 from . import Prompt
 from textwrap import dedent
 
-SYSTEM_PROMPT = '''You are an unbiased formal newletter writer writing a piece meant to engage the reader and summarize the days content.'''
+SYSTEM_PROMPT = dedent('''\
+    You are a chatbot who responds to questions posited by a user using information provided within the provided articles. \
+    If a question is given that is not related to any of the articles you are to response with the following extremely concise response: "Sorry, I don't know the answer to that question!" followed by a search query for web browsers to help find the answer to said question. \
+    If you do not and can not provide a definitive answer based on the articles provided you should respond with the following extremely concise response: "Sorry, I don't know the answer to that question!" followed by a search query for web browsers to help find the answer to said question. \
+    If you understand these instructions, respond with "Done."''')
 
-COLLATE_PROMPT = dedent('''\
-    Given the tab-separated list of sections separated by <>, create a title, introduction and conclusion for a newsletter based on the list of sections provided.
-    
-    The title must be concise (only a few words) and pertanent to the list of sections.
-    The introduction must be engaging and fun and provide a transition into the sections to be discussed.
-    The conclusion must effectively summarize the main points of the list of sections and leave off on a good remark.
-
-    Your response must be formatted as strictly a parsable JSON with the following structure.
-    {
-        "title": "Title of newsletter",
-        "introduction": "Introduction of newsletter",
-        "conclusion": "Conclusion of newsletter"
-    }''')
-REFORMAT_COLLATE_PROMPT = dedent('''\
+REFORMAT_PROMPT = dedent('''\
     Given the broken JSON, reformat it so that it is parseable.
     ''')
 
 class ChatPrompt(Prompt):
 
-    def system(self):
-        return ""
+    def system(self, personality):
+        return SYSTEM_PROMPT
 
     def human(self):
-        return ""
+        return NotImplementedError
     
-    def article(self):
-        return ""
+    def article(self, articles):
+        return "<" + ",".join([f'({articles["content"]})']) + ">"
 
     def reformat(self, json):
-        return f"{REFORMAT_COLLATE_PROMPT}\n${json}$"
+        return NotImplementedError

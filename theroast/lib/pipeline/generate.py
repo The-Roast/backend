@@ -12,12 +12,20 @@ from ..prompts import (
     section as section_prompt,
     chat as chat_prompt
 )
+from datetime import datetime
 
 START_CHAR = "{"
 END_CHAR = "}"
 
-def _predict_chat(system, articles, history, message):
-    return
+def _predict_chat(ag: BaseChatModel, system: str, articles: str, history: List[dict], message: dict):
+    _schema_map = {"agent": AIMessage, "human": HumanMessage}
+    convo = [SystemMessage(system), HumanMessage(articles), AIMessage("Done.")]
+    for hi_msg in history:
+        convo.append(_schema_map[hi_msg["type"]](hi_msg["content"]))
+    convo.append(_schema_map[message["type"]](message["content"]))
+    str_response: AIMessage = ag.predict_messages(convo)
+    di_response = {"type": "agent", "content": str_response.content, "created_at": datetime.now()}
+    return di_response
 
 
 def _parse_raw_json(content: str) -> Tuple[Dict[str, str], int]:
@@ -67,7 +75,7 @@ def _parse_raw_json(content: str) -> Tuple[Dict[str, str], int]:
 
     return di_content, _num_modifications
 
-def _predict_message(ag: BaseChatModel, system_content: str, human_content: str) -> dict:
+def _predict_message(ag: BaseChatModel, system: str, human: str) -> dict:
     """
     Predict and parse a message given system and human content.
 
@@ -79,17 +87,17 @@ def _predict_message(ag: BaseChatModel, system_content: str, human_content: str)
     is_valid = False
     result = {}
     while not is_valid:
-        str_message: AIMessage = ag.predict_messages([
-            SystemMessage(content = system_content),
-            HumanMessage(content = human_content)
+        str_response: AIMessage = ag.predict_messages([
+            SystemMessage(content = system),
+            HumanMessage(content = human)
         ])
         try:
-            result, _num_modifications = _parse_raw_json(str_message.content)
+            result, _num_modifications = _parse_raw_json(str_response.content)
             print(_num_modifications)
             is_valid = True
         except (json.JSONDecodeError, ValueError) as e:
-            raw_str_message = f"Error parsing message: {str_message.content}"
-            print(raw_str_message.encode("unicode_escape"))
+            raw_str_response = f"Error parsing message: {str_response.content}"
+            print(raw_str_response.encode("unicode_escape"))
             continue
     return result
 
@@ -106,8 +114,8 @@ def section(ag: BaseChatModel, clusters: Dict[int, List[str]], personality: str)
     for k, v in clusters.items():
         system = section_prompt.SectionPrompt().system(personality)
         human = section_prompt.SectionPrompt().human(v)
-        dict_sect = _predict_message(ag, system, human)
-        sections.append(dict_sect)
+        di_section = _predict_message(ag, system, human)
+        sections.append(di_section)
     return sections
 
 def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
@@ -129,8 +137,4 @@ def chat(ag: BaseChatModel, articles: List[dict], history: List[Dict[str, Any]],
     system = chat_prompt.ChatPrompt().system(personality)
     articles = chat_prompt.ChatPrompt().article(articles)
     
-    
-    
-    _predict_chat(system, articles, history, message)
-
-    return {}
+    return _predict_chat(ag, system, articles, history, message)
