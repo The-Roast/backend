@@ -3,7 +3,7 @@ import markdown
 from theroast.lib.models import CLAUDE, GPT
 from theroast.lib.sources.news import NEWS 
 from langchain.chat_models.base import BaseChatModel
-from .generate import section, collate
+from .generate import section, collate, chat
 from theroast.db.base import Digest
 from .batch import batch
 from itertools import chain
@@ -64,3 +64,12 @@ def generate_newsletter(
     flat_clusters = chain.from_iterable(clusters.values())
     used_articles = [content_article[content] for content in flat_clusters]
     return sections, structure, used_articles
+
+def generate_chat(
+        articles: List[Dict[str, Any]],
+        history: List[Dict[str, Any]],
+        message: Dict[str, Any],
+        personality: str,
+        agent: str = "CLAUDE"
+    ) -> dict:
+    return 

@@ -131,10 +131,7 @@ def collate(ag: BaseChatModel, sections: List[str], personality: str) -> dict:
     human = collate_prompt.CollatePrompt().human(sections)
     return _predict_message(ag, system, human)
 
-def chat(ag: BaseChatModel, articles: List[dict], history: List[Dict[str, Any]], message: Dict[str, Any], personality: str) -> dict:
-    
-
+def chat(ag: BaseChatModel, articles: List[Dict[str, Any]], history: List[Dict[str, Any]], message: Dict[str, Any], personality: str) -> dict:
     system = chat_prompt.ChatPrompt().system(personality)
     articles = chat_prompt.ChatPrompt().article(articles)
-    
     return _predict_chat(ag, system, articles, history, message)
