@@ -4,13 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert
 from sqlalchemy.orm import Session, selectinload, defer
 from sqlalchemy.orm.strategy_options import _AttrType
+from sqlalchemy.orm.attributes import flag_modified
 
 from theroast.db.crud.base import CRUDBase
 from theroast.db.tables.article import Article
 from theroast.db.tables.newsletter import Newsletter
 from theroast.db.tables.digest import Digest
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
-from theroast.app.schemas.chat import Conversation
+from theroast.app.schemas.chat import ChatInDB
 from theroast.app.utils import ORDER_BY
 
 ORDER_BY_MAPPING = {
@@ -81,9 +82,12 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         await db.refresh(db_obj)
         return db_obj        
 
-    async def update_chat(self, db: AsyncSession, *, obj_in: Newsletter, db_obj: Newsletter) -> Newsletter:
-        db_obj.chat = obj_in.log.
-
+    async def update_chat(self, db: AsyncSession, *, obj_in: List[ChatInDB], db_obj: Newsletter) -> Newsletter:
+        db_obj.chat.extend([msg.dict(exclude_none=True) for msg in obj_in])
+        flag_modified(db_obj, "chat")
+        await db.commit()
+        await db.refresh(db_obj)
+        return db_obj
 
     async def update_with_article(self, db: AsyncSession, *, obj_in: Newsletter, db_obj: List[Article]) -> Newsletter:
         obj_in.articles.extend(db_obj)

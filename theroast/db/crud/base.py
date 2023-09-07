@@ -34,7 +34,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         with_eager: bool = False, with_defer: bool = False
     ) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
         if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = await db.scalars(stmt)
         return db_objs.first()

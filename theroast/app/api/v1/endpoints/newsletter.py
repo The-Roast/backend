@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from http import HTTPStatus
 from enum import Enum
+from datetime import datetime
 
 from theroast.app import schemas, deps, utils
 from theroast.db import base, crud
@@ -138,11 +139,7 @@ async def read_chat(
 ) -> Any:
     chat = await crud.newsletter.get(
         db, uuid=uuid,
-        with_eager=True, _eager_attrs=[base.Newsletter.digest],
-        with_defer=True, _defer_attrs=[
-            base.Newsletter.articles, base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
-            base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html
-        ]
+        with_eager=True, _eager_attrs=[base.Newsletter.digest]
     )
     digest: base.Digest = chat.digest
     if not chat:
@@ -167,11 +164,7 @@ async def create_chat(
 ) -> Any:
     chat = await crud.newsletter.get(
         db, uuid=uuid,
-        with_eager=True, _eager_attrs=[base.Newsletter.digest, base.Newsletter.articles],
-        with_defer=True, _defer_attrs=[
-            base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
-            base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html
-        ]
+        with_eager=True, _eager_attrs=[base.Newsletter.digest, base.Newsletter.articles]
     )
     digest: base.Digest = chat.digest
     if not chat:
@@ -186,37 +179,9 @@ async def create_chat(
         )
     articles = jsonable_encoder(chat.articles)
     history = jsonable_encoder(chat.chat)
-    message = chat_in.dict()
+    message = {"created_at": datetime.now().isoformat(), **chat_in.dict()}
     response = pipeline.generate_chat(articles=articles, history=history, message=message, personality=digest.personality)
-    
-    crud.newsletter.create_message
-    return {"message": "This is a test response."}
-
-# @router.post("/{uuid}/messages", response_model=schemas.Conversation)
-# async def read_chats(
-#     *,
-#     db: AsyncSession = Depends(deps.get_db),
-#     uuid: UUID,
-#     current_user: base.User = Depends(deps.get_current_active_user)
-# ) -> Any:
-#     conversation = await crud.newsletter.get(db, uuid=uuid,
-#         with_eager=True, _eager_attrs=[
-#             base.Newsletter.digest, base.Newsletter.articles,
-#         ],
-#         with_defer=True, _defer_attrs=[
-#             base.Newsletter.articles, base.Newsletter.clicks, base.Newsletter.created_at, base.Newsletter.updated_at,
-#             base.Newsletter.title, base.Newsletter.title, base.Newsletter.introduction, base.Newsletter.body, base.Newsletter.conclusion, base.Newsletter.html,
-#         ]
-#     )
-#     digest: base.Digest = conversation.digest
-#     if not conversation:
-#         raise HTTPException(
-#             status_code=HTTPStatus.NOT_FOUND,
-#             detail="Newsletter not found."
-#         )
-#     if not crud.user.is_superuser(current_user) and digest.user_uuid != current_user.uuid:
-#         raise HTTPException(
-#             status_code=HTTPStatus.FORBIDDEN,
-#             detail="User does not have enough priviledges and does not own newsletter."
-#         )
-#     return {"message": "This is a test response."}
+    print(response)
+    msgs_in = [schemas.ChatInDB(**msg) for msg in [message, response]]
+    chat = await crud.newsletter.update_chat(db, obj_in=msgs_in, db_obj=chat)
+    return schemas.Conversation(newsletter_uuid=chat.uuid, log=chat.chat)

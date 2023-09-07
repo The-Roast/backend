@@ -20,7 +20,7 @@ class ChatPrompt(Prompt):
         return NotImplementedError
     
     def article(self, articles):
-        return "<" + ",".join([f'({articles["content"]})']) + ">"
+        return "<" + ",".join([f'({artcle["content"]})' for artcle in articles]) + ">"
 
     def reformat(self, json):
         return NotImplementedError

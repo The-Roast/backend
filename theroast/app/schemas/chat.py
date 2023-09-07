@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 from pydantic import BaseModel, UUID4
 from datetime import datetime
 
@@ -16,13 +16,15 @@ class ChatUpdate(ChatBase):
 class ChatInDBBase(ChatBase):
     type: str
     content: str
-    created_at: datetime
+    created_at: Union[datetime, str]
 
 class Chat(ChatInDBBase):
-    newsletter_uuid: UUID4
+    newsletter_uuid: Optional[UUID4]
+    created_at: datetime
 
 class ChatInDB(ChatInDBBase):
-    newsletter_uuid: UUID4
+    newsletter_uuid: Optional[UUID4]
+    created_at: str
 
 class Conversation(BaseModel):
     newsletter_uuid: UUID4

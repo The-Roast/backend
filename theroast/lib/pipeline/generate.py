@@ -19,12 +19,12 @@ END_CHAR = "}"
 
 def _predict_chat(ag: BaseChatModel, system: str, articles: str, history: List[dict], message: dict):
     _schema_map = {"agent": AIMessage, "human": HumanMessage}
-    convo = [SystemMessage(system), HumanMessage(articles), AIMessage("Done.")]
+    convo = [SystemMessage(content=system), HumanMessage(content=articles), AIMessage(content="Done.")]
     for hi_msg in history:
-        convo.append(_schema_map[hi_msg["type"]](hi_msg["content"]))
-    convo.append(_schema_map[message["type"]](message["content"]))
+        convo.append(_schema_map[hi_msg["type"]](content=hi_msg["content"]))
+    convo.append(_schema_map[message["type"]](content=message["content"]))
     str_response: AIMessage = ag.predict_messages(convo)
-    di_response = {"type": "agent", "content": str_response.content, "created_at": datetime.now()}
+    di_response = {"type": "agent", "content": str_response.content, "created_at": datetime.now().isoformat()}
     return di_response
 
 
