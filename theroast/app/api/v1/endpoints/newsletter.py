@@ -184,7 +184,12 @@ async def create_chat(
             status_code=HTTPStatus.FORBIDDEN,
             detail="User does not have enough priviledges and does not own newsletter."
         )
+    articles = jsonable_encoder(chat.articles)
+    history = jsonable_encoder(chat.chat)
+    message = chat_in.dict()
+    response = pipeline.generate_chat(articles=articles, history=history, message=message, personality=digest.personality)
     
+    crud.newsletter.create_message
     return {"message": "This is a test response."}
 
 # @router.post("/{uuid}/messages", response_model=schemas.Conversation)

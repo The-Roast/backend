@@ -10,7 +10,7 @@ from theroast.db.tables.article import Article
 from theroast.db.tables.newsletter import Newsletter
 from theroast.db.tables.digest import Digest
 from theroast.app.schemas.newsletter import NewsletterCreate, NewsletterUpdate
-from theroast.app.schemas.chat import ChatCreate, Chat
+from theroast.app.schemas.chat import Conversation
 from theroast.app.utils import ORDER_BY
 
 ORDER_BY_MAPPING = {
@@ -79,10 +79,11 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         db_obj = db_objs.first()
         await db.commit()
         await db.refresh(db_obj)
-        return db_obj
+        return db_obj        
 
-    async def create_message(self, db: AsyncSession, *, obj_in: ChatCreate, db_obj: Newsletter) -> Chat:
-        pass
+    async def update_chat(self, db: AsyncSession, *, obj_in: Newsletter, db_obj: Newsletter) -> Newsletter:
+        db_obj.chat = obj_in.log.
+
 
     async def update_with_article(self, db: AsyncSession, *, obj_in: Newsletter, db_obj: List[Article]) -> Newsletter:
         obj_in.articles.extend(db_obj)

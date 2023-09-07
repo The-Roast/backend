@@ -72,4 +72,10 @@ def generate_chat(
         personality: str,
         agent: str = "CLAUDE"
     ) -> dict:
-    return 
+    return chat(
+        agent=MODELS[agent],
+        articles=articles,
+        history=history,
+        message=message,
+        personality=personality
+    )
