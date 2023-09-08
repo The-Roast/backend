@@ -181,7 +181,6 @@ async def create_chat(
     history = jsonable_encoder(chat.chat)
     message = {"created_at": datetime.now().isoformat(), **chat_in.dict()}
     response = pipeline.generate_chat(articles=articles, history=history, message=message, personality=digest.personality)
-    print(response)
     msgs_in = [schemas.ChatInDB(**msg) for msg in [message, response]]
     chat = await crud.newsletter.update_chat(db, obj_in=msgs_in, db_obj=chat)
     return schemas.Conversation(newsletter_uuid=chat.uuid, log=chat.chat)

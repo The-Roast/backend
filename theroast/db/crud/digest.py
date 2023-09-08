@@ -22,8 +22,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
         _defer_attrs: List[_AttrType] = []
     ) -> List[Digest]:
         stmt = select(Digest).where(Digest.user_uuid == user_uuid)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         db_objs = await db.scalars(stmt)
@@ -47,8 +47,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
             color=create_color(obj_in.color),
             is_enabled=obj_in.is_enabled
         ).returning(Digest)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = await db.scalars(stmt)
         db_obj = db_objs.first()
         await db.commit()
@@ -65,8 +65,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
         _defer_attrs: List[_AttrType] = []
     ) -> List[Digest]:
         stmt = select(Digest).where(Digest.user_uuid == user_uuid)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         db_objs = db.scalars(stmt)
@@ -90,8 +90,8 @@ class CRUDDigest(CRUDBase[Digest, DigestCreate, DigestUpdate]):
             color=create_color(obj_in.color),
             is_enabled=obj_in.is_enabled
         ).returning(Digest)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = db.scalars(stmt)
         db_obj = db_objs.first()
         db.commit()

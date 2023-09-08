@@ -22,8 +22,8 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         _defer_attrs: List[_AttrType] = []
     ) -> List[Article]:
         stmt = select(Newsletter).where(Newsletter.uuid == uuid)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         scals = await db.scalars(stmt)
@@ -42,8 +42,8 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         stmt = insert(Article).values([
             obj_in.dict() for obj_in in objs_in
         ]).returning(Article)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         db_objs = scals.all()
         newsletter.articles.extend(db_objs)
@@ -65,8 +65,8 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
         stmt = insert(Article).values([
             obj_in.dict() for obj_in in objs_in
         ]).returning(Article)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         db_objs = scals.all()
         await db.commit()
@@ -92,8 +92,8 @@ class CRUDArticle(CRUDBase[Article, ArticleCreate, ArticleUpdate]):
             url=obj_in.url,
             published_at=obj_in.published_at
         ).returning(Article)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         db_obj = scals.first()
         newsletter.articles.extend(db_obj)

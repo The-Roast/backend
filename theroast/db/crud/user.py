@@ -22,8 +22,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         _defer_attrs: List[_AttrType] = []
     ) -> Optional[User]:
         stmt = select(User).where(User.email == email)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs)),
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs]),
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         return scals.first()
 
@@ -44,8 +44,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = await db.scalars(stmt)
         db_obj = scals.first()
         await db.commit()
@@ -95,8 +95,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         _defer_attrs: List[_AttrType] = []
     ) -> Optional[User]:
         stmt = select(User).where(User.email == email)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = db.scalars(stmt)
         return scals.first()
 
@@ -117,8 +117,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             is_active=obj_in.is_active,
             is_superuser=obj_in.is_superuser
         ).returning(User)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         scals = db.scalars(stmt)
         db_obj = scals.first()
         db.commit()

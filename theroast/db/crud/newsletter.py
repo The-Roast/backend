@@ -32,8 +32,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
     ) -> List[Newsletter]:
         order_col = ORDER_BY_MAPPING[order_by]
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(order_col.desc())
-        if with_eager: stmt = stmt.options(selectinload(_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         db_objs = await db.scalars(stmt)
@@ -50,8 +50,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
     ) -> List[Newsletter]:
         order_col = ORDER_BY_MAPPING[order_by]
         stmt = select(Newsletter).join(Digest.newsletters).where(Digest.user_uuid == user_uuid).order_by(order_col.desc())
-        if with_eager: stmt = stmt.options(selectinload(_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         db_objs = await db.scalars(stmt)
@@ -74,8 +74,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             conclusion=data["conclusion"],
             html=data.get("html", None)
         ).returning(Newsletter)
-        if with_eager: stmt = stmt.options(selectinload(_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = await db.scalars(stmt)
         db_obj = db_objs.first()
         await db.commit()
@@ -108,8 +108,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
         stmt = select(Newsletter).where(Newsletter.digest_uuid == digest_uuid).order_by(order_col.desc())
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
-        if with_eager: stmt = stmt.options(selectinload(_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = db.scalars(stmt)
         return db_objs.all()
 
@@ -130,8 +130,8 @@ class CRUDNewsletter(CRUDBase[Newsletter, NewsletterCreate, NewsletterUpdate]):
             conclusion=data["conclusion"],
             html=data.get("html", None)
         ).returning(Newsletter)
-        if with_eager: stmt = stmt.options(selectinload(_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = db.scalars(stmt)
         db_obj = db_objs.first()
         db.commit()

@@ -35,7 +35,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
         if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = await db.scalars(stmt)
         return db_objs.first()
 
@@ -48,8 +48,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         with_eager: bool = False, with_defer: bool = False
     ) -> List[ModelType]:
         stmt = select(self.model)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         db_objs = await db.scalars(stmt)
@@ -65,8 +65,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         stmt = insert(self.model).values(obj_in_data).returning(self.model)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = await db.scalars(stmt)
         db_obj = db_objs.first()
         await db.commit()
@@ -102,8 +102,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         with_eager: bool = False, with_defer: bool = False
     ) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = await db.scalars(stmt)
         await db.commit()
         return db_objs.first()
@@ -116,8 +116,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         with_eager: bool = False, with_defer: bool = False
     ) -> Optional[ModelType]:
         stmt = select(self.model).where(self.model.uuid == uuid)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = db.scalars(stmt)
         return db_objs.first()
     
@@ -130,8 +130,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         with_eager: bool = False, with_defer: bool = False
     ) -> List[ModelType]:
         stmt = select(self.model).offset(skip).limit(limit)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         if skip: stmt = stmt.offset(skip)
         if limit: stmt = stmt.limit(limit)
         db_objs = db.scalars(stmt)
@@ -147,8 +147,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         stmt = insert(self.model).values(obj_in_data).returning(self.model)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = db.scalars(stmt)
         db_obj = db_objs.first()
         db.commit()
@@ -184,8 +184,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         with_eager: bool = False, with_defer: bool = False
     ) -> ModelType:
         stmt = delete(self.model).where(self.model.uuid == uuid).returning(self.model)
-        if with_eager: stmt = stmt.options(selectinload(*_eager_attrs))
-        if with_defer: stmt = stmt.options(defer(*_defer_attrs))
+        if with_eager: stmt = stmt.options(*[selectinload(attr) for attr in _eager_attrs])
+        # if with_defer: stmt = stmt.options(defer(*_defer_attrs))
         db_objs = db.scalars(stmt)
         db.commit()
         return db_objs.first()
