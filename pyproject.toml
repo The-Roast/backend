@@ -37,6 +37,7 @@ greenlet = "^2.0.2"
 bcrypt = "^4.0.1"
 arxiv = "^1.4.8"
 ipykernel = "^6.25.2"
+scholarly = "^1.7.11"
 
 [tool.poetry.group.dev.dependencies]
 python-multipart = "^0.0.6"
