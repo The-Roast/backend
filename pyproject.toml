@@ -35,6 +35,7 @@ anthropic = "^0.3.8"
 fastavro = ">=1.8.1"
 greenlet = "^2.0.2"
 bcrypt = "^4.0.1"
+arxiv = "^1.4.8"
 ipykernel = "^6.25.2"
 
 [tool.poetry.group.dev.dependencies]
