@@ -13,4 +13,9 @@ def merge_meta_and_text(meta, text):
         merged_data.append(data)
     
     return merged_data
-    
+
+def convert_datetime_to_str(news_in: list):
+
+    for i, a in enumerate(news_in):
+        news_in[i]["published_at"] = news_in[i]["published_at"].strftime("%m/%d/%Y, %H:%M:%S")
+    return news_in

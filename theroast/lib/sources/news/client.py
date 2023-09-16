@@ -53,6 +53,8 @@ class NewsSource():
             self.cli.get_top_headlines,
             country="us"
         )
+        print(_data)
         urls = [article["url"] for article in _data["articles"]]
+        print(urls)
         articles = self.content.get_content(urls)
         return articles
