@@ -22,6 +22,7 @@ def main():
     config_in["interests"] = ["tech"]
     config_in["sources"] = []
     config_in["category"] = "business"
+    news_out = convert_datetime_to_str(news.get_top(config_in))
 
     json.dump(news_out, open(f"scrapes/{datetime.now().timestamp()}.json", "w+"))
 
