@@ -21,8 +21,8 @@ class NewsSource():
 
     def _get_newsapi(self, digest: dict, method: Callable, **kwargs):
         interests = " OR ".join(digest["interests"])
-        # sources = ",".join(digest["sources"])
-        sources = None
+        sources = ",".join(digest["sources"])
+        # sources = None
         for _ in range(MAX_TRIES):
             try:
                 return method(q=interests, sources=sources, **kwargs)
@@ -51,10 +51,10 @@ class NewsSource():
         _data = self._get_newsapi(
             digest,
             self.cli.get_top_headlines,
-            country="us"
+            country="us",
+            category=digest.get("category", None)
         )
-        print(_data)
         urls = [article["url"] for article in _data["articles"]]
-        print(urls)
         articles = self.content.get_content(urls)
-        return articles
+        data = merge_meta_and_text(_data["articles"], articles)
+        return data
