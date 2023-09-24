@@ -51,7 +51,7 @@ class NewsSource():
         _data = self._get_newsapi(
             digest,
             self.cli.get_top_headlines,
-            country="us",
+            country="us" if not digest.get("category", None) else None,
             category=digest.get("category", None)
         )
         urls = [article["url"] for article in _data["articles"]]
